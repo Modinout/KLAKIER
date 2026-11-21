@@ -4,12 +4,13 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { dzienCzytelny, NAZWY_MODULOW, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
-import { POZIOMY } from '../ryzyko.js'
+import { dzienCzytelny, NAZWY_MODULOW, nazwaZrodla } from '../nazwy.js'
 import { ustalenia } from '../ustalenia.js'
 
 export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], moduly: [], tagi: [] }
-export const START_FILTRY = { ...PUSTE_FILTRY, statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] }
+
+// Status and risk belong to the view, so clearing the filters keeps them.
+const POLA = ['szukaj', 'od', 'do', 'zrodla', 'moduly', 'tagi']
 
 function Chip({ etykieta, usun }) {
   return (
@@ -97,18 +98,14 @@ function FiltrDaty({ od, doDnia, zmien }) {
   )
 }
 
-function opcjeZ(nazwy) {
-  return Object.entries(nazwy).map(([wartosc, etykieta]) => ({ wartosc, etykieta }))
-}
-
-export default function Filtry({ filtry, zmien, domyslny, wiersze }) {
+export default function Filtry({ filtry, zmien, wiersze }) {
   function ustaw(zmiana) {
     zmien({ ...filtry, ...zmiana })
   }
 
   const zrodla = [...new Set(wiersze.map((r) => r.zrodlo))].sort()
   const moduly = [...new Set(wiersze.flatMap((r) => ustalenia(r).map((s) => s.modul)))].sort()
-  const zmienione = JSON.stringify(filtry) !== JSON.stringify(START_FILTRY)
+  const zmienione = POLA.some((pole) => filtry[pole].length > 0)
 
   return (
     <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
@@ -120,8 +117,6 @@ export default function Filtry({ filtry, zmien, domyslny, wiersze }) {
         wybrane={filtry.zrodla}
         zmien={(zrodla) => ustaw({ zrodla })}
       />
-      <FiltrListy nazwa="Status" opcje={opcjeZ(NAZWY_STATUSOW)} wybrane={filtry.statusy} zmien={(statusy) => ustaw({ statusy })} />
-      <FiltrListy nazwa="Ryzyko" opcje={opcjeZ(POZIOMY)} wybrane={filtry.ryzyka} zmien={(ryzyka) => ustaw({ ryzyka })} />
       <FiltrListy
         nazwa="Moduł"
         opcje={moduly.map((m) => ({ wartosc: m, krotka: m, etykieta: NAZWY_MODULOW[m] }))}
@@ -129,8 +124,8 @@ export default function Filtry({ filtry, zmien, domyslny, wiersze }) {
         zmien={(moduly) => ustaw({ moduly })}
       />
       {zmienione && (
-        <Button variant="ghost" className="text-xs" onClick={domyslny}>
-          Domyślny widok
+        <Button variant="ghost" className="text-xs" onClick={() => zmien({ ...PUSTE_FILTRY, statusy: filtry.statusy, ryzyka: filtry.ryzyka })}>
+          Wyczyść filtry
         </Button>
       )}
     </div>

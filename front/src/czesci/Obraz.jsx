@@ -16,7 +16,7 @@ function pusty(img) {
 
 export default function Obraz({ reklama, ukryj }) {
   return (
-    <div className="mb-4 flex justify-center rounded-lg bg-muted p-3">
+    <div className="my-4 flex justify-center rounded-lg bg-muted p-3">
       <img
         src={'/api/reklamy/' + reklama.id + '/obraz'}
         alt="Obraz reklamy"

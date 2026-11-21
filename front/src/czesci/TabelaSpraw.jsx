@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowRight, ArrowUp, ChevronLeft, ChevronRight, Circle, CircleCheck, CircleDashed } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
+import { ileReklam, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { tagi } from '../ustalenia.js'
 
@@ -68,8 +68,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <Naglowek className="w-20">Nr</Naglowek>
-                <Naglowek className="w-full">Reklama</Naglowek>
+                <Naglowek className="w-full">Sprawa</Naglowek>
                 <Naglowek>Źródło</Naglowek>
                 <Naglowek>Ryzyko</Naglowek>
                 <Naglowek>Status</Naglowek>
@@ -79,7 +78,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
             <TableBody>
               {naStronie.length === 0 && (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                     {pusto}
                   </TableCell>
                 </TableRow>
@@ -91,19 +90,12 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
                   data-state={s.reklamy.some((r) => r.id === otwarteId) ? 'selected' : undefined}
                   onClick={() => otworz(s)}
                 >
-                  <TableCell className="h-[44px] px-3 font-mono text-xs text-muted-foreground">
+                  <TableCell className="h-[44px] max-w-0 px-3">
                     <div className="flex items-center gap-2">
-                      {nowe && <span className={'size-1.5 rounded-full ' + (nowe(s) ? 'bg-foreground' : 'bg-transparent')} />}
-                      {s.glowna.id}
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-0 px-3">
-                    <div className="flex items-center gap-2">
+                      {nowe && <span className={'size-1.5 shrink-0 rounded-full ' + (nowe(s) ? 'bg-foreground' : 'bg-transparent')} />}
                       <span className="max-w-[340px] shrink-0 truncate font-medium">{s.tytul}</span>
                       {s.reklamy.length > 1 && (
-                        <span className="shrink-0 rounded-sm bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
-                          ×{s.reklamy.length}
-                        </span>
+                        <span className="shrink-0 text-xs text-muted-foreground">{ileReklam(s.reklamy.length)}</span>
                       )}
                       <span className="min-w-0 truncate text-muted-foreground">{tagi(s.glowna).join(' · ')}</span>
                     </div>

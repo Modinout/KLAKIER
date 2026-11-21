@@ -51,11 +51,7 @@ export default function ListaUstalen({ reklama }) {
       )}
       {!model && lista.length === 0 && !bezTekstu(reklama) && <Punkt szary tytul="Brak ustaleń" />}
       {bezTekstu(reklama) && <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />}
-      {notatki(reklama).map((s) => (
-        <Punkt key={s.kod} szary tytul={s.opis}>
-          {s.kod === 'brak_na_liscie_cert' && <Podpis>Do przekazania CERT Polska</Podpis>}
-        </Punkt>
-      ))}
+      {notatki(reklama).map((s) => <Punkt key={s.kod} szary tytul={s.opis} />)}
     </ul>
   )
 }

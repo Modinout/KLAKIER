@@ -166,9 +166,7 @@ export function ileSpraw(n) {
 }
 
 export const OPISY = {
-  analityka:
-    'Reklamy inwestycyjne zebrane automatycznie i sprawdzone w rejestrach KNF. Najgroźniejsze sprawy są na górze: otwórz, przeczytaj ustalenia i zdecyduj.',
-  alerty: 'Sprawy wysokiego ryzyka. „Nowe” to te, które doszły, odkąd panel jest otwarty.',
+  alerty: 'Sprawy wysokiego ryzyka.',
   kalibracja:
     'Tu sprawdzasz, jak czuły jest model, który czyta tekst reklam. Niższy próg łapie więcej oszustw, ale daje więcej fałszywych alarmów. Wyższy odwrotnie.',
   suwak: 'Suwak pokazuje, co by się zmieniło przy innym progu. Nie zmienia ocen spraw w kolejce.',

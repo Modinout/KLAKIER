@@ -52,7 +52,7 @@ export default function Uczenie({ decyzje, odswiez }) {
             {uczy ? 'Model się uczy…' : 'Ucz model z decyzji'}
           </Button>
         </Potwierdzenie>
-        <span className="text-muted-foreground">Decyzje analityków: {liczba(decyzje)}</span>
+        <span className="text-muted-foreground">Oceny tekstu od analityków: {liczba(decyzje)}</span>
       </div>
       <p className="mt-2 text-muted-foreground">{OPISY.ucz}</p>
       <form className="mt-5 flex items-end gap-2" onSubmit={dodaj}>

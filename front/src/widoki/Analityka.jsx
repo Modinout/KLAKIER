@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import Filtry, { PUSTE_FILTRY, START_FILTRY } from '../czesci/Filtry.jsx'
+import Filtry, { PUSTE_FILTRY } from '../czesci/Filtry.jsx'
 import Powody from '../czesci/Powody.jsx'
-import Srednie from '../czesci/Srednie.jsx'
 import TabelaSpraw from '../czesci/TabelaSpraw.jsx'
 import Trend from '../czesci/Trend.jsx'
-import { OPISY, dzienCzytelny, ileSpraw, liczba } from '../nazwy.js'
+import Widoki, { WIDOKI } from '../czesci/Widoki.jsx'
+import { dzienCzytelny, ileReklam, ileSpraw, liczba } from '../nazwy.js'
 import { dzienReklamy, najmocniejszyTag, odNajgorszych, tytul, wSprawy } from '../sprawy.js'
 import { ustalenia } from '../ustalenia.js'
 
@@ -51,7 +50,7 @@ function Pusto({ poza, wyczysc }) {
 }
 
 export default function Analityka({ wiersze, otwarteId, otworz }) {
-  const [filtry, setFiltry] = useState(START_FILTRY)
+  const [filtry, setFiltry] = useState({ ...PUSTE_FILTRY, ...WIDOKI[0].zakres })
   const wszystkie = useMemo(() => wSprawy(wiersze), [wiersze])
   const ile = (zmiana) => wszystkie.filter((s) => pasujeSprawa(s, { ...filtry, ...zmiana })).length
 
@@ -63,42 +62,21 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
     const bezPowodu = wszystkie.filter((s) => pasujeSprawa(s, { ...filtry, tagi: [] })).sort(odNajgorszych)
     return [...Map.groupBy(bezPowodu, najmocniejszyTag)].filter(([tag]) => tag).map(([tag, lista]) => [tag, lista.length])
   }, [wszystkie, filtry])
-  const srednie = useMemo(
-    () => wszystkie.filter((s) => pasujeSprawa(s, { ...filtry, ryzyka: ['srednie'], tagi: [] })),
-    [wszystkie, filtry]
-  )
   const dlaTrendu = useMemo(
     () => wiersze.filter((r) => pasujeReklama(r, { ...PUSTE_FILTRY, zrodla: filtry.zrodla, moduly: filtry.moduly })),
     [wiersze, filtry.zrodla, filtry.moduly]
   )
 
-  const wToku = ile({ statusy: ['w_toku'], ryzyka: [], tagi: [] })
-  const pokazSrednie = takieSame(filtry.ryzyka, ['wysokie']) && filtry.tagi.length === 0 && srednie.length > 0
   const tylkoSzukane = { ...PUSTE_FILTRY, szukaj: filtry.szukaj }
 
   return (
     <>
       <div className="mb-5 flex shrink-0 items-end justify-between gap-8">
-        <div>
-          <div className="mb-1 flex items-baseline gap-4">
-            <h1 className="text-2xl font-bold tracking-tight">
-              {takieSame(filtry, START_FILTRY) ? 'Do przejrzenia: ' + ileSpraw(sprawy.length) : 'Sprawy: ' + liczba(sprawy.length)}
-            </h1>
-            {wToku > 0 && (
-              <Button
-                variant="link"
-                className="h-auto p-0 text-muted-foreground"
-                onClick={() => setFiltry({ ...filtry, statusy: ['w_toku'], ryzyka: [], tagi: [] })}
-              >
-                W toku ({liczba(wToku)})
-              </Button>
-            )}
-          </div>
-          <p className="text-muted-foreground">{OPISY.analityka}</p>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Sprawdzone automatycznie: {ileReklam(wiersze.length)}</h1>
         <Trend reklamy={dlaTrendu} />
       </div>
-      <Filtry filtry={filtry} zmien={setFiltry} domyslny={() => setFiltry(START_FILTRY)} wiersze={wiersze} />
+      <Widoki filtry={filtry} zmien={setFiltry} ile={ile} />
+      <Filtry filtry={filtry} zmien={setFiltry} wiersze={wiersze} />
       {(powody.length > 1 || filtry.tagi.length > 0) && (
         <Powody
           powody={powody}
@@ -120,13 +98,6 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
           />
         }
       />
-      {pokazSrednie && (
-        <Srednie
-          sprawy={srednie}
-          pokaz={() => setFiltry({ ...filtry, ryzyka: ['srednie'], tagi: [] })}
-          wybierz={(tag) => setFiltry({ ...filtry, ryzyka: ['srednie'], tagi: [tag] })}
-        />
-      )}
     </>
   )
 }

@@ -28,7 +28,7 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
     <div className="max-w-4xl rounded-lg border">
       <div className="p-6">
         <div className="mb-4 flex items-baseline justify-between">
-          <span className="font-medium">Próg modelu</span>
+          <span className="font-medium">Symulacja progu</span>
           <span className="font-semibold tabular-nums">{liczba(prog)}</span>
         </div>
         <Slider

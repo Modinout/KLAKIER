@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
-import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, liniaOszustwa, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
+import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, liniaOszustwa, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import ListaUstalen from './ListaUstalen.jsx'
@@ -98,10 +98,15 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
         className="gap-0 data-[side=right]:w-[560px] data-[side=right]:sm:max-w-[560px]"
         onInteractOutside={(e) => e.target.closest?.('[data-sonner-toaster]') && e.preventDefault()}
       >
-        <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pt-6 pb-4">
-          <SheetTitle className="pr-8 text-lg font-semibold">{tytul(reklama)}</SheetTitle>
-          <SheetDescription className="mt-1 mb-3">
-            {reklama.id} · {nazwaZrodla(reklama.zrodlo)} · {data(reklama.zebrano)} · {NAZWY_STATUSOW[reklama.status]}
+        <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pb-4">
+          <div className="sticky top-0 -mx-6 bg-popover px-6 pt-6 pb-1">
+            <SheetTitle className="pr-8 text-lg font-semibold">
+              {tytul(reklama)}
+              {wSprawie.length > 1 && <span className="font-normal text-muted-foreground"> · {ileReklam(wSprawie.length)}</span>}
+            </SheetTitle>
+          </div>
+          <SheetDescription className="mb-3">
+            Reklama nr {reklama.id} · {nazwaZrodla(reklama.zrodlo)} · {data(reklama.zebrano)} · {NAZWY_STATUSOW[reklama.status]}
             {reklama.url && zBiblioteki(reklama.url) && (
               <>
                 {' · '}
@@ -112,13 +117,13 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
             )}
           </SheetDescription>
           <Wniosek reklama={reklama} />
-          {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
           <Rejestr reklama={reklama} />
-          <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
           <ListaUstalen reklama={reklama} />
+          {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
+          <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
+          {!bezTekstu(reklama) && <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />}
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
-          {!bezTekstu(reklama) && <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />}
         </div>
         <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
           {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}
@@ -133,7 +138,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
             </Button>
           )}
           <Button variant="ghost" className="ml-auto" disabled={!nastepna} onClick={() => otworz(nastepna.glowna.id)}>
-            Następna
+            Następna sprawa
             <ChevronRight />
           </Button>
         </div>

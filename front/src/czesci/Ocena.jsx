@@ -10,6 +10,12 @@ const OCENY = {
   ok: 'Tekst w porządku',
 }
 
+const WERDYKTY_MODELU = {
+  oszustwo: 'oszustwo',
+  do_sprawdzenia: 'wymaga sprawdzenia',
+  ok: 'tekst w porządku',
+}
+
 export default function Ocena({ reklama, podmien }) {
   const [otwarta, setOtwarta] = useState(Boolean(reklama.werdykt_analityka))
 
@@ -38,21 +44,24 @@ export default function Ocena({ reklama, podmien }) {
     )
   }
 
-  const obecna = reklama.werdykt_analityka ?? reklama.werdykt
-
   return (
-    <div className="mt-6 flex items-center gap-1.5">
-      {Object.entries(OCENY).map(([werdykt, nazwa]) => (
-        <Button
-          key={werdykt}
-          size="xs"
-          variant={werdykt === obecna ? 'default' : 'outline'}
-          aria-pressed={werdykt === obecna}
-          onClick={() => ustaw(werdykt)}
-        >
-          {nazwa}
-        </Button>
-      ))}
+    <div className="mt-6">
+      {reklama.werdykt && (
+        <p className="mb-2 text-[13px] text-muted-foreground">Ocena modelu: {WERDYKTY_MODELU[reklama.werdykt]}</p>
+      )}
+      <div className="flex items-center gap-1.5">
+        {Object.entries(OCENY).map(([werdykt, nazwa]) => (
+          <Button
+            key={werdykt}
+            size="xs"
+            variant={werdykt === reklama.werdykt_analityka ? 'default' : 'outline'}
+            aria-pressed={werdykt === reklama.werdykt_analityka}
+            onClick={() => ustaw(werdykt)}
+          >
+            {nazwa}
+          </Button>
+        ))}
+      </div>
     </div>
   )
 }
