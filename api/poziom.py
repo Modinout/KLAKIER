@@ -1,13 +1,12 @@
 # One risk level per record, from all that is known about it: collector findings, register and text rules, the model.
-# A hard fact alone makes a record high. A breach of the advertising rules by a listed firm makes it medium,
-# and so does a licensed brand paid for by another of its own companies: a formal mismatch, not a missing licence.
-# Such a company paying for another brand's domain is high.
+# A hard fact alone makes a record high; a breach of the advertising rules by a listed firm makes it medium.
 WYSOKIE = {
     'reklama_domeny_z_ostrzezenia_knf', 'druga_domena_ostrzezonej_strony', 'wielu_platnikow_domeny',
-    'platnik_poza_listami', 'doradztwo_bez_zezwolenia', 'obca_domena',
+    'platnik_poza_listami', 'doradztwo_bez_zezwolenia', 'obca_domena', 'na_liscie_csirt_knf',
 }
-# Notes describe a finding and are not one themselves.
-NOTATKI = {'brak_na_liscie_cert', 'na_liscie_cert'}
+# Notes describe a finding and are not one themselves. A licensed brand paid for by another of its own
+# companies is a formal mismatch an analyst would dismiss; that company paying for another brand's domain is high.
+NOTATKI = {'brak_na_liscie_cert', 'na_liscie_cert', 'platnik_spoza_rejestru'}
 
 
 def poziom(sygnaly, werdykt, rodzaj):
