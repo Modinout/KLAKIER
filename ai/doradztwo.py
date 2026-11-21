@@ -42,8 +42,8 @@ def sygnaly(tekst, rejestr):
     if not trafienie:
         return []
     if rejestr:
-        uprawnienia = 'Płatnika nie ma na listach firm inwestycyjnych KNF.'
+        uprawnienia = 'Firmy, która to oferuje, nie ma na listach firm inwestycyjnych KNF.'
     else:
-        uprawnienia = 'Płatnik nie jest znany, więc zezwolenia nie da się potwierdzić.'
+        uprawnienia = 'Nie wiadomo, kto stoi za tym tekstem, więc zezwolenia nie da się potwierdzić.'
     opis = f'Tekst mówi o doradztwie inwestycyjnym lub zarządzaniu portfelem („{cytat(tekst, trafienie)}”). {uprawnienia}'
     return [{'modul': 'M3', 'kod': 'doradztwo_bez_zezwolenia', 'opis': opis, 'podstawa': PODSTAWA}]
