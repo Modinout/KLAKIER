@@ -85,6 +85,18 @@ def podobne(id):
         ).fetchall()
 
 
+def platnicy_domen():
+    # Ordered by id so the first stored spelling of a payer's name is the one shown.
+    with polacz() as baza:
+        return baza.execute(
+            """
+            SELECT domena, reklamodawca, rejestr->>'stan' AS stan FROM reklamy
+            WHERE domena IS NOT NULL AND reklamodawca IS NOT NULL
+            ORDER BY id
+            """
+        ).fetchall()
+
+
 def przyklady_analityka():
     with polacz() as baza:
         return baza.execute(

@@ -24,6 +24,20 @@ PROBY = [
     ('Inwestuj bez podatku Belki. Korzyści zależą od indywidualnej sytuacji klienta i mogą ulec zmianie.', FIRMA, []),
     ('Nasza inwestycja jest w pełni bezpieczna, spełniamy wymogi nadzorcze KNF.', FIRMA, ['nadzor_jako_argument']),
     ('Podlegamy nadzorowi KNF. Otwórz rachunek maklerski.', FIRMA, []),
+    ('Handluj kontraktami CFD na akcje i indeksy. Inwestowanie wiąże się z ryzykiem.', FIRMA, ['brak_ostrzezenia_cfd']),
+    ('Handluj kontraktami CFD na akcje i indeksy z niskim spreadem.', FIRMA, []),
+    ('Handluj na Złocie CFD', FIRMA, []),
+    ('Handluj kontraktami CFD na akcje. 74% rachunków inwestorów detalicznych odnotowuje straty w wyniku handlu CFD u tego dostawcy.', FIRMA, []),
+    ('Trade forex with tight spreads. 74% of retail investor accounts lose money when trading CFDs with this provider.', MARKA, []),
+    ('Trade forex with tight spreads on our platform. Your capital is at risk.', MARKA, ['brak_ostrzezenia_cfd']),
+    ('CFD na złoto. 68% rachunków CFD traci pieniądze.', FIRMA, []),
+    ('Handel kontraktami CFD\n75% rachunków inwestorów detalicznych\nodnotowuje straty pieniężne w wyniku handlu\nkontraktami CFD u niniejszego dostawcy', FIRMA, []),
+    ('CFD-Handel. 75,2 % der Kleinanlegerkonten verlieren Geld beim CFD-Handel mit diesem Anbieter.', MARKA, []),
+    ('Trade Index CFDs now. Trading CFDs/FX carries risk and is not suitable for everyone.', MARKA, ['brak_ostrzezenia_cfd']),
+    ('Kontrakty na różnice kursowe z dźwignią 1:30. Możesz stracić więcej, niż wpłacisz.', FIRMA, ['brak_ostrzezenia_cfd']),
+    ('Kantor internetowy: wymiana walut po kursie forex, bez prowizji.', FIRMA, []),
+    ('Kup akcje i ETF-y bez prowizji. To nie są kontrakty CFD.', FIRMA, []),
+    ('Handluj kontraktami CFD na akcje i indeksy. Inwestowanie wiąże się z ryzykiem.', OBCY, []),
     ('Zyskaj 12% rocznie na naszym portfelu.', OBCY, []),
     ('Zyskaj 12% rocznie na naszym portfelu.', None, []),
     ('', FIRMA, []),
@@ -64,10 +78,16 @@ for tekst, rejestr, kody in PROBY:
     zle += not dobrze
     print('OK  ' if dobrze else 'FAIL', tekst[:60].ljust(60), '| expected', kody, '| got', mam)
 
+CFD = 'Handluj kontraktami CFD na akcje i indeksy. Inwestowanie wiąże się z ryzykiem.'
+for zrodlo, kody in [('google_ads', ['brak_ostrzezenia_cfd']), ('tiktok_ads', ['brak_ostrzezenia_cfd']), ('youtube', []), ('strony_doradcow', [])]:
+    mam = [s['kod'] for s in wymogi.sygnaly(CFD, FIRMA, zrodlo)]
+    zle += mam != kody
+    print('OK  ' if mam == kody else 'FAIL', f'CFD ad without the warning, source {zrodlo}'.ljust(60), '| expected', kody, '| got', mam)
+
 cytat = wymogi.sygnaly('Konto z bonusem. Zyskaj 12% rocznie na portfelu. Zadzwoń.', FIRMA)[0]['opis']
 dobrze = '„Zyskaj 12% rocznie na portfelu”' in cytat
 zle += not dobrze
 print('OK  ' if dobrze else 'FAIL', 'the finding quotes the sentence as written |', cytat)
 
-print(f'{len(PROBY) + 1 - zle} of {len(PROBY) + 1} checks passed')
+print(f'{len(PROBY) + 5 - zle} of {len(PROBY) + 5} checks passed')
 sys.exit(1 if zle else 0)

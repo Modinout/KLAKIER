@@ -16,6 +16,22 @@ ZYSK = re.compile(
 ODSETKI = re.compile(r'\blokat\w*|\boprocentowan\w*|\bodset\w*|\boszczędn\w*|\bpromocj\w*|\binterest\b|\bw skali roku')
 RYZYKO = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*|\brisk\w*|\blos[es]\w*')
 
+PODSTAWA_CFD = (
+    'Standardowe ostrzeżenie o ryzyku dla kontraktów CFD: decyzja ESMA (UE) 2018/796 z 22 maja 2018 r., '
+    'zastąpiona krajową interwencją produktową KNF'
+)
+CFD = re.compile(r'\bcfd\b|\bkontrakt\w+ na różnic\w+|\bcontracts? for differences?\b|\bforex\b|\bfx\b')
+# Forex alone can be a currency exchange office; with trading words it is leveraged trading.
+HANDEL = re.compile(r'\bhandl\w*|\btrading\w*|\btrade\b|\btraduj\w*|\bdźwigni\w*|\bleverage\b|\bspread\w*|\bbroker\w*')
+KANTOR = re.compile(r'\bkantor\w*|\bwymian\w+ walut\w*')
+# "74% rachunków inwestorów detalicznych odnotowuje straty", "74% of retail investor accounts lose money",
+# and the short form allowed where the number of characters is limited.
+OSTRZEZENIE_CFD = re.compile(
+    r'\d+(?:[.,]\d+)?\s*%[^.!?]{0,120}(?:rachunk\w*|\w*kont\w*|accounts?|cuentas|inwestor\w*|investors?)'
+    r'[^.!?]{0,120}(?:strat\w*|trac\w*|los[es]\w*|verlier\w*|pierden)'
+    r'|(?:strat\w*|trac\w*|los[es]\w*)[^.!?]{0,120}\d+(?:[.,]\d+)?\s*%[^.!?]{0,60}(?:rachunk\w*|kont\w*|accounts?)'
+)
+
 HISTORIA = re.compile(
     r'\bwynik\w* historyczn\w*|\bhistoryczn\w+ (?:wynik\w*|stop\w+ zwrotu)|\bw (?:ostatni\w+|minion\w+) \w+ (?:lat\w*|rok\w*|miesi\w+)'
     r'|\bpast performance|\bhistorical (?:performance|returns)'
@@ -62,7 +78,14 @@ def sygnal(kod, opis, podstawa):
     return {'modul': 'M2', 'kod': kod, 'opis': opis, 'podstawa': podstawa}
 
 
-def sygnaly(tekst, rejestr):
+# A video description and a page of a firm's site are not ads: the warning may stand in the film or in a footer.
+NIE_REKLAMY = ('youtube', 'strony_doradcow')
+# A caption with no risk line proves nothing: the warning usually stands in the picture, which is not read here.
+# A text that does speak of risk and leaves the number out is the advertiser's own shortened warning.
+MOWA_O_RYZYKU = re.compile(r'\bryzyk\w*|\brisk\w*|\brisiko\w*|\briesgo\w*|\bstracić\b|\butrat\w+ (?:kapitału|pieniędzy|środków)')
+
+
+def sygnaly(tekst, rejestr, zrodlo=None):
     """Findings on the risk information, only for a payer that is an investment firm from the KNF lists."""
     if not tekst or not rejestr or rejestr['stan'] not in ('w_rejestrze', 'spoza_rejestru'):
         return []
@@ -75,6 +98,16 @@ def sygnaly(tekst, rejestr):
             'zysk_bez_ryzyka',
             f'Reklama mówi o zysku („{cytat(tekst, zysk)}”), a nie ma w niej informacji o ryzyku.',
             f'art. 44 ust. 2 lit. b {ROZPORZADZENIE}',
+        ))
+
+    cfd = twierdzenie(CFD, male, lambda t: t.group() not in ('forex', 'fx') or (HANDEL.search(male) and not KANTOR.search(male)))
+    # Text read from an image breaks the warning over several lines.
+    o_ryzyku = zrodlo not in NIE_REKLAMY and MOWA_O_RYZYKU.search(male)
+    if cfd and o_ryzyku and not OSTRZEZENIE_CFD.search(' '.join(male.split())):
+        wynik.append(sygnal(
+            'brak_ostrzezenia_cfd',
+            f'Reklama oferuje handel kontraktami CFD lub na rynku forex („{cytat(tekst, cfd)}”), wspomina o ryzyku, ale nie podaje, jaki odsetek rachunków klientów traci pieniądze.',
+            PODSTAWA_CFD,
         ))
 
     historia = twierdzenie(HISTORIA, male)

@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 import alerty
 import baza
+import platnicy_domeny
 from schematy import (
     Alert,
     DodanyRodzaj,
@@ -55,6 +56,7 @@ def dodaj_reklame(reklama: NowaReklama):
     wiersz = baza.dodaj(reklama.model_dump(), ocena, sedzia)
     if wiersz is None:
         raise HTTPException(409, 'Ta reklama jest już w bazie')
+    wiersz = z_sygnalem_domeny([wiersz])[0]
     zapisana = Reklama.model_validate(wiersz)
     if zapisana.poziom == 'wysokie':
         alerty.wyslij(Alert.model_validate(zapisana.model_dump()).model_dump_json())
@@ -64,24 +66,24 @@ def dodaj_reklame(reklama: NowaReklama):
 @app.get('/reklamy', response_model=list[Reklama])
 def lista_reklam(werdykt: Werdykt | None = None, status: Status | None = None, min_ryzyko: float = 0,
                  od: datetime | None = None):
-    return baza.lista(werdykt, status, min_ryzyko, od)
+    return z_sygnalem_domeny(baza.lista(werdykt, status, min_ryzyko, od))
 
 
 @app.get('/reklamy/{id}', response_model=Reklama)
 def jedna_reklama(id: int):
-    return znaleziona(baza.jedna(id))
+    return z_sygnalem_domeny([znaleziona(baza.jedna(id))])[0]
 
 
 @app.patch('/reklamy/{id}', response_model=Reklama)
 def zmien_reklame(id: int, zmiana: ZmianaReklamy):
-    return znaleziona(baza.zmien(id, zmiana.model_dump(exclude_unset=True)))
+    return z_sygnalem_domeny([znaleziona(baza.zmien(id, zmiana.model_dump(exclude_unset=True)))])[0]
 
 
 @app.get('/reklamy/{id}/podobne', response_model=list[PodobnaReklama])
 def podobne_reklamy(id: int):
     znaleziona(baza.jedna(id))
     try:
-        return baza.podobne(id)
+        return z_sygnalem_domeny(baza.podobne(id))
     except psycopg.errors.QueryCanceled as blad:
         raise HTTPException(503, 'Szukanie podobnych reklam trwało za długo.') from blad
 
@@ -95,7 +97,7 @@ def dodaj_obraz(id: int, obraz: Obraz):
         ocena = ocen({**reklama, 'tekst': tekst})
         baza.zapisz_tekst(id, tekst)
         baza.zapisz_oceny([{'id': id, **ocena}])
-    return baza.zapisz_obraz(id, typ, dane)
+    return z_sygnalem_domeny([baza.zapisz_obraz(id, typ, dane)])[0]
 
 
 @app.get('/reklamy/{id}/obraz')
@@ -182,6 +184,17 @@ def przelicz_wszystkie():
     with httpx.Client() as klient:
         baza.zapisz_oceny([{'id': reklama['id'], **ocen(reklama, klient)} for reklama in reklamy])
     return len(reklamy)
+
+
+def z_sygnalem_domeny(wiersze):
+    """Rows of the reklamy table with the finding that needs every ad of a domain.
+
+    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad must show on the older ads
+    of its domain at once.
+    """
+    sygnaly = platnicy_domeny.sygnaly_domen(baza.platnicy_domen())
+    return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + [sygnaly[wiersz['domena']]]} if wiersz['domena'] in sygnaly
+            else wiersz for wiersz in wiersze]
 
 
 def znaleziona(wiersz):

@@ -51,7 +51,7 @@ def ocen(material: Material):
         'rejestr': rejestr,
         'sygnaly': (
             (sygnaly(material.reklamodawca, rejestr, material.zrodlo) if na_temat else [])
-            + wymogi.sygnaly(material.tekst, rejestr)
+            + wymogi.sygnaly(material.tekst, rejestr, material.zrodlo)
             + doradztwo.sygnaly(material.tekst, rejestr)
         ),
     }

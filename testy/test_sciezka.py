@@ -90,6 +90,27 @@ def test_lista_od_daje_tylko_nowsze():
     assert druga['id'] in [r['id'] for r in nowsze]
 
 
+def test_trzeci_niezwiazany_platnik_domeny_daje_sygnal_wszystkim_jej_reklamom():
+    domena = uuid.uuid4().hex[:12] + '.example'
+
+    def dodaj(platnik):
+        reklama = {**nowa_reklama(), 'domena': domena, 'reklamodawca': platnik}
+        return httpx.post(f'{API}/reklamy', json=reklama, timeout=180).json()['id']
+
+    def z_sygnalem(numery):
+        return [n for n in numery
+                if 'wielu_platnikow_domeny' in [s['kod'] for s in httpx.get(f'{API}/reklamy/{n}').json()['sygnaly']]]
+
+    numery = [dodaj('Jan Kowalczyk'), dodaj('Anna Wierzbicka')]
+    assert z_sygnalem(numery) == []
+    numery.append(dodaj('Piotr Zawadzki'))
+    assert z_sygnalem(numery) == numery
+    lista = httpx.get(f'{API}/reklamy').json()
+    assert all('wielu_platnikow_domeny' in [s['kod'] for s in r['sygnaly']] for r in lista if r['id'] in numery)
+    httpx.post(f'{API}/ucz', timeout=600).raise_for_status()
+    assert z_sygnalem(numery) == numery
+
+
 def test_nieznana_reklama_daje_404():
     assert httpx.get(f'{API}/reklamy/0').status_code == 404
 

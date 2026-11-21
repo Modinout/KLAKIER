@@ -45,14 +45,14 @@ Pola jak wyżej oraz:
 | `ryzyko` | liczba 0-1 | prawdopodobieństwo oszustwa |
 | `pewny` | prawda / fałsz | fałsz przy werdykcie `do_sprawdzenia`: ocenić powinien człowiek |
 | `rejestr` | obiekt lub null | czy płatnik reklamy jest na listach KNF (domy maklerskie, banki maklerskie, oddziały zagranicznych firm, zagraniczne firmy notyfikowane); null, gdy reklama nie podaje płatnika. Pola: `stan`, `podmiot`, `panstwo`, `lista` |
-| `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnały zbieracza zostają przy każdym ponownym ocenianiu |
+| `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnały zbieracza zostają przy każdym ponownym ocenianiu; sygnał `wielu_platnikow_domeny` (moduł `M1`) oznacza, że reklamy tej samej `domena` opłaca co najmniej trzech różnych płatników, którzy nie są w rejestrze KNF i nie mają w nazwie marki z domeny. Api liczy go przy każdym odczycie ze wszystkich reklam domeny i nie zapisuje go w bazie, więc dostają go też starsze reklamy domeny, gdy przybędzie płatnik |
 | `powody` | lista | słowa, które najmocniej wpłynęły na ocenę; każde ma `slowo` i `waga`; pusta przy ryzyku poniżej 0,1 |
 | `rodzaj` | tekst lub null | rodzaj oszustwa według modelu, np. jeden z `GET /rodzaje` |
 | `drugi_sedzia` | obiekt lub null | ocena dużego modelu, gdy mały nie jest pewny: `werdykt`, `uzasadnienie`; null, gdy duży model nie jest ustawiony |
 | `status` | `nowa`, `w_toku`, `zamknieta` | etap pracy analityka |
 | `werdykt_analityka` | `ok`, `do_sprawdzenia`, `oszustwo` lub null | werdykt analityka; z tych werdyktów model uczy się przez `POST /ucz` |
 | `ma_obraz` | prawda / fałsz | czy reklama ma obraz pod `GET /reklamy/{id}/obraz` |
-| `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i werdyktu, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy reklama prowadzi do domeny z listy ostrzeżeń KNF, do kopii ostrzeżonej strony albo jej treść jest typowa dla fałszywych inwestycji (werdykt `oszustwo`); `srednie`, gdy jest inny sygnał; `niskie`, gdy nie ma ustaleń (sam werdykt `do_sprawdzenia` poziomu nie podnosi); sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) to notatki i poziomu nie podnoszą |
+| `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i werdyktu, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy jest twarde ustalenie (domena z listy ostrzeżeń KNF, kopia ostrzeżonej strony, domena opłacana przez wielu niepowiązanych płatników, płatnik spoza rejestru albo poza listami KNF, doradztwo bez zezwolenia) albo treść jest typowa dla fałszywych inwestycji (werdykt `oszustwo`); `srednie`, gdy jest inny sygnał, czyli naruszenie zasad reklamy przez firmę z rejestru; `niskie`, gdy nie ma ustaleń (sam werdykt `do_sprawdzenia` poziomu nie podnosi); sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) to notatki i poziomu nie podnoszą |
 | `powod` | tekst lub null | jedno zdanie, które decyduje o poziomie: `opis` najmocniejszego sygnału albo zdanie o ocenie tekstu; null przy poziomie `niskie` |
 
 ## Adresy api
