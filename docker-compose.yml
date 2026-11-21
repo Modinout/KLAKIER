@@ -15,6 +15,10 @@ services:
 
   ai:
     build: ./ai
+    healthcheck: &zdrowie
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/zdrowie')"]
+      interval: 2s
+      retries: 30
 
   api:
     build: ./api
@@ -23,18 +27,20 @@ services:
       AI_URL: http://ai:8000
     ports:
       - "8000:8000"
+    healthcheck: *zdrowie
     depends_on:
       baza:
         condition: service_healthy
       ai:
-        condition: service_started
+        condition: service_healthy
 
   front:
     build: ./front
     ports:
       - "8080:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
   zbieracz:
     build: ./zbieracz
@@ -42,7 +48,8 @@ services:
     environment:
       API_URL: http://api:8000
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   dane_bazy:
