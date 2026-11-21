@@ -87,7 +87,7 @@ Panel woła te same adresy z przedrostkiem `/api`.
 
 | Adres | Co robi |
 | --- | --- |
-| `POST /ocen` | przyjmuje `tekst`, `reklamodawca`, `url`, `zrodlo` (dla `youtube` nazwa to kanał, a nie płatnik, więc brak na listach KNF nie jest ustaleniem, a tekstu model nie ocenia: werdykt `ok`, ryzyko 0); zwraca `werdykt`, `ryzyko`, `pewny`, `rejestr`, `sygnaly`, `powody`, `rodzaj` |
+| `POST /ocen` | przyjmuje `tekst`, `reklamodawca`, `url`, `zrodlo` (dla `youtube` i `strony_doradcow` nazwa to autor materiału, a nie płatnik reklamy, więc rejestr nie daje ustalenia `M1`; dla `youtube` tekstu nie ocenia też model: werdykt `ok`, ryzyko 0); zwraca `werdykt`, `ryzyko`, `pewny`, `rejestr`, `sygnaly`, `powody`, `rodzaj` |
 | `POST /drugi_sedzia` | przyjmuje `tekst`; zwraca `werdykt`, `uzasadnienie` od dużego modelu; `503`, gdy go nie ma albo nie odpowiedział |
 | `POST /ucz` | przyjmuje `przyklady` (lista `tekst`, `werdykt`), zastępuje nimi wszystkie przykłady analityka i uczy model od nowa; zwraca `przyklady`, `razem` |
 | `GET /rodzaje` | lista nazw rodzajów oszustw |

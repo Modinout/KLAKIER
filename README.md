@@ -11,10 +11,10 @@ Potrzebny jest Docker z Compose.
 ```
 cp .env.example .env
 docker compose up -d --build
-docker compose --profile zbieracz run --rm zbieracz
+docker compose --profile zbieracz run --rm zbieracz python z_pliku.py pokaz.jsonl
 ```
 
-W pliku `.env` ustaw własne hasło bazy. Trzecia komenda wczytuje przykładowe reklamy z `zbieracz/przyklad.jsonl`.
+W pliku `.env` ustaw własne hasło bazy. Trzecia komenda wczytuje 144 prawdziwe reklamy z `zbieracz/pokaz.jsonl`, w tym 32 oszustwa z ostrzeżeń CSIRT KNF.
 
 Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone.
 
@@ -27,9 +27,10 @@ Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są o
 ```
 docker compose --profile patrol up -d --no-deps kolejka robotnik harmonogram
 docker compose --profile patrol run --rm --no-deps patrol python patrol.py <domena>
+docker compose --profile patrol run --rm --no-deps patrol python tiktok.py [fraza ...]
 ```
 
-Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc zleca sprawdzenie każdej domeny z listy ostrzeżeń KNF. Druga sprawdza jedną domenę od ręki.
+Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc zleca sprawdzenie każdej domeny z listy ostrzeżeń KNF. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę.
 
 Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy po przecinku, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
 

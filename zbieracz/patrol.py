@@ -86,20 +86,14 @@ def sprawdz(domena, wpis, przegladarka, ostrzezenia, z_cert):
 
 
 def obsluz(domena, ostrzezenia, przegladarka, z_cert):
-    """Checks one domain and sends its records and pictures; returns added, skipped, errors (0 or 1) and the line to print.
-
-    A picture goes also to a record the api already has without a picture or without text,
-    so a second run repairs older records: the api reads the text only for a record whose text is empty.
-    """
+    """Checks one domain and sends its records and pictures; returns added, skipped, errors (0 or 1) and the line to print."""
     dodane = obrazy = 0
     try:
         licznik, reklamy, druga, rekordy = sprawdz(domena, ostrzezenia[domena], przegladarka, ostrzezenia, z_cert)
         for rekord, obraz in rekordy:
-            nowy, zapisany = wysylka.dodaj(rekord)
+            nowy, z_obrazem = wysylka.wyslij(rekord, obraz)
             dodane += nowy
-            if obraz and not (zapisany['ma_obraz'] and zapisany['tekst']):
-                wysylka.wyslij_obraz(zapisany['id'], obraz)
-                obrazy += 1
+            obrazy += z_obrazem
     except Exception as blad:
         return 0, 0, 1, f'{domena}: błąd: {type(blad).__name__} {" ".join(str(blad).split())[:200]}'
     pominiete = len(rekordy) - dodane

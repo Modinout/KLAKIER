@@ -20,6 +20,19 @@ def dodaj(rekord):
     return True, zapamietaj(odpowiedz.json())
 
 
+def wyslij(rekord, obraz):
+    """Sends the record, then its picture; returns whether the record is new and whether the picture went.
+
+    A picture goes also to a record the api already has without a picture or without text,
+    so a second run repairs older records: the api reads the text only for a record whose text is empty.
+    """
+    nowy, zapisany = dodaj(rekord)
+    if obraz and not (zapisany['ma_obraz'] and zapisany['tekst']):
+        wyslij_obraz(zapisany['id'], obraz)
+        return nowy, True
+    return nowy, False
+
+
 def wyslij_obraz(id, obraz):
     # The api reads the text from the picture, which takes seconds per picture.
     odpowiedz = httpx.put(f"{os.environ['API_URL']}/reklamy/{id}/obraz",

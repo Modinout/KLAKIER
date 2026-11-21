@@ -126,14 +126,19 @@ def sprawdz(reklamodawca):
     return wynik('poza_listami')
 
 
+# For these sources the name is the author of the material, not the payer of an ad: the register gives no finding.
+AUTOR_ZAMIAST_PLATNIKA = ('youtube', 'strony_doradcow')
+
+
 def sygnaly(platnik, rejestr, zrodlo=None):
     """Findings for the analyst: one signal when the payer is not on the lists, none otherwise."""
+    if zrodlo in AUTOR_ZAMIAST_PLATNIKA:
+        return []
     podstawa = f'Listy KNF, stan na {STAN_NA}'
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         opis = f'Płatnik „{platnik}” nie figuruje w rejestrach KNF. Marka odpowiada wpisowi „{rejestr["podmiot"]}” ({rejestr["panstwo"]}).'
         return [{'modul': 'M1', 'kod': 'platnik_spoza_rejestru', 'opis': opis, 'podstawa': podstawa}]
-    # A YouTube channel is the author of the video, not a payer: its absence from the lists is no finding.
-    if rejestr and rejestr['stan'] == 'poza_listami' and zrodlo != 'youtube':
+    if rejestr and rejestr['stan'] == 'poza_listami':
         opis = f'Płatnik „{platnik}” nie figuruje na żadnej z czterech list firm inwestycyjnych KNF.'
         return [{'modul': 'M1', 'kod': 'platnik_poza_listami', 'opis': opis, 'podstawa': podstawa}]
     return []

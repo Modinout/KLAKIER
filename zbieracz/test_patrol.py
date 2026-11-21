@@ -234,3 +234,42 @@ def test_rotacja_bez_ustawien_zostawia_przegladarke(monkeypatch):
     monkeypatch.setenv('ZBIERACZ_USER_AGENTS', '')
     monkeypatch.delenv('ZBIERACZ_PROXY', raising=False)
     assert rotacja.ustawienia() == {'user_agent': None, 'proxy': None}
+
+
+class Karta:
+    """A page stub that shows the given selectors; a screenshot returns the selector it was taken of."""
+
+    def __init__(self, widoczne):
+        self.widoczne = widoczne
+
+    def locator(self, wybor):
+        karta = self
+
+        class Element:
+            first = None
+
+            def filter(self, visible):
+                return self
+
+            def count(self):
+                return int(wybor in karta.widoczne)
+
+            def screenshot(self):
+                return wybor
+
+        element = Element()
+        element.first = element
+        return element
+
+
+def test_obraz_reklamy_bierze_obraz_przed_ramka():
+    karta = Karta({reklamy_google.OBRAZ, reklamy_google.RAMKA})
+    assert reklamy_google.obraz_reklamy(karta) == reklamy_google.OBRAZ
+
+
+def test_obraz_reklamy_bez_obrazu_bierze_ramke():
+    assert reklamy_google.obraz_reklamy(Karta({reklamy_google.RAMKA})) == reklamy_google.RAMKA
+
+
+def test_obraz_reklamy_bez_obrazu_i_ramki_to_brak():
+    assert reklamy_google.obraz_reklamy(Karta(set())) is None

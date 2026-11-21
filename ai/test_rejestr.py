@@ -48,10 +48,12 @@ for pusty in ['', None]:
     dobrze = sprawdz(pusty) is None
     zle += not dobrze
     print('OK  ' if dobrze else 'FAIL', repr(pusty).ljust(48), '| expected None', '| got', sprawdz(pusty))
-kanal = 'Kanał o inwestowaniu'
-for zrodlo, ile in [('google_ads', 1), ('youtube', 0)]:
-    dobrze = len(sygnaly(kanal, sprawdz(kanal), zrodlo)) == ile
-    zle += not dobrze
-    print('OK  ' if dobrze else 'FAIL', ('name on no list, source ' + zrodlo).ljust(48), '| expected', ile, 'signal(s)')
-print('REJESTR', len(PROBY) + 4 - zle, 'of', len(PROBY) + 4, 'passed')
+ZRODLA = [('google_ads', 1), ('youtube', 0), ('strony_doradcow', 0)]
+for nazwa in ['Kanał o inwestowaniu', 'Revolut Ltd']:
+    for zrodlo, ile in ZRODLA:
+        dobrze = len(sygnaly(nazwa, sprawdz(nazwa), zrodlo)) == ile
+        zle += not dobrze
+        print('OK  ' if dobrze else 'FAIL', (nazwa + ', source ' + zrodlo).ljust(48), '| expected', ile, 'signal(s)')
+razem = len(PROBY) + 2 + 2 * len(ZRODLA)
+print('REJESTR', razem - zle, 'of', razem, 'passed')
 sys.exit(1 if zle else 0)
