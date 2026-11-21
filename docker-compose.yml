@@ -15,16 +15,27 @@ services:
 
   ai:
     build: ./ai
+    environment:
+      DUZY_MODEL_URL: ${DUZY_MODEL_URL:-}
+      DUZY_MODEL_NAZWA: ${DUZY_MODEL_NAZWA:-}
+      DUZY_MODEL_KLUCZ: ${DUZY_MODEL_KLUCZ:-}
+    volumes:
+      - stan_ai:/app/stan
     healthcheck: &zdrowie
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/zdrowie')"]
       interval: 2s
       retries: 30
+
+  odczyt:
+    build: ./odczyt
+    healthcheck: *zdrowie
 
   api:
     build: ./api
     environment:
       BAZA_URL: postgresql://klakier:${HASLO_BAZY}@baza/klakier
       AI_URL: http://ai:8000
+      ODCZYT_URL: http://odczyt:8000
     ports:
       - "8000:8000"
     healthcheck: *zdrowie
@@ -51,5 +62,54 @@ services:
       api:
         condition: service_healthy
 
+  patrol:
+    build:
+      context: ./zbieracz
+      dockerfile: Dockerfile.patrol
+    profiles: [patrol]
+    environment:
+      API_URL: http://api:8000
+      KOLEJKA_URL: redis://kolejka:6379/0
+      ZBIERACZ_USER_AGENTS: ${ZBIERACZ_USER_AGENTS:-}
+      ZBIERACZ_PROXY: ${ZBIERACZ_PROXY:-}
+    depends_on:
+      api:
+        condition: service_healthy
+
+  kolejka:
+    image: public.ecr.aws/docker/library/redis:7-alpine
+    profiles: [patrol]
+    restart: unless-stopped
+
+  robotnik:
+    build:
+      context: ./zbieracz
+      dockerfile: Dockerfile.patrol
+    profiles: [patrol]
+    command: ["python", "robotnik.py"]
+    environment:
+      API_URL: http://api:8000
+      KOLEJKA_URL: redis://kolejka:6379/0
+      ZBIERACZ_USER_AGENTS: ${ZBIERACZ_USER_AGENTS:-}
+      ZBIERACZ_PROXY: ${ZBIERACZ_PROXY:-}
+    restart: unless-stopped
+    depends_on:
+      kolejka:
+        condition: service_started
+      api:
+        condition: service_healthy
+
+  harmonogram:
+    build:
+      context: ./zbieracz
+      dockerfile: Dockerfile.patrol
+    profiles: [patrol]
+    command: ["cron", "-f"]
+    restart: unless-stopped
+    depends_on:
+      kolejka:
+        condition: service_started
+
 volumes:
   dane_bazy:
+  stan_ai:

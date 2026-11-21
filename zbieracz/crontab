@@ -1,0 +1,2 @@
+# Every night at 02:00 queue every domain of the KNF warning list for the patrol.
+0 2 * * * root cd /app && KOLEJKA_URL=redis://kolejka:6379/0 /usr/local/bin/python zlec.py >> /proc/1/fd/1 2>&1

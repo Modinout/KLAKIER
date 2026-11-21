@@ -1,0 +1,10 @@
+FROM public.ecr.aws/docker/library/python:3.11-slim
+WORKDIR /app
+COPY requirements-patrol.txt .
+RUN pip install --no-cache-dir -r requirements-patrol.txt
+# The node binary bundled with playwright needs libatomic, which the slim image lacks.
+RUN apt-get update && apt-get install -y --no-install-recommends libatomic1 cron && rm -rf /var/lib/apt/lists/*
+RUN playwright install --with-deps chromium
+COPY . .
+COPY --chmod=0644 crontab /etc/cron.d/patrol
+CMD ["python", "patrol.py"]

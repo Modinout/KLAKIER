@@ -1,0 +1,761 @@
+lista;nazwa;panstwo;organ_nadzoru
+domy_maklerskie;AIXON INVESTMENT MANAGEMENT SP. Z O.O.;Polska;KNF
+domy_maklerskie;CASPAR ASSET MANAGEMENT S.A.;Polska;KNF
+domy_maklerskie;CERES DOM INWESTYCYJNY S.A. | EFIX DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;CVI DOM MAKLERSKI SP. Z O.O.;Polska;KNF
+domy_maklerskie;DOM INWESTYCYJNY NEHREBETIUS S.A.;Polska;KNF
+domy_maklerskie;DOM INWESTYCYJNY XELION SP. Z O.O.;Polska;KNF
+domy_maklerskie;DOM MAKLERSKI AFS Sp. z o.o.;Polska;KNF
+domy_maklerskie;DOM MAKLERSKI BANKU OCHRONY ŚRODOWISKA S.A.;Polska;KNF
+domy_maklerskie;DOM MAKLERSKI BDM S.A.;Polska;KNF
+domy_maklerskie;DOM MAKLERSKI INC S.A.;Polska;KNF
+domy_maklerskie;DOM MAKLERSKI NAVIGATOR S.A.;Polska;KNF
+domy_maklerskie;DORADZTWO DLA POLSKICH PRZEDSIĘBIORSTW SECURITIES S.A.;Polska;KNF
+domy_maklerskie;ERSTE SECURITIES POLSKA S.A.;Polska;KNF
+domy_maklerskie;EVEREST INVESTMENT MANAGEMENT S.A.;Polska;KNF
+domy_maklerskie;EVO DOM MAKLERSKI S.A. | PRIME SELECTION DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;IFDS DOM MAKLERSKI S.A. | INVESTMENT FUNDS DEPOSITARY SERVICES S.A.;Polska;KNF
+domy_maklerskie;IPOPEMA SECURITIES S.A.;Polska;KNF
+domy_maklerskie;IX ASSET MANAGEMENT S.A. | NIEZALEŻNY DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;LFI DOM MAKLERSKI S.A. | LFI DM S.A.;Polska;KNF
+domy_maklerskie;MICHAEL/STRÖM DOM MAKLERSKI S.A. | MICHAEL/STRÖM DOM MAKLERSKI Sp. z o.o.;Polska;KNF
+domy_maklerskie;NOBLE Securities S.A.;Polska;KNF
+domy_maklerskie;NWAI DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;OANDA TMS BROKERS S.A. | Dom Maklerski TMS BROKERS S.A.;Polska;KNF
+domy_maklerskie;PEKAO INVESTMENT BANKING S.A.;Polska;KNF
+domy_maklerskie;PGE DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;Q SECURITIES S.A.;Polska;KNF
+domy_maklerskie;TRIGON DOM MAKLERSKI S.A.;Polska;KNF
+domy_maklerskie;XTB S.A. | X-TRADE BROKERS DOM MAKLERSKI S.A.;Polska;KNF
+banki_maklerskie;ALIOR BANK S.A. | Biuro Maklerskie ALIOR Bank;Polska;KNF
+banki_maklerskie;BANK HANDLOWY S.A. | Departament Maklerski Banku Handlowego;Polska;KNF
+banki_maklerskie;BANK MILLENNIUM S.A. | Biuro Maklerskie Banku Millennium;Polska;KNF
+banki_maklerskie;BANK PEKAO S.A. (BANK POLSKA KASA OPIEKI S.A.) | B iuro Maklerskie PEKAO;Polska;KNF
+banki_maklerskie;BNP Paribas Bank Polska S.A. | Biuro Maklerskie BNP Paribas Bank Polska;Polska;KNF
+banki_maklerskie;ERSTE BANK POLSKA S.A. | Erste Biuro Maklerskie | SANTANDER BANK POLSKA S.A. | Santander Biuro Maklerskie;Polska;KNF
+banki_maklerskie;ING BANK ŚLĄSKI S.A. | Biuro Maklerskie ING Bank Śląski;Polska;KNF
+banki_maklerskie;mBANK S.A. | Biuro Maklerskie mBank;Polska;KNF
+banki_maklerskie;POWSZECHNA KASA OSZCZĘDNOŚCI BANK POLSKI S.A. (PKO BP S.A.) | Biuro Maklerskie PKO Banku Polskiego;Polska;KNF
+banki_maklerskie;VeloBank S.A. | Departament Maklerski VeloBank;Polska;KNF
+oddzialy_zagranicznych_firm;CMC Markets Germany GmbH;Niemcy;Federal Financial Supervisory Authority | (BaFin)
+oddzialy_zagranicznych_firm;Convera Europe Financial S.A.;Luksemburg;Commission de Surveillance du Secteur Financier (CSSF)
+oddzialy_zagranicznych_firm;EXT Ltd;Cypr;Cyprus Securities and Exchange Commission | (CySEC)
+oddzialy_zagranicznych_firm;Finax, o.c.p., a.s.;Słowacja;Narodna Banka Slovenska (NBS)
+oddzialy_zagranicznych_firm;IG Europe GmbH;Niemcy;Federal Financial Supervisory Authority | (BaFin)
+oddzialy_zagranicznych_firm;Instant Trading EU Ltd.;Cypr;Cyprus Securities and Exchange Commission | (CySEC)
+oddzialy_zagranicznych_firm;Jefferies GmbH;Niemcy;Federal Financial Supervisory Authority | (BaFin)
+oddzialy_zagranicznych_firm;LYNX B.V.;Holandia;Autoriteit Financiële Markten (AFM)
+oddzialy_zagranicznych_firm;Tradition Financial Services España, Sociedad De Valores, S.A.U.;Hiszpania;Comision Nacional Del Mercado De Valores (CNMV)
+oddzialy_zagranicznych_firm;WOOD & Company Financial Services a.s.;Czechy;Czech National Bank | (CNB)
+notyfikowane_zagraniczne;360 Treasury Systems AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;3D Global Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;42 financial services a.s. | 42 financial services s.r.o.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;50KCY LTD | 50COINSCY LTD | UR Trade Fix Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;7Q Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;A.H.W. Capital Mangement GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;A.J.K. Wealth Management Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;A.T.I. Associstes (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;A/S Global Risk Management Ltd Fondsmaeglerselskab;Dania;www.finanstilsynet.dk
+notyfikowane_zagraniczne;ABF TRADE EU LIMITED | X Global Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ABG Sundal Collier ASA | ABG Sundal Collier Norge ASA;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;ABN AMRO - ODDO BHF B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;AC Markets (Europe) Ltd | LTTRADER LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Accuindex EU Limited | Ruizean Markets Ltd | RZT Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ACOLIN Europe AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Across Private Investments, o.c.p., a.s. | Across Wealth Management o.c.p., a.s. | Across Investment Services, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;ACT Financial Solutions B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;ActivMarkets - Empresa de Investimento, S.A.;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;Adamant Capital Partners AD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Adams Street (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;ADM Investor Services B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Admiral Markets AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;Admirals Europe Ltd | Admiral Markets Cyprus Ltd | Admiralex Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Aeonic Securities C.I.F Plc | Solidus Securities Cyprus C.I.F. Ltd | Solidus Securities Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;AFEX Markets Europe Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;AFS Interest BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;AGF International Advisors Company Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;AHP Capital Management GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;AIB Corporate Finance Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Airwallex Capital (Netherlands) B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Aisa International, s.r.o.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;AK Jensen Norway AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;AKCENTA CZ, a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;AKSYS GLOBAL MARKETS EUROPE LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Alaric Securities OOD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;ALBOURNE CYPRUS LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Alfa Capital Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Algorithmic Trading Group Netherlands Management B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;All Energy Trading N.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;All Options International N.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;All Securities BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Allianz Global Investors Europe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;ALPACA EUROPE, A.V., S.L.U. | WEALTHKERNEL SPAIN, A.V., S.L.U.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Alpha FX Europe Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;ALT21 Europe Limited;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;Amana Capital (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Amenda Markets AS IBS;Łotwa;www.fktk.lv
+notyfikowane_zagraniczne;AMFIE;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Aon Solutions Ireland Limited | Aon Hewitt Ireland Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;APME FX Trading Europe Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Apollo Capital Solutions Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Aquilla Nummus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Arctic Asset Management AS | Arctic Fund Management AS | Arctic Capital Partners AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Arctic Securities AS | Arctic Securities ASA;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Arctica Finance hf.;Islandia;www.fme.is
+notyfikowane_zagraniczne;Argus Stockbrokers Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Arion Banki hf.;Islandia;www.cb.is
+notyfikowane_zagraniczne;Arisaig Wealth Management B.V. | Black Swan Capital B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;ARTEX Global Markets AG | Artex MTF AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;ARTS Asset Management GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;AS Mintos Marketplace;Łotwa;www.bank.lv/en/
+notyfikowane_zagraniczne;AS Suprema Securities;Estonia;www.fi.ee/
+notyfikowane_zagraniczne;Asante Capital Group Germany GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Asset Management International B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;ASSETERA GmbH;Austria;www.fma.gv.at/en/
+notyfikowane_zagraniczne;ASTEO Luxembourg S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;ATFX Global Markets (CY) Ltd | Positiva Markets (CY) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Atlantic Capital Ltd;Gibraltar;www.fsc.gi
+notyfikowane_zagraniczne;Atlantic Securities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Attrax Financial Services SA | attrax S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Aurel-bcg;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Ava Trade EU Ltd | Ava Capital Markets Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;AWM Wealth Advisers Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Axeltis;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Axia Ventures Group Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Ayers Alliance Financial Group Ltd | Harborx Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;AYOMI Financial Services Limited;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;B2B Prime Services EU Ltd | Menasecurities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Ballinger Markets Ltd;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;Bankhaus Scheich Wertpapierspezialist AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;BCM Begin Capital Markets CY Ltd | OX Capital Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;BDT & MSD Partners Europe GmbH | BDT & Company Europe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;BenchMark Finance PLC;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;BESTINVER, SOCIEDAD DE VALORES, S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;BETA Securities SA;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;Bitpanda Financial Services GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Bitstamp finančne storitve d.o.o. | (ang. Bitstamp Financial Services Ltd.);Słowenia;www.a-tvp.si
+notyfikowane_zagraniczne;BlackRock (Netherlands) B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Blacktower Financial Management (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Blacktower Financial Management (International) Ltd;Gibraltar;www.fsc.gi
+notyfikowane_zagraniczne;BLOCKMAZE GREECE INVESTMENT SERVICES SINLGE MEMBER SOCIETE ANONYME | TRIPLE A EXPERTS INVESTMENT SERVICES SINGLE MEMBER S.A. | TRIPLE A EXPERTS INVESTMENT SERVICES S.A. | Triple A Experts Investment Services Single Member S.A. | Triple A Experts S.A.;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;Bloomberg Trading Facility B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Blue Suisse Ltd | Port FX Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;BLUENEXT;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;BMCP GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;BN & Partners Capital AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;BNP Paribas Dealing Services;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;BNP Paribas Equities France;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;BNP Paribas Investment Partners Netherlands N.V. | ABN Amro Asset Management (Netherlands) B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Boer & Olij Securities B.V. | Boer & Olij Effectenhuis;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Boku Securities SIA;Łotwa;www.bank.lv/en/
+notyfikowane_zagraniczne;BOS Wealth Management Europe sa;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Boson Alfa Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;BOURSE DIRECT;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;BP ENERGY SOLUTIONS, SOCIEDAD DE VALORES, S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Brewin Dolphin Wealth Management Ltd | Tilman Brewin Dolphin Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;BROCTAGON PRIME LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;BSG France S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;BT Securities SA;Rumunia;www.asfromania.ro
+notyfikowane_zagraniczne;BTIG Norway AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Calamatta Cuschieri Investment Services Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Cambridge Associates GmbH | Cambridge Associates (Germany) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Campbell Lutyens & Co (France) S.A.;Francja;www.acpr.fr
+notyfikowane_zagraniczne;Cantor Fitzgerald Ireland Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;CAPITAL COM GROUP LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Capital Com SV Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Capital Markets, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Capital Solutions Advisory GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Captin B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Carne Global Financial Services (Europe) – Empresa de Investimento, S.A. | Carne Global Financial Services (Europe), Unipessoal Lda.;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;Cashline Értékpapír zártkörűen működő Részvénytársaság;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;CBRE Capital Advisors B.V. | CBRE Real Estate Finance B.V. | CB Richard Ellis Real Estate Finance BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;CDJ SOCIAL STOCKS LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Centris Capital AG;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Centrus Advisors Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Cex Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;CHARLGATE Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Chase Buchanan Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Chatham Financial Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Chefinvest International AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Cheuvreux SA | Credit Agricole Cheuvreux;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Citadel Securities GCS (Ireland) Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Citfin – Finanční trhy, a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;Citigroup Global Markets Europe AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;CLAREMONT SQUARE CAPITAL LIMITED | Afterprime Europe Limited | H.C.F.S. High Capital Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Clarkson Platou Project Sales AS | RS Platou Finans Shipping AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Clear Street Europe BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Cleaves Securities AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;CLICKOPTIONS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;CLSA Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;CMC Markets Germany GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Coeli Wealth Management AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Cohen & Company (Europe) S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Coinbase Financial Services Europe Ltd. | Bux Europe Ltd | HUA REN (Cyprus) Financial Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Colin&Cie. Luxembourg S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Colmex Pro Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Columbia Threadneedle Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Comgest Asset Management International Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Computershare Investor Services (Ireland) Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Concorde Értékpapir Részvénytársaság;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;Connaught (EU) B.V.;Holandia;www.amf.nl
+notyfikowane_zagraniczne;Conotoxia Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Conseq Investment Management, a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;Convera Europe Financial S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Corum Vermögensverwaltung (Deutschland) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Createrra Finance S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Credit Financier Invest (CFI) Ltd | CFI Markets Ltd | CF Invest Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;CREDO Vermogensmanagement GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;CREDOS d.o.o.;Chorwacja;www.hanfa.hr
+notyfikowane_zagraniczne;CROWD Tech Ltd | MPF Global Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;CTCAP LTD | CT CAPITALLTRADERS LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;CTS Cloud Trading Solutions Ltd | Novox Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;CVC Capital Markets S.à r.l.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;CYRRUS a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;D.T. Direct Investment Hub Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;D2X Group N.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Daiwa Capital Markets Deutschland GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Darion Capital Management BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;DC Placement Advisors GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;DealerBox Technologies S.A.S;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;DeFinVa Deutsche Finanzvertriebsagentur GmbH | The Silverfern Group Europe GmbH | First Investment Partners;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Deltastock AD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Deriv Investments (Europe) Ltd | Deriv Investment (Europe) Ltd | Binary Investment (Europe) Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Descartes Trading S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Development Company for Israel Europe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Dialog Vermögensmanagement GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Dif Broker – Empresa de Investimento, S.A. | DIF Broker - Sociedade Financeira de Corretagem, SA | DIF Broker - Sociedade Corretora, SA;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;Direct Hedge Danmark Fondsmæglerselskab A/S;Dania;www.finanstilsynet.dk
+notyfikowane_zagraniczne;Directa SIM S.p.A.;Włochy;www.consob.it
+notyfikowane_zagraniczne;Dodge & Cox (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;DonauCapital Pure Investment GmbH | DonauCapital Investment GmbH | DonauCapital Wertpapier AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;DonauCapital Wertpapier GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;DOO FINANCIAL CYPRUS LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Doto Europe Ltd. | Vasby Capital Markets Limited;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;DPRG IM LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Dragon Capital (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;DriveWealth Europe UAB;Litwa;www.lb.lt
+notyfikowane_zagraniczne;DRW Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Dukascopy Europe IBS AS;Łotwa;www.fktk.lv
+notyfikowane_zagraniczne;Dutch Options and Futures Institute B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;DWS International GmbH | Deutsche Asset Management International GmBH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;e-MID SIM S.p.A;Włochy;www.consob.it
+notyfikowane_zagraniczne;Easy Forex Trading Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EBURY PARTNERS MARKETS CYPRUS LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ECOMMBX INVESTMENTS LIMITED | Mercorix Limited | Symmetria F.S. Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EDR Financial Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EFEKTA obchodník s cennými papíry a.s. | Efekta Consulting, a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;Eightcap EU Ltd | R Capital Solutions Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ELIDI Securities Ltd | UGM Securities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ELITE SIM S.p.A.;Włochy;www.bancaditalia.it
+notyfikowane_zagraniczne;Elitepartner Financial Advisors GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Eminova Fondkommission AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;EMKAP LTD | MeritKapital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Emporium Capital K.A. Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Energy Risk Management Fondsmæglerselskab A/S;Dania;www.dfsa.dk
+notyfikowane_zagraniczne;ENGIE Global Markets | GDF SUEZ Trading | GASELYS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Enmacc Financial Services GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;EOS Venture;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;EOS Venture;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Equilor Investment Ltd;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;equinet AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;EQUITI GLOBAL MARKETS LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Erste Investment AG;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;Etoro (Europe) Ltd | RetailFX Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EUI Private Wealth Ltd | AHR Private Wealth Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Eurivex Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EUROAMERICAN FINANCIAL ADVISORS EAF, S.L;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Eurobank Equities Investment Firm S.A. | Eurobank EFG Equities Investment Firm S.A. | Eurobank EFG Securities Investment Firm S.A.;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;Europa Brokerhaz;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;Eurotrade Investments RGB Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EUROXX SECURITIES S.A.;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;Evbx Ltd | VSTAR & SOHO MARKETS LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Evelyn Partners Investment Management (Europe) Limited | Smith & Williamson Investment Management (Europe) Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;EVER CAPITAL INVESTMENTS, S.V., S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Ever Financial AD | Financial House Ever AD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Evercore GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Everest Index Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Evli Oyj;Finlandia;www.finanssivalvonta.fi
+notyfikowane_zagraniczne;EXANE Options;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Exclusive Change Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EXCLUSIVE PARTNERS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Exelcius Prime Ltd | CopyDO Social Investment Network Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EXENICO (CY) LTD | Grandis Securities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Exness (Cy) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;EXT Ltd | M&L Invest Union Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FACTORY AD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Fathom Wealth Management Advisors Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Fearnley Securities AS | Fearnley Fonds ASA;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Fiduciary Wealth Management Limited;Gibraltar;www.gfsc.gi
+notyfikowane_zagraniczne;FIL (Luxembourg) SA;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;FIMEX Capital o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Finad GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;FINALTO EU LTD | Magnasale Trading Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Financial & Risk Transaction Services Ireland Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Finary SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Finax o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;FinDeal Advisers S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;FINQUOTES FINANCIAL (CYPRUS) LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FIO, burzovni spolecnost, a.s. Czechy;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;First Avenue Partners (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;First Capital Management Group GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;First Prudential Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Fisher Investments Ireland Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Fisher Investments Luxembourg Sarl;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Flow Traders B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;FMO Investment Management B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;FNZ (Europe) DAC;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Fondee s.r.o.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;Forex TB Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FORIS CAPITAL CY LIMITED | A.N. Allnew Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Fortrade Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FP Asset Management Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Freedom Finance Europe Ltd | Freedom Finance Cyprus Ltd | FFINEU Investments Limited;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FTI Finance Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;FUND CHANNEL S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;FundRock Distribution S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Fundvest UAB;Litwa;www.lb.lt
+notyfikowane_zagraniczne;FUSION MARKETS EU LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FX Central Clearing Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FXdirekt Bank AG Niemcy;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;FXGlobe Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FXNET Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FXOPEN EU Ltd | AMB Prime Ltd | Valutrades CY Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;FXPRO Financial Services Ltd | Euroorient Securities and Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Gasum Portfolio Services Oy;Finlandia;www.finanssivalvonta.fi
+notyfikowane_zagraniczne;GATE SECURITIES (CYPRUS) LTD | Sheer Markets (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;GBE Brokers Ltd | GBE Safepay Transactions Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;GBR Capital GmbH | GBR Financial Services GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;GBR Capital GmbH | GBR Financial Services GmbH;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;GC Exchange Fondsmæglerselskab A/S;Dania;www.dfsa.dk
+notyfikowane_zagraniczne;Gemini Intergalactic EU Artemis, Ltd;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;General Investments AG | DT Securities AG | DT Securities GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Geneve Invest (Europe) S.A. | Geneve Invest (Europe) S.a.r.l.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;GHI GLOBAL ADVISORY PARTNERS A.V, S.L.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;GLITNIR AS | Fischer Partners Fondkommission AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Global Funds Exchange EAD | Emirates Wealth EAD | BMFN EAD | UniTrader EAD | BMFN EAD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Global Shares Execution Services Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Global Trade CIF Ltd | Vistabrokers CIF Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;GMG Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;GMO Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;GO Markets Ltd | Galactus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Goldenburg Group Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Goldman Sachs Paris Inc. Et Cie;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Goodbody Stockbrokers Unlimited Company;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Gothaer Asset Management AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;GPB Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Grand Capital Ltd | Finex Ltd;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Granfeld Wealth Management Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;GRAVITY PRIVATE WEALTH LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;GreenStream Network Plc;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Griffin Markets Europe SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Growell Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Grunfin AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;GTSE CAPITAL GROUP LTD | Eight Plus Capital Ltd | Acier FX Ltd | Argusfx Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Guggenheim Partners Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Guggenheim Securities Europe Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;GuildAM Ltd.;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;GWT Fondsmeglerselskab A/S;Dania;www.finanstilsynet.dk
+notyfikowane_zagraniczne;HABERL Wealth Management, o. c. p., a. s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Hamilton Lane (Germany) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;HANetf EU Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Harindale Ltd. | ICC Intercertus Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Harmovest Capital (Cyprus) Ltd | GVD KORIMCY LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Heptagon Capital Limited;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;HF Markets (Europe) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Hidden Road Partners CIV NL B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Hitomorrow Securities LTD | T.C.R. International Ltd | 1 T.C.R. Corp. Ltd | 1 Financial ROD Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Hogg Capital Invetsments Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Holborn Assets Wealth Management (Cy) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Houlihan Lokey (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Howden Capital Markets & Advisory (EU) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;HOXTON CAPITAL MANAGEMENT (EUROPE) LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;HRTEU Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;HSBC Financial Products | HSBC CCF Financial Products;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;HSBC Global Asset Management (Deutschland) GmbH | HSBC Investments Deutschland GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;HSBC International Financial Advisers (Malta) Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;HSH Corporate Finance ltd;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;HUAPRIME EU LTD | Ultima Markets Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Huber & Co Ltd;Gibraltar;www.fsc.gi
+notyfikowane_zagraniczne;HYDE CREDIT LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;I.W.G. International Wealth Group Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;IBKR Europe S.a.r.l.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;ibrokr.AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;IC Markets (EU) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ICAP Energy AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;ICE Securities Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;ICFD Ltd | iFOREX (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ICM InvestmentBank AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;IDCM Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;IFH Capital Trader Ltd;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;IG Europe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;IGM Forex Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;IN2MARKETS LTD | Pruden Ventures Capital Ltd | Constance Investment Ltd | QBF Investment Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Indication Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Instant Trading EU Ltd | Tradomart Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Instinet Germany GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Institutional CN (Europe) — Empresa de Investimento, S.A.;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;Integrae Sim S.p.A.;Włochy;www.consob.it
+notyfikowane_zagraniczne;Interactive Brokers Ireland Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Intercapital Securities Ltd (vrijednosti papiri);Chorwacja;www.hanfa.hr
+notyfikowane_zagraniczne;Intermediate Capital Group Benelux B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Intermonte SIM SpA;Włochy;www.bancaditalia.it
+notyfikowane_zagraniczne;International Commodity Consulting ICC B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;International Investment Platform, o.c.p., a.s. | Cornhill Management, o.c.p., a.s. | SFM Group, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Interpolis Pensioenen Vermogensbeheer B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;InterTrader Ltd;Gibraltar;www.fsc.gi
+notyfikowane_zagraniczne;Invest4Growth Asset Management Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Investcorp Europe S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Investec Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Investium Limited;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Investors Europe (Malta) Limited | Dolfin Asset Services Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;IQBroker Europe Ltd | Iqoption Europe Ltd | Investlab Holdings Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Iqoption Europe Ltd | Investlab Holdings Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Isec Wealth Management Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;iSwap Euro B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;IWC Investment Partners Fondsmeglerselskab A/S;Dania;www.finanstilsynet.dk
+notyfikowane_zagraniczne;J.P. Morgan Dublin plc;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;J&E Davy Unlimited Company | J&E Davy t/a Davy | J&E Davy t/a Davy Stockbrokers;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;J2T Services Ltd | LIME TRADING (CY) LTD | Just2Trade Online Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Jane Street Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;JB Capital Markets Sociedad de Valores, S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;JB DRAX HONORE (FRANCE) SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Jefferies GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;JFD Group Ltd | JFD Brokers Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;JLL Transaction Services AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Jump Trading Europe B.V.,;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Justmarkets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Kepler Capital Markets S.A. | Landsbanki Kepler | Kepler Landsbanki | Kepler Equities;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Key Way Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;KfW Capital GmbH & Co. KG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;KKR Credit Advisors (Ireland) Unlimited Company;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;KNG Securities International - Empresa de Investimento, Lda | KNG Securities International, Lda;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;Kvarn Investment Services Oy;Finlandia;https://www.finanssivalvonta.fi
+notyfikowane_zagraniczne;L.F. Investment Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Lago Kapital Ltd;Finlandia;www.finanssivalvonta.fi
+notyfikowane_zagraniczne;LAIETANA LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;LCM Commodities SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Leonteq Securities (Europe) GmbH | EFG Financial Products (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;LIFEGOALS FINANCIAL SERVICES LIMITED | Emergo Wealth Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Lightyear Europe AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;LIQID Asset Management GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Lirunex Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Liteforex (Europe) Ltd | Mayzus Investment Company Ltd | United World Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;LL Capital & Partners Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Lloyds Bank Corporate Markets Wertpapierhandelsbank GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;LMAX Broker Europe Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;LocalTapiola Asset Management Ltd;Finlandia;Finanssivalvonta.fi
+notyfikowane_zagraniczne;Luna Wealth Asset Management Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Lydya Financial Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Lynx B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Macquarie Capital France;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Magic Compass Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Magnum FX (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Makor Securities Paris SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Man (Europe) AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Mandatum Asset Management Ltd | Mandatum Life Investment Services Ltd;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Manentia Wealth Consulting Group Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Mangold Fonkommission AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Marche de TitreS France (MTS France);Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Marcuard Heritage (Europe) Ltd | Marcuard Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Marex SA | HPC SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Marex Società di Intermediazione mobiliare S.p.A. (Marex SIM S.p.A.);Włochy;www.consob.it
+notyfikowane_zagraniczne;Marex Spectron Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;MARIANA UFP SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;MARIANA UFP SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Marigny Capital;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Market Securities France SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;MarketAxess NL B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;MCA Intelifunds Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;MeDirect Bank (Malta) PLC;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;Medvešek Pušnik, borzno posredniška hiša, d.d., Ljubljana;Słowenia;www.a-tvp.si
+notyfikowane_zagraniczne;Mega Equity Securities and Financial Services Public Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Mercer Global Investments Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Mercia Securities Ltd | Initial Merit Secure Ltd | Nextrade Worldwide Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Mercurius Pro, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Merrill Lynch, Pierce, Fenner and Smith SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;MEX EUROPE LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Mexem Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;MIND MONEY LIMITED | Zerich Securities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;MIO-Partners (EU) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Mirabella Malta Advisers Ltd;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;MIT SIM SpA;Włochy;www.consob.it
+notyfikowane_zagraniczne;MITRADE EU LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Mitsui Bussan Commodities France SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;MK BROKERS AD;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;MMC Securities (Ireland) Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Moelis & Company Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Monex Europe Markets, S.V, S.A.U;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Moneycorp Technologies Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Montesquieu Finance B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Monument Group Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Mount Nico Corp Ltd | Nico Financial NF Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Moventum S.C.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;MTG Liquidity Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;MTS Associated Markets;Belgia;www.nbb.be
+notyfikowane_zagraniczne;Naga Markets Europe Ltd | Naga Markets Ltd | Hanseatic Brokerhouse Global Markets Ltd | AF Alaska Financial Ltd | Ava Trade Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Naxex Invest Ltd. | Depaho Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;NBC Global Finance Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;NBC Paris;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;NBI Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;New England Asset Management Ltd | GR-NEAM Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;New Momentum AV, SA;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;NFS Netfonds Financial Service GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;NFS Network Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Njord Securities AS | Castelar Corporate Finance AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;NNIP Advisors B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Noemon Finance Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Nomura Investment Management Europe S.A. | Macquarie Investment Management Europe S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Noordnederlands Effektenkantoor B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Nordlux Vermögensmanagement S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Notely Trading Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Notesco Financial Services Ltd | IronFX Global Ltd | IronFX Ltd | IronFX Financial Services Ltd | IronForex Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;NOVA SECURITIES LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;NOVIA GLOBAL EUROPE LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Npinvestor Fondsmaeglerselskab A/S;Dania;www.dfsa.dk
+notyfikowane_zagraniczne;NRP Project Finance AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Numisma Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;NUNTIUS BROKERAGE AND INVESTMENT SERVICES SINGLE MEMBER S.A. | Nuntius Brokerage and Investment Services S.A.;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;OAKK Capital Partners BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Octa Markets Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;OEXN LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;OFL Westpapierhandels AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;OKX Europe Markets Limited | Oanda Europe Markets Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Olive Tree Capital Markets Limited | Atonline Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Omega Funds Investment Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Omicron Investment Management GmbH | Omicron Invest Management GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;One Plus Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;One Trading Exchange B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Oppenheim Asset Management;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Opstock Ltd;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Optieclub.nl B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;optionsXpress Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Optiver v.o.f.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;OQTIMA EU LTD | Nordskov Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;ORBEO;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;ORBEX Ltd | AFB FX Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Orion Securities Ltd;Litwa;www.lb.lt
+notyfikowane_zagraniczne;Orkla Finans Kapitalforvaltning ASA;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Otkritie Broker Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Ott, Hagen & Partner AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;PAM Capital AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Pareto Private Equity AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Pareto Securities;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Pareto Securities AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Pareto Securities Oy;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Partners Group (EU) GmbH | Partners Group (Deutschland) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Patria Finance a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;Payward Europe Digital Solutions (CY) Limited | I.F. GREENFIELDS WEALTH LTD | Pacific Union Group Ltd | Brightfx Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Peaks B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;PEAKSIGHT LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Peel Hunt Europe Fondsmæglerselskab A/S;Dania;www.dfsa.dk
+notyfikowane_zagraniczne;PELICAN EXCHANGE EUROPE (CY) LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Pepperstone EU Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Perella Weinbesrg Partners France SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Performance Ronnaru Company Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Pershing Securities International Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Petram & Co N.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;PIMCO Europe GmbH | PIMCO Deutschland GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;PineBridge Investemnts Deutschland GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Piper Sandler Europe SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;PJT Partners Park Hill (Spain) A.V., S.A.U.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;PLUM Money CY Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Plus500CY Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Plus500EE AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;PM MTF LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Pohjola Corporate Finance LTD;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Primus Global Ltd | FX Primus Europe (Cy) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Pritle N.V. | Pritle B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Privalux Management S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Privanet Securities Oy;Finlandia;www.fin-fsa.fi
+notyfikowane_zagraniczne;Probus Pleion Luxembourg S.A. | BCB & Partners SA;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Prochoice Chrimatistiriaki Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Prodigit Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Prospergate Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Proteste Investe — Empresa de Investimento, Unipessoal Lda.;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;PROXENTA Finance, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Qbasis Invest GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Quantile BV;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Quay Financials (Gibraltar) Ltd;Gibraltar;www.fsc.gi
+notyfikowane_zagraniczne;QUEST FUND PLACE-MENT EUROPE, AGENCIA DE VALORES, SOCIEDAD ANÓNIMA;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;QUIDEOS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Quilter Cheviot Europe Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;R.J. O’Brien France S.A.S.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Raiffeisen Vermoegensverwaltungsbank AG Austria;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Ramius GmbH | Ramius HVB Partners Austria GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Rathbones Investment Management International (Ireland) Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Raymond James Corporate Finance GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;RAYMOND JAMES France SAS | Raymond James Euro Equities;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;RBC Capital Markets (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Red Mars Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Redburn (France) SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Rede Partners (Netherlands) B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Redpine Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Renaissance Securities (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;RENARD Solutions AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Revolut Securities Europe UAB | Revolut Securities UAB;Litwa;www.lb.lt
+notyfikowane_zagraniczne;RM-S Market, o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Robinhood Europe, UAB;Litwa;www.lb.lt
+notyfikowane_zagraniczne;RoboMarkets Deutschland GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Robomarkets Ltd | Roboforex (Cy) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Roemer Capital (Europe) Limited | Sinara Financial Corporation (Europe) Ltd | THINK WEALTH LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Ronin Europe Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Royal Financial Trading (CY) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Rubicon Infrastructure Advisors;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Ruffer SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Rynat Trading Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;S.S.I.F. Blue Rock Financial Services S.A.;Rumunia;www.asfromania.ro
+notyfikowane_zagraniczne;SAB o.c.p., a.s. | Fio o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Safecap Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Salmann Investment Management AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Salus Alpha Capital GmbH;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;SAPIENS MARKETS EU, SOCIEDAD DE VALORES, S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;SB1 Markets AS | Sparebank 1 Markets AS | Argo Securities AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;SECURITIZE EUROPE BROKERAGE AND MARKETS, S.V., S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;SFI Markets B.V. | STX Fixed Income B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;SFS Markets Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;SGX FX Markets NL B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;SHARES FINANCIAL ASSETS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Shine Trades (CY) Ltd | Triumph Int. (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;SIA “DN Operator”;Łotwa;www.bank.lv/en/
+notyfikowane_zagraniczne;SIB (Cyprus) Ltd | TD Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Silvercrest Asset Management (Europe) Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Skanestas Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Skilling Ltd | Finovel Cyprus Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;SKY Asset Management AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Skybound Wealth Europe Ltd. | Fenix Capital Markets Trading Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Slim Vermogensbeheer B.V. | Berben's Effectenkantoor B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;SM Capital Markets Ltd | ABC 123 (CY) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Small & Mid Cap Investmentbank AG;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Societatea De Servicii De Investitii Financiare Romintrade SA;Rumunia;www.asfromania.ro
+notyfikowane_zagraniczne;Société Générale - Forge;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;SOLARIS EMEA LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Solas Capital Germany GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Solid Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;SOLVENTIS, S.V., S.A. | Solventis, AV, S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Spiko Finance SASU;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Spirit Asset Management SA;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Square Global;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Squared Financial (CY) Ltd | Aspide Financial Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;SSC Smart FX Ltd | Jin Daocheng Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;SSIF BRK FINANCIAL GROUP S.A;Rumunia;www.asfromania.ro
+notyfikowane_zagraniczne;STAK SECURITIES LTD | STAK FX Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;STATOK LTD | SMSG Limited;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Stifel Europe Securities SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Stonehage Fleming Investment Management (Liechtenstein) AG;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;StoneX Europe Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;StoneX Financial Europe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Strategic Wealth Management A/S;Dania;www.dfsa.dk
+notyfikowane_zagraniczne;Strato Markets B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Stratos Europe Limited | FXCM EU Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Streams Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Substnz Capital Partners GmbH | eXapital Capital Advisors GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Sucden Financial Hamburg GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Superfund Asset Management GmbH | Quadriga Asset Management GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;Susquehanna International Securities Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Svensk Värdepappersservice i Stockholm AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Swiss Life Asset Managers Transactions AS | NRP Finans AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;Swiss Re Capital Markets Europe S.A.;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Swissquote Capital Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Systrade AG | Systrade Asset Management AG, Vaduz Liechtenstein;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;T Markets EU Limited | NBH Markets EU Ltd | Fideliscm (Cyprus) Ltd | SN Financials Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TAURUS (EUROPE) LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TCW Italy SIM S.p.A. | (TCW Italy Societŕ di Intermediazione Mobiliare S.p.A.,);Włochy;www.consob.it
+notyfikowane_zagraniczne;TD Global Finance Unlimited Company | TD Global Finance;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Templar EIS Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;TF Global Markets (Europe) Ltd | A-Conversio Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TFI Ecommpay Ltd | TFI Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;The Alliance Partnership Netherlands B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;The Cyprus Investment and Securities Corporation Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;The First Interstellar Capital Ltd | Olikriet Capital Ltd | Consulco Capital Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;The New Amsterdam Group B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;The Spectrum IFA Group Limited;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;THE ULTIMA INVESTMENTS CYPRUS LIMITED | BrokerCreditService (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Tickmill Europe Ltd | Vipro Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Timberland Invest Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;TIOMARKETS CY LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Titanedge Securities Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Today’s Group B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;TOM B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Top Markets Solutions Ltd. | Teletrade-DJ International Consulting Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TOPFX Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Tower Research Capital Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;TP ICAP (Europe) SA;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Trade Capital Markets (TCM) Ltd | Leadcapital Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TRADEPLACE LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TradeStation Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;TRADESTONE LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Tradeview Europe Limited;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;Tradeweb EU B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Tradeweb Execution Services B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Trading 212 EU GmbH | FXFlat Bank AG | FX Flat Bank GmbH | FXFlat Wertpapierhandelsbank GmbH | Heyder Kruger & Kollegen GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Trading 212 Ltd | Avus Capital Ltd;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;Trading 212 Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Trading Point of Financial Instruments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TRADING.COM MARKETS EU LIMITED;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Tradition Financial Services España, Sociedad De Valores S.A.U.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Tradition Financial Services GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Tradition Luxembourg SA;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Tradition Securities and Futures S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Trek Labs Europe Ltd | FTX EU LTD | K-DNA Financial Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Triangleview Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TriOptima AB;Szwecja;www.fi.se
+notyfikowane_zagraniczne;Trive Financial Services Europe Ltd. | Trive Financial Services Malta Limited | AKFX Financial Services Ltd | Cresco Capital Markets (Malta) Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Trust Capital TC Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;TSAF OTC SA | Viel Tradition S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;TSG Brokers Ltd. | GWG (Cyprus) Ltd | Gametech (Cyprus) Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Turquoise Global Holdings Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;UAB ,,Axiology DLT”;Litwa;www.lb.lt
+notyfikowane_zagraniczne;"UAB FMI ""MRC Markets""";Litwa;www.lb.lt
+notyfikowane_zagraniczne;UBK Markets Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Unifinanz Tust reg.;Liechtenstein;www.fma-li.li
+notyfikowane_zagraniczne;Union Corporate AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;UNIQUA Capital Markets GmbH;Austria;www.fma.gv.at
+notyfikowane_zagraniczne;UP Trend Ltd;Bułgaria;www.fsc.bg
+notyfikowane_zagraniczne;UPTEVIA | Caceis Corporate Trust (Caceis CT) | Credit Agricole Investor Services Corporate Trust S.A.;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Upvest Securities GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;UTI INTERNATIONAL (FRANCE) SAS;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;Validas N.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Validus Europe AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;VALOR o.c.p., a. s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Van Sterling Capital Limited;Malta;www.mfsa.mt
+notyfikowane_zagraniczne;VanEck (Europe) GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Veles International Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Velthuyse & Mulder Vermogensbeheer B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Venturebeam Markets AS | Funderbeam Markets AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;Verdispar Securities AS;Norwegia;www.finanstilsynet.no
+notyfikowane_zagraniczne;VermogensParaplu Beheer B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Vernier Capital Advisors (Europe) Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;Vertis Environmental Financial Ltd;Węgry;www.mnb.hu
+notyfikowane_zagraniczne;VICTORIAPARTNERS GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Virtu Europe Trading Limited | Virtu ITG Europe Ltd | Investment Technology Group Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Virtu Financial Ireland Ltd;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Vivid Money B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;VLK-KBCS B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;VSMARKETS LTD | KLIPS CY LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;VTC Europe B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;W.G. WEALTH GUARDIAN LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;W1M EUROPE, A.V., S.A. | LONDON AND CAPITAL WEALTH MANAGEMENT EUROPE, A.V. S.A.;Hiszpania;www.cnmv.es
+notyfikowane_zagraniczne;Waystone Investment Management (IE) Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;WB TRADE EU LTD | Windsor Brokers Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;WEALTHYHOOD EUROPE INVESTMENT SERVICES SINGLE MEMBER SOCIETE ANONYME;Grecja;www.hcmc.gr
+notyfikowane_zagraniczne;Webull Securities (Europe) B.V.;Holandia;www.amf.nl
+notyfikowane_zagraniczne;Wellington Management Euorpe GmbH;Niemcy;www.bafin.de
+notyfikowane_zagraniczne;Wells Fargo Securities Europe;Francja;www.acpr.banque-france.fr
+notyfikowane_zagraniczne;WGM Services Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;WH Selfinvest SA;Luksemburg;www.cssf.lu
+notyfikowane_zagraniczne;Wijs & Van Oostveen B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;William Blair B.V.;Holandia;www.afm.nl
+notyfikowane_zagraniczne;Winners Investments o.c.p., a.s.;Słowacja;www.nbs.sk
+notyfikowane_zagraniczne;Wisdompoint Capital Ltd | Tradernet Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;WisdomTree Ireland Limited;Irlandia;www.centralbank.ie
+notyfikowane_zagraniczne;Wise Assets Europe AS | TINV Europe AS;Estonia;www.fi.ee
+notyfikowane_zagraniczne;Wise Wolves Finance Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;WOOD & Company Financial Services a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;WOOD Retail Investments a.s.;Czechy;www.cnb.cz
+notyfikowane_zagraniczne;WRDNB Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;XBorder Partners Wealth — Empresa de Investimento, S.A.;Portugalia;www.cmvm.pt
+notyfikowane_zagraniczne;XNT Ltd | Exante Ltd;Malta;www.mfsa.com.mt
+notyfikowane_zagraniczne;XSpot Wealth (EU) Ltd | X Spot Markets (EU) Ltd | Boursotrade Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;XTB Ltd | DUB Investments Ltd;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;XTELLUS EUROPE LTD;Cypr;www.cysec.gov.cy
+notyfikowane_zagraniczne;Zemblanco Investments Ltd;Cypr;www.cysec.gov.cy
