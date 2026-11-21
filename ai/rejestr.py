@@ -122,6 +122,11 @@ def sprawdz(reklamodawca):
     wpis = _PO_NAZWIE.get(nazwa) or _MARKI.get(nazwa) or _PO_NAZWIE.get(marka) or _MARKI.get(marka)
     if wpis:
         return wynik('w_rejestrze', wpis)
+    # A bare brand is no sign of another company when the brand has one listed entity: CMC Markets.
+    if marka is not None and rdzen(nazwa) and not set(rdzen(nazwa)) <= POSPOLITE:
+        podmioty = {w['nazwa']: w for w, n in reversed(_NAZWY) if rdzen(n) == rdzen(nazwa)}
+        if len(podmioty) == 1:
+            return wynik('w_rejestrze', *podmioty.values())
     # There is no TFI list among the four, so a fund company cannot be checked here.
     if 'tfi' in nazwa.split() or 'towarzystwo funduszy inwestycyjnych' in nazwa:
         return wynik('tfi')

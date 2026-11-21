@@ -1,4 +1,5 @@
-import { domena, domenaDocelowa, NAZWY_LIST_KNF } from '../nazwy.js'
+import { domena, domenaDocelowa, NAZWY_LIST_KNF, pierwszaDomena } from '../nazwy.js'
+import { tytul } from '../sprawy.js'
 
 const KTO = {
   youtube: 'Kanał',
@@ -36,7 +37,9 @@ export default function Rejestr({ reklama }) {
   const rejestr = reklama.rejestr
   const chip = stan(reklama)
   const cel = domenaDocelowa(reklama)
-  if (!reklama.reklamodawca && !cel) return null
+  // Titled by the first domain in the text: no link, it was not checked as a target.
+  const zTekstu = !cel && !reklama.reklamodawca && tytul(reklama) === pierwszaDomena(reklama.tekst) ? tytul(reklama) : null
+  if (!reklama.reklamodawca && !cel && !zTekstu) return null
 
   return (
     <div className="mb-4 divide-y rounded-lg border">
@@ -56,6 +59,11 @@ export default function Rejestr({ reklama }) {
           >
             {cel}
           </a>
+        </Wiersz>
+      )}
+      {zTekstu && (
+        <Wiersz nazwa="Prowadzi do">
+          <span className="truncate">{zTekstu}</span>
         </Wiersz>
       )}
       {rejestr?.podmiot && (

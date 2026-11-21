@@ -7,7 +7,7 @@ import { POZIOMY } from '../ryzyko.js'
 import { tagi } from '../ustalenia.js'
 
 const NAGLOWEK = 44
-const WIERSZ = 45
+const WIERSZ = 44
 const NAJWIECEJ = 12
 
 const IKONY_RYZYKA = {
@@ -53,8 +53,9 @@ function useWierszeWOknie() {
   return [pole, ile]
 }
 
-export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otworz, pusto = 'Brak spraw w tym widoku' }) {
-  const [pole, naStrone] = useWierszeWOknie()
+export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otworz, wierszy, pusto = 'Brak spraw w tym widoku' }) {
+  const [pole, wOknie] = useWierszeWOknie()
+  const naStrone = wierszy ?? wOknie
   const [strona, setStrona] = useState(0)
   const stron = Math.max(1, Math.ceil(sprawy.length / naStrone))
   const biezaca = Math.min(strona, stron - 1)
@@ -62,7 +63,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
 
   return (
     <>
-      <div ref={pole} className="min-h-0 flex-1 overflow-hidden">
+      <div ref={pole} className={wierszy ? '' : 'min-h-0 flex-1 overflow-hidden'}>
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader>

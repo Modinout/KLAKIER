@@ -66,6 +66,19 @@ export function najmocniejszyTag(sprawa) {
   return tagi(sprawa.glowna)[0]
 }
 
+const KODY_OSTRZEZONE = ['reklama_domeny_z_ostrzezenia_knf', 'druga_domena_ostrzezonej_strony']
+
+// Evidence behind a case: 0 warned domain, 1 any other finding, 2 text model only.
+function dowod(sprawa) {
+  if (sprawa.reklamy.some((r) => r.sygnaly.some((s) => KODY_OSTRZEZONE.includes(s.kod)))) return 0
+  return sprawa.reklamy.some((r) => ustalenia(r).length > 0) ? 1 : 2
+}
+
 export function odNajgorszych(a, b) {
-  return KOLEJNOSC[a.poziom] - KOLEJNOSC[b.poziom] || b.dzien.localeCompare(a.dzien) || b.glowna.id - a.glowna.id
+  return (
+    KOLEJNOSC[a.poziom] - KOLEJNOSC[b.poziom] ||
+    dowod(a) - dowod(b) ||
+    b.dzien.localeCompare(a.dzien) ||
+    b.glowna.id - a.glowna.id
+  )
 }

@@ -68,7 +68,8 @@ export default function App() {
   useAlerty(dolacz)
 
   const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie'), [reklamy])
-  const nowyAlert = (s) => !poczatkowe.current?.has(s.klucz) && !s.reklamy.some((r) => obejrzane.has(r.id))
+  const przybyla = (s) => !poczatkowe.current?.has(s.klucz)
+  const nowyAlert = (s) => przybyla(s) && !s.reklamy.some((r) => obejrzane.has(r.id))
   const nieobejrzane = alerty.filter(nowyAlert).length
 
   function podmien(nowa) {
@@ -104,8 +105,8 @@ export default function App() {
             <TabsContent value="analityka" className="flex min-h-0 flex-col">
               <Analityka wiersze={reklamy} otwarteId={otwarte?.id} otworz={otworz} />
             </TabsContent>
-            <TabsContent value="alerty" className="flex min-h-0 flex-col">
-              <Alerty sprawy={alerty} nowe={nowyAlert} otwarteId={otwarte?.id} otworz={otworz} />
+            <TabsContent value="alerty" className="flex min-h-0 flex-col overflow-auto">
+              <Alerty sprawy={alerty} przybyla={przybyla} nowe={nowyAlert} otwarteId={otwarte?.id} otworz={otworz} />
             </TabsContent>
             <TabsContent value="kalibracja" className="min-h-0 overflow-auto">
               <Kalibracja prog={prog} ustawProg={setProg} wiersze={reklamy} odswiez={odswiez} />

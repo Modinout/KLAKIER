@@ -18,11 +18,11 @@ SZCZEGOLY = {
 ZEBRANO = '2026-11-21T10:00:00+00:00'
 
 
-def test_rekord_z_platnikiem_i_domena():
+def test_rekord_z_reklamodawca_i_domena():
     assert tiktok.rekord(REKLAMA, SZCZEGOLY, ZEBRANO) == {
         'zrodlo': 'tiktok_ads', 'id_zrodla': '1881897875265745', 'platforma': 'tiktok',
         'url': 'https://library.tiktok.com/ads/detail/?ad_id=1881897875265745', 'domena': 'www.finax.eu',
-        'reklamodawca': 'HTTPOOL, d.o.o.', 'tekst': 'Inwestowanie i relaks? To możliwe!',
+        'reklamodawca': 'Finax, o.c.p., a. s.', 'tekst': 'Inwestowanie i relaks? To możliwe!',
         'zebrano': ZEBRANO, 'opublikowano': '2026-11-15'}
 
 
@@ -31,9 +31,27 @@ def test_bez_adresu_strony_domena_pusta():
     assert tiktok.rekord(REKLAMA, szczegoly, ZEBRANO)['domena'] is None
 
 
-def test_bez_platnika_reklamodawca_z_wyniku():
-    szczegoly = {**SZCZEGOLY, 'advertiser': {**SZCZEGOLY['advertiser'], 'sponsor': ''}}
-    assert tiktok.rekord(REKLAMA, szczegoly, ZEBRANO)['reklamodawca'] == 'Finax, o.c.p., a. s.'
+def test_temat_spoza_finansow_odpada():
+    assert not tiktok.w_temacie({**REKLAMA, 'subject': 'Business Services'})
+    assert not tiktok.w_temacie({**REKLAMA, 'subject': 'Home Improvement'})
+
+
+def test_slowo_o_nieruchomosciach_w_podpisie_lub_nazwie_odpada():
+    assert not tiktok.w_temacie({**REKLAMA, 'subject': None, 'title': 'Mieszkania nad morzem, rata od 2000 zł'})
+    assert not tiktok.w_temacie({**REKLAMA, 'subject': None, 'name': 'NataliaNieruchomości'})
+    assert not tiktok.w_temacie({**REKLAMA, 'title': 'Inwestycja w APARTAMENT w Tajlandii'})
+
+
+def test_reklama_finansowa_bez_tematu_przechodzi():
+    assert tiktok.w_temacie({**REKLAMA, 'subject': None})
+    assert tiktok.w_temacie({**REKLAMA, 'subject': 'Apps', 'title': '24/7 Mobile Forex App'})
+
+
+def test_wybierz_liczy_poza_tematem_i_bierze_najwyzej_dziesiec():
+    lista = [{**REKLAMA, 'id': str(i)} for i in range(11)] + [{**REKLAMA, 'subject': 'Home Improvement'}]
+    wybrane, poza_tematem = tiktok.wybierz(lista)
+    assert [reklama['id'] for reklama in wybrane] == [str(i) for i in range(10)]
+    assert poza_tematem == 1
 
 
 def test_rekord_bez_podpisu_ma_pusty_tekst():

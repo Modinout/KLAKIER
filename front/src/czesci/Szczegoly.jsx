@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
-import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
+import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, liniaOszustwa, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { tagi } from '../ustalenia.js'
@@ -28,7 +28,7 @@ function Wniosek({ reklama }) {
       <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
         {POZIOMY[reklama.poziom]} ryzyko
       </span>
-      {reklama.powod && ': ' + reklama.powod}
+      {reklama.powod && ': ' + reklama.powod.replace(/^Tekst reklamy wygląda na oszustwo/, liniaOszustwa(reklama))}
     </p>
   )
 }
@@ -115,13 +115,13 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
             )}
           </SheetDescription>
           <Wniosek reklama={reklama} />
-          {obraz && <Obraz key={reklama.id} reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
+          {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
           <Rejestr reklama={reklama} />
-          <Tekst key={reklama.id} reklama={reklama} obraz={obraz} />
+          <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
           <ListaUstalen reklama={reklama} />
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
-          {!bezTekstu(reklama) && <Ocena key={reklama.id} reklama={reklama} podmien={podmien} />}
+          {!bezTekstu(reklama) && <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />}
         </div>
         <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
           {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}

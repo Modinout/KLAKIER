@@ -31,7 +31,6 @@ export default function ListaUstalen({ reklama }) {
       ))}
       {model && (
         <Punkt tytul={model}>
-          {reklama.rodzaj && <Podpis>Rodzaj: {reklama.rodzaj}</Podpis>}
           {drugi && (
             <Podpis>
               Drugi model: {NAZWY_WERDYKTOW[drugi.werdykt]}. {drugi.uzasadnienie}

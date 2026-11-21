@@ -29,7 +29,7 @@ def test_notatka_cert_nie_podnosi_poziomu():
 def test_tekst_oszustwa_daje_poziom_wysoki():
     zapisana = dodaj(nowa_reklama(OSZUSTWO))
     assert zapisana['poziom'] == 'wysokie'
-    assert zapisana['powod'].startswith('Tekst reklamy wygląda na oszustwo')
+    assert zapisana['powod'].startswith('Treść typowa dla fałszywych inwestycji')
 
 
 def test_zwykla_reklama_ma_poziom_niski():

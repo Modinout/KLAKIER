@@ -64,15 +64,33 @@ export const TAGI = {
 }
 
 export const TAGI_MODELU = {
-  oszustwo: 'Tekst wygląda na oszustwo',
+  oszustwo: 'Treść typowa dla fałszywych inwestycji',
   do_sprawdzenia: 'Tekst budzi wątpliwości',
 }
 
-export function tag(sygnal) {
-  if (TAGI[sygnal.kod]) return TAGI[sygnal.kod]
-  if (sygnal.opis.length <= 40) return sygnal.opis
-  const uciete = sygnal.opis.slice(0, 41)
+function skroc(opis) {
+  if (opis.length <= 40) return opis
+  const uciete = opis.slice(0, 41)
   return uciete.slice(0, uciete.lastIndexOf(' ')).replace(/[,.;:]$/, '')
+}
+
+function zWielkiej(tekst) {
+  return tekst.charAt(0).toUpperCase() + tekst.slice(1)
+}
+
+export function tag(sygnal) {
+  return TAGI[sygnal.kod] ?? skroc(sygnal.opis)
+}
+
+export function tagModelu(reklama) {
+  const rodzaj = reklama.rodzaj?.trim()
+  if (reklama.werdykt === 'oszustwo' && rodzaj) return zWielkiej(skroc(rodzaj))
+  return TAGI_MODELU[reklama.werdykt]
+}
+
+export function liniaOszustwa(reklama) {
+  const rodzaj = reklama.rodzaj?.trim()
+  return rodzaj ? TAGI_MODELU.oszustwo + ': ' + zWielkiej(rodzaj) : TAGI_MODELU.oszustwo
 }
 
 export function nazwaZrodla(zrodlo) {

@@ -128,3 +128,8 @@
     @apply font-sans;
     }
 }
+
+/* Narrow enough that a centred toast stays clear of the open details sheet. */
+[data-sonner-toaster] {
+  --width: 300px !important;
+}

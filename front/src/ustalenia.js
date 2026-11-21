@@ -1,4 +1,4 @@
-import { bezTekstu, tag, TAGI, TAGI_MODELU } from './nazwy.js'
+import { bezTekstu, liniaOszustwa, tag, TAGI, tagModelu } from './nazwy.js'
 
 // CERT notes say whether operators block the domain; they are not findings about the ad.
 export const KODY_CERT = ['brak_na_liscie_cert', 'na_liscie_cert']
@@ -15,7 +15,7 @@ export function notatkiCert(reklama) {
 
 export function ocenaModelu(reklama) {
   if (bezTekstu(reklama)) return null
-  if (reklama.werdykt === 'oszustwo') return 'Tekst reklamy wygląda na oszustwo'
+  if (reklama.werdykt === 'oszustwo') return liniaOszustwa(reklama)
   if (reklama.werdykt === 'do_sprawdzenia') return 'Tekst reklamy budzi wątpliwości'
   return null
 }
@@ -27,6 +27,6 @@ function sila(t) {
 
 export function tagi(reklama) {
   const zSygnalow = [...new Set(ustalenia(reklama).map(tag))].sort((a, b) => sila(a) - sila(b))
-  const model = ocenaModelu(reklama) && TAGI_MODELU[reklama.werdykt]
+  const model = ocenaModelu(reklama) && tagModelu(reklama)
   return [...zSygnalow, ...(model ? [model] : [])].slice(0, 3)
 }

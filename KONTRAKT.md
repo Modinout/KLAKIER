@@ -52,7 +52,7 @@ Pola jak wyżej oraz:
 | `status` | `nowa`, `w_toku`, `zamknieta` | etap pracy analityka |
 | `werdykt_analityka` | `ok`, `do_sprawdzenia`, `oszustwo` lub null | werdykt analityka; z tych werdyktów model uczy się przez `POST /ucz` |
 | `ma_obraz` | prawda / fałsz | czy reklama ma obraz pod `GET /reklamy/{id}/obraz` |
-| `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i werdyktu, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy reklama prowadzi do domeny z listy ostrzeżeń KNF, do kopii ostrzeżonej strony albo jej tekst oceniono jako oszustwo; `srednie`, gdy jest inny sygnał albo tekst budzi wątpliwości; `niskie`, gdy nie ma ustaleń; sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) to notatki i poziomu nie podnoszą |
+| `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i werdyktu, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy reklama prowadzi do domeny z listy ostrzeżeń KNF, do kopii ostrzeżonej strony albo jej treść jest typowa dla fałszywych inwestycji (werdykt `oszustwo`); `srednie`, gdy jest inny sygnał; `niskie`, gdy nie ma ustaleń (sam werdykt `do_sprawdzenia` poziomu nie podnosi); sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) to notatki i poziomu nie podnoszą |
 | `powod` | tekst lub null | jedno zdanie, które decyduje o poziomie: `opis` najmocniejszego sygnału albo zdanie o ocenie tekstu; null przy poziomie `niskie` |
 
 ## Adresy api

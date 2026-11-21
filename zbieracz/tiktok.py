@@ -12,6 +12,9 @@ BIBLIOTEKA = 'https://library.tiktok.com'
 FRAZY = ['inwestowanie', 'forex', 'kryptowaluty', 'giełda', 'trading']
 NAJWIECEJ = 10
 MIESIAC_MS = 30 * 24 * 3600 * 1000
+# A deny-list, because TikTok's topic label is unreliable: the same ad gets Financial Services, Apps or nothing.
+TEMATY_POZA = {'Business Services', 'Home Improvement'}
+SLOWA_POZA = ('nieruchomo', 'mieszkan', 'apartament', 'dewelop')
 
 
 def adres_wyszukiwania(fraza, teraz_ms):
@@ -30,15 +33,29 @@ def domena(adres):
     return urlsplit(adres).hostname if adres else None
 
 
+def w_temacie(reklama):
+    """False for an ad that sells no financial product: a non-financial topic or a real-estate word."""
+    if reklama.get('subject') in TEMATY_POZA:
+        return False
+    tekst = f'{reklama.get("title") or ""} {reklama["name"]}'.lower()
+    return not any(slowo in tekst for slowo in SLOWA_POZA)
+
+
+def wybierz(lista):
+    """Up to NAJWIECEJ ads on topic and the number of ads left out as off topic."""
+    pasujace = [reklama for reklama in lista if w_temacie(reklama)]
+    return pasujace[:NAJWIECEJ], len(lista) - len(pasujace)
+
+
 def rekord(reklama, szczegoly, zebrano):
-    """Record from a search result and the ad's detail data; the payer, when shown, stands for the advertiser."""
+    """Record from a search result and the ad's detail data."""
     return {
         'zrodlo': 'tiktok_ads',
         'id_zrodla': reklama['id'],
         'platforma': 'tiktok',
         'url': adres_szczegolow(reklama['id']),
         'domena': domena(szczegoly['ad'].get('external_url')),
-        'reklamodawca': szczegoly['advertiser'].get('sponsor') or reklama['name'],
+        'reklamodawca': reklama['name'],
         'tekst': (reklama.get('title') or '').strip(),
         'zebrano': zebrano,
         'opublikowano': data(reklama['first_shown_date']).isoformat() if reklama.get('first_shown_date') else None,
@@ -58,7 +75,7 @@ def okladka(reklama):
 
 
 def reklamy(przegladarka, fraza):
-    """Returns the number of matching ads and up to NAJWIECEJ of them, each with its detail data and picture."""
+    """Returns the number of matching ads, up to NAJWIECEJ on topic with detail data and picture, and the number off topic."""
     with przegladarka.new_context(locale='pl-PL', viewport={'width': 1280, 'height': 1400}, **rotacja.ustawienia()) as kontekst:
         karta = kontekst.new_page()
         # The first visit sets the cookies the search needs; a search without them is refused.
@@ -69,17 +86,18 @@ def reklamy(przegladarka, fraza):
         if not wyszukiwanie.value.ok:
             raise RuntimeError(f'wyszukiwanie w bibliotece TikToka odpowiedziało {wyszukiwanie.value.status}')
         wynik = wyszukiwanie.value.json()
-        znalezione = []
         # The library leaves out the list when nothing matches.
-        for reklama in wynik.get('data', [])[:NAJWIECEJ]:
+        wybrane, poza_tematem = wybierz(wynik.get('data', []))
+        znalezione = []
+        for reklama in wybrane:
             karta.wait_for_timeout(3000)
             adres = okladka(reklama)
             znalezione.append((reklama, szczegoly(karta, reklama['id']), kontekst.request.get(adres).body() if adres else None))
-    return wynik['total'], znalezione
+    return wynik['total'], znalezione, poza_tematem
 
 
 def szczegoly(karta, id):
-    """The ad's detail data, as its library page loads it: payer, landing address and the rest."""
+    """The ad's detail data, as its library page loads it: landing address and the rest."""
     with karta.expect_response(lambda odpowiedz: f'/api/v1/items/{id}/details' in odpowiedz.url, timeout=45000) as odpowiedz:
         karta.goto(adres_szczegolow(id), wait_until='domcontentloaded', timeout=45000)
     if not odpowiedz.value.ok:
@@ -92,7 +110,7 @@ def obsluz(fraza, przegladarka):
     dodane = obrazy = 0
     try:
         zebrano = datetime.now(timezone.utc).isoformat(timespec='seconds')
-        razem, znalezione = reklamy(przegladarka, fraza)
+        razem, znalezione, poza_tematem = reklamy(przegladarka, fraza)
         for reklama, dane, obraz in znalezione:
             nowy, z_obrazem = wysylka.wyslij(rekord(reklama, dane, zebrano), obraz)
             dodane += nowy
@@ -100,7 +118,7 @@ def obsluz(fraza, przegladarka):
     except Exception as blad:
         return 0, 0, 1, f'{fraza}: błąd: {type(blad).__name__} {" ".join(str(blad).split())[:200]}'
     pominiete = len(znalezione) - dodane
-    return dodane, pominiete, 0, (f'{fraza}: reklamy TikTok: {razem}, wzięte {len(znalezione)}; '
+    return dodane, pominiete, 0, (f'{fraza}: reklamy TikTok: {razem}, poza tematem {poza_tematem}, wzięte {len(znalezione)}; '
                                   f'dodane {dodane}, pominięte {pominiete}; obrazy {obrazy}')
 
 
