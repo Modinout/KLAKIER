@@ -55,8 +55,9 @@ def dodaj_reklame(reklama: NowaReklama):
     wiersz = baza.dodaj(reklama.model_dump(), ocena, sedzia)
     if wiersz is None:
         raise HTTPException(409, 'Ta reklama jest już w bazie')
-    if wiersz['werdykt'] == 'oszustwo' or wiersz['sygnaly_zbieracza']:
-        alerty.wyslij(Alert.model_validate(wiersz).model_dump_json())
+    zapisana = Reklama.model_validate(wiersz)
+    if zapisana.poziom == 'wysokie':
+        alerty.wyslij(Alert.model_validate(zapisana.model_dump()).model_dump_json())
     return wiersz
 
 

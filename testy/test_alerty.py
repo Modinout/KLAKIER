@@ -26,14 +26,16 @@ def alerty_przez(gniazdo, sekundy):
     return alerty
 
 
-def test_sygnal_zbieracza_daje_alert():
-    sygnal = {'modul': 'M3', 'kod': 'test_zbieracza', 'opis': 'Sygnał zbieracza', 'podstawa': ''}
+def test_domena_z_ostrzezenia_daje_alert():
+    sygnal = {'modul': 'M3', 'kod': 'reklama_domeny_z_ostrzezenia_knf', 'opis': 'Domena z ostrzeżenia KNF',
+              'podstawa': ''}
     with connect(ALERTY) as gniazdo:
         reklama = {**nowa_reklama(NIEWINNY_TEKST), 'sygnaly': [sygnal]}
         numer = httpx.post(f'{API}/reklamy', json=reklama, timeout=180).json()['id']
         alerty = [a for a in alerty_przez(gniazdo, 5) if a['id'] == numer]
     assert len(alerty) == 1
-    assert set(alerty[0]) == {'id', 'reklamodawca', 'ryzyko', 'werdykt', 'zrodlo', 'dodano'}
+    assert set(alerty[0]) == {'id', 'reklamodawca', 'ryzyko', 'werdykt', 'zrodlo', 'dodano', 'poziom', 'powod'}
+    assert alerty[0]['poziom'] == 'wysokie' and alerty[0]['powod'] == sygnal['opis']
 
 
 def test_zwykla_reklama_nie_daje_alertu():

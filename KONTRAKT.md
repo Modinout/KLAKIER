@@ -50,6 +50,8 @@ Pola jak wyżej oraz:
 | `status` | `nowa`, `w_toku`, `zamknieta` | etap pracy analityka |
 | `werdykt_analityka` | `ok`, `do_sprawdzenia`, `oszustwo` lub null | werdykt analityka; z tych werdyktów model uczy się przez `POST /ucz` |
 | `ma_obraz` | prawda / fałsz | czy reklama ma obraz pod `GET /reklamy/{id}/obraz` |
+| `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i werdyktu, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy reklama prowadzi do domeny z listy ostrzeżeń KNF, do kopii ostrzeżonej strony albo jej tekst oceniono jako oszustwo; `srednie`, gdy jest inny sygnał albo tekst budzi wątpliwości; `niskie`, gdy nie ma ustaleń; sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) to notatki i poziomu nie podnoszą |
+| `powod` | tekst lub null | jedno zdanie, które decyduje o poziomie: `opis` najmocniejszego sygnału albo zdanie o ocenie tekstu; null przy poziomie `niskie` |
 
 ## Adresy api
 
@@ -67,7 +69,7 @@ Pola jak wyżej oraz:
 | `POST /rodzaje` | dodaje rodzaj oszustwa, treść: `{"nazwa": "...", "opis": "..."}`, i ocenia od nowa wszystkie reklamy; zwraca `nazwa`, `przyklady`, `przeliczono`; `409`, gdy taki rodzaj już jest, `503`, gdy nie ma dużego modelu |
 | `GET /progi` | dane dla suwaka progu: ile oszustw łapie dany próg i ile daje fałszywych alarmów |
 | `POST /odczytaj` | odczytuje tekst z obrazu reklamy, opis wyżej w „Tekst z obrazu reklamy” |
-| `/alerty` (WebSocket) | po każdej nowej reklamie (`POST /reklamy` z odpowiedzią `201`) z werdyktem `oszustwo` albo z co najmniej jednym sygnałem zbieracza wysyła każdemu połączonemu klientowi jedną wiadomość JSON: `{"id", "reklamodawca", "ryzyko", "werdykt", "zrodlo", "dodano"}`; klient nic nie wysyła |
+| `/alerty` (WebSocket) | po każdej nowej reklamie (`POST /reklamy` z odpowiedzią `201`) z poziomem `wysokie` wysyła każdemu połączonemu klientowi jedną wiadomość JSON: `{"id", "reklamodawca", "ryzyko", "werdykt", "zrodlo", "dodano", "poziom", "powod"}`; klient nic nie wysyła |
 
 Panel woła te same adresy z przedrostkiem `/api`.
 

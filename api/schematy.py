@@ -3,8 +3,11 @@ from typing import Literal
 
 from pydantic import BaseModel, model_validator
 
+import poziom
+
 Werdykt = Literal['ok', 'do_sprawdzenia', 'oszustwo']
 Status = Literal['nowa', 'w_toku', 'zamknieta']
+Poziom = Literal['wysokie', 'srednie', 'niskie']
 
 
 class Sygnal(BaseModel):
@@ -57,12 +60,16 @@ class Reklama(NowaReklama):
     status: Status
     werdykt_analityka: Werdykt | None
     ma_obraz: bool
+    poziom: Poziom
+    powod: str | None
 
     @model_validator(mode='before')
     @classmethod
-    def dolacz_sygnaly_zbieracza(cls, wiersz):
+    def dolacz_sygnaly_i_poziom(cls, wiersz):
         # A row of the reklamy table keeps the collector's signals in their own column.
-        return {**wiersz, 'sygnaly': wiersz['sygnaly_zbieracza'] + wiersz['sygnaly']}
+        sygnaly = wiersz['sygnaly_zbieracza'] + wiersz['sygnaly']
+        poziom_reklamy, powod = poziom.poziom(sygnaly, wiersz['werdykt'], wiersz['tekst'], wiersz['rodzaj'])
+        return {**wiersz, 'sygnaly': sygnaly, 'poziom': poziom_reklamy, 'powod': powod}
 
 
 class PodobnaReklama(Reklama):
@@ -76,6 +83,8 @@ class Alert(BaseModel):
     werdykt: Werdykt
     zrodlo: str
     dodano: datetime
+    poziom: Poziom
+    powod: str | None
 
 
 class ZmianaReklamy(BaseModel):
