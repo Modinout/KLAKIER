@@ -1,6 +1,5 @@
 import { bezTekstu, NAZWY_WERDYKTOW } from '../nazwy.js'
 import { notatkiCert, ocenaModelu, ustalenia } from '../ustalenia.js'
-import Ocena from './Ocena.jsx'
 
 function Punkt({ tytul, szary, children }) {
   return (
@@ -18,7 +17,7 @@ function Podpis({ children }) {
   return <p className="text-[13px] text-muted-foreground">{children}</p>
 }
 
-export default function ListaUstalen({ reklama, podmien }) {
+export default function ListaUstalen({ reklama }) {
   const lista = ustalenia(reklama)
   const model = ocenaModelu(reklama)
   const drugi = reklama.drugi_sedzia
@@ -41,13 +40,7 @@ export default function ListaUstalen({ reklama, podmien }) {
         </Punkt>
       )}
       {!model && lista.length === 0 && !bezTekstu(reklama) && <Punkt szary tytul="Brak ustaleń" />}
-      {bezTekstu(reklama) ? (
-        <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />
-      ) : (
-        <li>
-          <Ocena reklama={reklama} podmien={podmien} />
-        </li>
-      )}
+      {bezTekstu(reklama) && <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />}
       {notatkiCert(reklama).map((s) => (
         <Punkt key={s.kod} szary tytul={s.opis}>
           {s.kod === 'brak_na_liscie_cert' && <Podpis>Do przekazania CERT Polska</Podpis>}

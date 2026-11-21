@@ -1,13 +1,16 @@
+import { useEffect, useRef, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
-import { BLAD_ZAPISU, data, domena, dzienCzytelny, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
+import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
-import { dzienReklamy } from '../sprawy.js'
+import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { tagi } from '../ustalenia.js'
 import ListaUstalen from './ListaUstalen.jsx'
+import Obraz from './Obraz.jsx'
+import Ocena from './Ocena.jsx'
 import Podobne from './Podobne.jsx'
 import Rejestr from './Rejestr.jsx'
 import Sekcja from './Sekcja.jsx'
@@ -20,41 +23,54 @@ const KOMUNIKATY = {
 }
 
 function Wniosek({ reklama }) {
-  const lista = tagi(reklama)
   return (
     <p className="mb-4">
       <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
         {POZIOMY[reklama.poziom]} ryzyko
       </span>
-      {lista.length > 0 && ': ' + lista.join(' · ')}
+      {reklama.powod && ': ' + reklama.powod}
     </p>
   )
 }
 
-function InneWSprawie({ reklamy, otworz }) {
+function InneWSprawie({ reklama, reklamy, otworz }) {
   if (reklamy.length === 0) return null
   return (
     <Sekcja tytul={'Inne reklamy w tej sprawie (' + reklamy.length + ')'}>
       <ul className="max-h-52 divide-y overflow-auto rounded-lg border">
-        {reklamy.map((r) => (
-          <li key={r.id}>
-            <button className="grid w-full grid-cols-[auto_1fr_auto] gap-4 px-3.5 py-2 text-left hover:bg-muted/50" onClick={() => otworz(r.id)}>
-              <span className="font-mono text-xs leading-5 text-muted-foreground">{r.id}</span>
-              <span className="truncate">{nazwaZrodla(r.zrodlo)}</span>
-              <span className="text-muted-foreground">{dzienCzytelny(dzienReklamy(r))}</span>
-            </button>
-          </li>
-        ))}
+        {reklamy.map((r) => {
+          const lista = tagi(r)
+          return (
+            <li key={r.id}>
+              <button className="grid w-full grid-cols-[auto_1fr_auto] gap-4 px-3.5 py-2 text-left hover:bg-muted/50" onClick={() => otworz(r.id)}>
+                <span className="font-mono text-xs leading-5 text-muted-foreground">{r.id}</span>
+                <span className="truncate">
+                  {r.reklamodawca !== reklama.reklamodawca && r.reklamodawca && <span className="font-medium">{r.reklamodawca} · </span>}
+                  {lista.length > 0 ? lista.join(' · ') : <span className="text-muted-foreground">bez ustaleń</span>}
+                </span>
+                <span className="text-muted-foreground">{dzienCzytelny(dzienReklamy(r))}</span>
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </Sekcja>
   )
 }
 
 export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, podmien, odswiez }) {
+  const tresc = useRef(null)
+  const [bezObrazu, setBezObrazu] = useState(null)
   const i = sprawy.findIndex((s) => s.reklamy.some((r) => r.id === reklama.id))
   const nastepna = i === -1 ? null : sprawy[i + 1]
   const ids = i === -1 ? [reklama.id] : sprawy[i].reklamy.map((r) => r.id)
-  const wSprawie = wiersze.filter((r) => ids.includes(r.id))
+  const wSprawie = wiersze.filter((r) => ids.includes(r.id)).sort(odNajgorszej)
+  const obraz = reklama.ma_obraz && bezObrazu !== reklama.id
+
+  // The sheet body mounts after the first render, and starts at the top anyway.
+  useEffect(() => {
+    if (tresc.current) tresc.current.scrollTop = 0
+  }, [reklama.id])
 
   function ustawStatus(status) {
     const poprzednie = wSprawie.map((r) => [r.id, r.status])
@@ -63,7 +79,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
       .then((nowe) => {
         nowe.forEach(podmien)
         toast(KOMUNIKATY[status], { duration: 5000, action: { label: 'Cofnij', onClick: () => cofnij(poprzednie, id) } })
-        if (status === 'nowa') return
+        if (status !== 'zamknieta') return
         if (nastepna) otworz(nastepna.glowna.id)
         else zamknij()
       })
@@ -85,24 +101,27 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
         className="gap-0 data-[side=right]:w-[560px] data-[side=right]:sm:max-w-[560px]"
         onInteractOutside={(e) => e.target.closest?.('[data-sonner-toaster]') && e.preventDefault()}
       >
-        <div className="min-h-0 flex-1 overflow-auto px-6 pt-6 pb-4">
-          <SheetTitle className="pr-8 text-lg font-semibold">{reklama.reklamodawca ?? domena(reklama.url)}</SheetTitle>
+        <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pt-6 pb-4">
+          <SheetTitle className="pr-8 text-lg font-semibold">{tytul(reklama)}</SheetTitle>
           <SheetDescription className="mt-1 mb-3">
             {reklama.id} · {nazwaZrodla(reklama.zrodlo)} · {data(reklama.zebrano)} · {NAZWY_STATUSOW[reklama.status]}
+            {reklama.url && zBiblioteki(reklama.url) && (
+              <>
+                {' · '}
+                <a href={reklama.url} target="_blank" rel="noreferrer" className="underline underline-offset-4">
+                  Źródło w bibliotece reklam
+                </a>
+              </>
+            )}
           </SheetDescription>
           <Wniosek reklama={reklama} />
-          {reklama.ma_obraz && (
-            <img
-              src={'/api/reklamy/' + reklama.id + '/obraz'}
-              alt="Obraz reklamy"
-              className="mb-4 max-h-80 w-full rounded-lg border object-contain"
-            />
-          )}
+          {obraz && <Obraz key={reklama.id} reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
           <Rejestr reklama={reklama} />
-          <Tekst key={reklama.id} reklama={reklama} />
-          <ListaUstalen reklama={reklama} podmien={podmien} />
-          <InneWSprawie reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
-          <Podobne reklama={reklama} otworz={otworz} odswiez={odswiez} />
+          <Tekst key={reklama.id} reklama={reklama} obraz={obraz} />
+          <ListaUstalen reklama={reklama} />
+          <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
+          <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
+          {!bezTekstu(reklama) && <Ocena key={reklama.id} reklama={reklama} podmien={podmien} />}
         </div>
         <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
           {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}

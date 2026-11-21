@@ -1,4 +1,4 @@
-import { domena, NAZWY_LIST_KNF } from '../nazwy.js'
+import { domena, domenaDocelowa, NAZWY_LIST_KNF } from '../nazwy.js'
 
 const KTO = {
   youtube: 'Kanał',
@@ -6,11 +6,21 @@ const KTO = {
   patrol_ostrzezen: 'Właściciel strony',
 }
 
+// For these sources the name is the author, not a payer, so a match on the KNF lists is information only.
+const AUTORZY = ['youtube', 'strony_doradcow']
+
 const STANY = {
   w_rejestrze: { tekst: 'na liście KNF', kolor: 'bg-muted text-muted-foreground' },
   spoza_rejestru: { tekst: 'inna spółka niż w rejestrze', kolor: 'bg-amber-100 text-amber-800' },
   poza_listami: { tekst: 'brak na listach KNF', kolor: 'bg-destructive/10 text-destructive' },
   bank: { tekst: 'bank, poza listami firm inwestycyjnych', kolor: 'bg-muted text-muted-foreground' },
+}
+
+function stan(reklama) {
+  const rejestr = reklama.rejestr
+  if (!AUTORZY.includes(reklama.zrodlo)) return STANY[rejestr?.stan]
+  if (rejestr?.stan === 'w_rejestrze' || (rejestr?.stan === 'spoza_rejestru' && rejestr.podmiot)) return STANY.w_rejestrze
+  return null
 }
 
 function Wiersz({ nazwa, children }) {
@@ -24,21 +34,27 @@ function Wiersz({ nazwa, children }) {
 
 export default function Rejestr({ reklama }) {
   const rejestr = reklama.rejestr
-  const stan = STANY[rejestr?.stan]
-  if (!reklama.reklamodawca && !reklama.url) return null
+  const chip = stan(reklama)
+  const cel = domenaDocelowa(reklama)
+  if (!reklama.reklamodawca && !cel) return null
 
   return (
     <div className="mb-4 divide-y rounded-lg border">
       {reklama.reklamodawca && (
         <Wiersz nazwa={KTO[reklama.zrodlo] ?? 'Zapłacił'}>
           <span className="font-medium">{reklama.reklamodawca}</span>
-          {stan && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + stan.kolor}>{stan.tekst}</span>}
+          {chip && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + chip.kolor}>{chip.tekst}</span>}
         </Wiersz>
       )}
-      {reklama.url && (
+      {cel && (
         <Wiersz nazwa="Prowadzi do">
-          <a href={reklama.url} target="_blank" rel="noreferrer" className="truncate underline underline-offset-4">
-            {domena(reklama.url)}
+          <a
+            href={reklama.url && domena(reklama.url) === cel ? reklama.url : 'https://' + cel}
+            target="_blank"
+            rel="noreferrer"
+            className="truncate underline underline-offset-4"
+          >
+            {cel}
           </a>
         </Wiersz>
       )}

@@ -7,12 +7,13 @@ import re
 ROZPORZADZENIE = 'rozporządzenia delegowanego 2017/565'
 
 ZYSK = re.compile(
-    r'\d+(?:[.,]\d+)?\s*%\s*(?:zysk\w*|zwrot\w*|rocznie|miesięcznie|tygodniowo|dziennie|w skali roku)'
+    r'\d+(?:[.,]\d+)?\s*%\s*(?:zysk\w*|zwrot\w*|rocznie|miesięcznie|tygodniowo|dziennie)'
     r'|\bzysk\w* (?:gwarantowan\w+|pewn\w+)|\bgwarantowan\w+ (?:zysk\w*|doch\w+)'
     r'|\bzarob\w*|\bzarabia\w*|\bpasywn\w+ doch\w+|\bguaranteed (?:profits?|returns?)|\bearn (?:up to )?\d'
 )
-# Interest on a deposit or a welcome bonus is not a gain from investing.
-ODSETKI = re.compile(r'\blokat\w*|\boprocentowan\w*|\bodset\w*|\boszczędn\w*|\bpromocj\w*|\binterest\b')
+# Interest on an account or a deposit and a welcome bonus are not gains from investing:
+# the advertising rules of regulation 2017/565 do not cover them.
+ODSETKI = re.compile(r'\blokat\w*|\boprocentowan\w*|\bodset\w*|\boszczędn\w*|\bpromocj\w*|\binterest\b|\bw skali roku')
 RYZYKO = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*|\brisk\w*|\blos[es]\w*')
 
 HISTORIA = re.compile(
@@ -37,10 +38,10 @@ _ZAPRZECZENIE = re.compile(r'\bnie\b|\bani\b|\bbez\b|\bżadn\w+|\bnot\b|\bno\b|\
 _OKNO = 120
 
 
-def twierdzenie(wzor, male):
-    """The first match that the words before it do not deny."""
+def twierdzenie(wzor, male, przyjmij=lambda trafienie: True):
+    """The first match that the words before it do not deny and that the caller accepts."""
     for trafienie in wzor.finditer(male):
-        if not _ZAPRZECZENIE.search(male[max(0, trafienie.start() - _OKNO):trafienie.start()]):
+        if not _ZAPRZECZENIE.search(male[max(0, trafienie.start() - _OKNO):trafienie.start()]) and przyjmij(trafienie):
             return trafienie
     return None
 
@@ -69,7 +70,7 @@ def sygnaly(tekst, rejestr):
     wynik = []
 
     zysk = twierdzenie(ZYSK, male)
-    if zysk and not RYZYKO.search(male) and not ODSETKI.search(cytat(male, zysk)):
+    if zysk and not RYZYKO.search(male) and not ODSETKI.search(male):
         wynik.append(sygnal(
             'zysk_bez_ryzyka',
             f'Reklama mówi o zysku („{cytat(tekst, zysk)}”), a nie ma w niej informacji o ryzyku.',

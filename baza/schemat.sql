@@ -6,6 +6,7 @@ CREATE TABLE reklamy (
     id_zrodla     TEXT NOT NULL,
     platforma     TEXT NOT NULL,
     url           TEXT,
+    domena        TEXT,
     reklamodawca  TEXT,
     tekst         TEXT NOT NULL,
     zebrano       TIMESTAMPTZ NOT NULL,

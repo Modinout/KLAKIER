@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowRight, ArrowUp, ChevronLeft, ChevronRight, Circle, CircleCheck, CircleDashed } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { domena, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
+import { NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { tagi } from '../ustalenia.js'
 
-const NA_STRONIE = 12
+const NAGLOWEK = 44
+const WIERSZ = 45
+const NAJWIECEJ = 12
 
 const IKONY_RYZYKA = {
   wysokie: <ArrowUp className="size-4 text-destructive" />,
@@ -31,78 +33,93 @@ function ZIkona({ ikona, children }) {
 
 function Naglowek({ children, className = '' }) {
   return (
-    <TableHead className={'sticky top-0 z-10 h-[42px] bg-background px-3 text-muted-foreground shadow-[inset_0_-1px_0_var(--color-border)] ' + className}>
+    <TableHead className={'h-[42px] bg-background px-3 text-muted-foreground shadow-[inset_0_-1px_0_var(--color-border)] ' + className}>
       {children}
     </TableHead>
   )
 }
 
-export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otworz }) {
+// As many rows as fit, so the table never scrolls inside itself.
+function useWierszeWOknie() {
+  const pole = useRef(null)
+  const [ile, setIle] = useState(1)
+  useLayoutEffect(() => {
+    const obserwator = new ResizeObserver(([wpis]) =>
+      setIle(Math.min(NAJWIECEJ, Math.max(1, Math.floor((wpis.contentRect.height - NAGLOWEK) / WIERSZ))))
+    )
+    obserwator.observe(pole.current)
+    return () => obserwator.disconnect()
+  }, [])
+  return [pole, ile]
+}
+
+export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otworz, pusto = 'Brak spraw w tym widoku' }) {
+  const [pole, naStrone] = useWierszeWOknie()
   const [strona, setStrona] = useState(0)
-  const stron = Math.max(1, Math.ceil(sprawy.length / NA_STRONIE))
+  const stron = Math.max(1, Math.ceil(sprawy.length / naStrone))
   const biezaca = Math.min(strona, stron - 1)
-  const naStronie = sprawy.slice(biezaca * NA_STRONIE, (biezaca + 1) * NA_STRONIE)
+  const naStronie = sprawy.slice(biezaca * naStrone, (biezaca + 1) * naStrone)
 
   return (
     <>
-      <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border *:data-[slot=table-container]:min-h-0 *:data-[slot=table-container]:overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <Naglowek className="w-20">Nr</Naglowek>
-              <Naglowek className="w-full">Reklama</Naglowek>
-              <Naglowek>Źródło</Naglowek>
-              <Naglowek>Ryzyko</Naglowek>
-              <Naglowek>Status</Naglowek>
-              <Naglowek>Data</Naglowek>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {naStronie.length === 0 && (
+      <div ref={pole} className="min-h-0 flex-1 overflow-hidden">
+        <div className="overflow-hidden rounded-lg border">
+          <Table>
+            <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                  Brak spraw
-                </TableCell>
+                <Naglowek className="w-20">Nr</Naglowek>
+                <Naglowek className="w-full">Reklama</Naglowek>
+                <Naglowek>Źródło</Naglowek>
+                <Naglowek>Ryzyko</Naglowek>
+                <Naglowek>Status</Naglowek>
+                <Naglowek>Data</Naglowek>
               </TableRow>
-            )}
-            {naStronie.map((s) => (
-              <TableRow
-                key={s.klucz + s.glowna.id}
-                className="cursor-pointer"
-                data-state={s.reklamy.some((r) => r.id === otwarteId) ? 'selected' : undefined}
-                onClick={() => otworz(s)}
-              >
-                <TableCell className="h-[50px] px-3 font-mono text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    {nowe && <span className={'size-1.5 rounded-full ' + (nowe(s) ? 'bg-foreground' : 'bg-transparent')} />}
-                    {s.glowna.id}
-                  </div>
-                </TableCell>
-                <TableCell className="max-w-0 px-3">
-                  <div className="flex items-center gap-2">
-                    <span className="max-w-[340px] shrink-0 truncate font-medium">
-                      {s.glowna.reklamodawca ?? domena(s.glowna.url)}
-                    </span>
-                    {s.reklamy.length > 1 && (
-                      <span className="shrink-0 rounded-sm bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
-                        ×{s.reklamy.length}
-                      </span>
-                    )}
-                    <span className="min-w-0 truncate text-muted-foreground">{tagi(s.najgorsza).join(' · ')}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="px-3">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
-                <TableCell className="px-3">
-                  <ZIkona ikona={IKONY_RYZYKA[s.poziom]}>{POZIOMY[s.poziom]}</ZIkona>
-                </TableCell>
-                <TableCell className="px-3">
-                  <ZIkona ikona={IKONY_STATUSU[s.glowna.status]}>{NAZWY_STATUSOW[s.glowna.status]}</ZIkona>
-                </TableCell>
-                <TableCell className="px-3 text-muted-foreground">{kiedy(s)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {naStronie.length === 0 && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                    {pusto}
+                  </TableCell>
+                </TableRow>
+              )}
+              {naStronie.map((s) => (
+                <TableRow
+                  key={s.klucz}
+                  className="cursor-pointer"
+                  data-state={s.reklamy.some((r) => r.id === otwarteId) ? 'selected' : undefined}
+                  onClick={() => otworz(s)}
+                >
+                  <TableCell className="h-[44px] px-3 font-mono text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      {nowe && <span className={'size-1.5 rounded-full ' + (nowe(s) ? 'bg-foreground' : 'bg-transparent')} />}
+                      {s.glowna.id}
+                    </div>
+                  </TableCell>
+                  <TableCell className="max-w-0 px-3">
+                    <div className="flex items-center gap-2">
+                      <span className="max-w-[340px] shrink-0 truncate font-medium">{s.tytul}</span>
+                      {s.reklamy.length > 1 && (
+                        <span className="shrink-0 rounded-sm bg-muted px-1.5 text-xs leading-5 text-muted-foreground">
+                          ×{s.reklamy.length}
+                        </span>
+                      )}
+                      <span className="min-w-0 truncate text-muted-foreground">{tagi(s.glowna).join(' · ')}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-3">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
+                  <TableCell className="px-3">
+                    <ZIkona ikona={IKONY_RYZYKA[s.poziom]}>{POZIOMY[s.poziom]}</ZIkona>
+                  </TableCell>
+                  <TableCell className="px-3">
+                    <ZIkona ikona={IKONY_STATUSU[s.glowna.status]}>{NAZWY_STATUSOW[s.glowna.status]}</ZIkona>
+                  </TableCell>
+                  <TableCell className="px-3 text-muted-foreground">{kiedy(s)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <div className="mt-3 flex shrink-0 items-center gap-6">
         <span className="mr-auto text-muted-foreground">{ile}</span>

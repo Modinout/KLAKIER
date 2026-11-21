@@ -28,6 +28,7 @@ def rekord_reklamy(domena, wpis, reklama, zebrano):
         'id_zrodla': reklama['kreacja'],
         'platforma': 'google',
         'url': f'https://{domena}/',
+        'domena': domena,
         'reklamodawca': reklama['reklamodawca'],
         # Google draws the ad as a picture; the api reads the text from it when the picture arrives.
         'tekst': '',

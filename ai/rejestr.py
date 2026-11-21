@@ -15,15 +15,19 @@ FORMY_PRAWNE = [
     'sl', 'lda', 'dac', 'se', 'oy', 'ab', 'asa', 'aps', 'cif', 'ocp',
 ]
 
-# Words that tell apart entities of one brand (eToro Group vs Etoro Europe), not brands.
-OGOLNE = {
-    'europe', 'european', 'eu', 'global', 'group', 'international', 'int', 'markets', 'market', 'financial', 'finance',
-    'services', 'service', 'securities', 'holdings', 'holding', 'operations', 'technology', 'technologies',
+KRAJE = {
+    'europe', 'european', 'eu',
     'polska', 'poland', 'pl', 'cyprus', 'cy', 'malta', 'mt', 'ireland', 'ie', 'germany', 'deutschland', 'de',
     'netherlands', 'nl', 'france', 'fr', 'luxembourg', 'lu', 'spain', 'españa', 'es', 'italy', 'austria', 'at',
     'gibraltar', 'gi', 'estonia', 'ee', 'latvia', 'lv', 'lithuania', 'lt', 'bulgaria', 'bg', 'czech', 'cz',
     'slovakia', 'sk', 'liechtenstein', 'denmark', 'dk', 'sweden', 'uk', 'gb', 'us', 'usa', 'au', 'australia',
     'sg', 'singapore', 'hk', 'canada', 'ca', 'seychelles', 'sc', 'bvi', 'ae', 'za',
+}
+
+# Words that tell apart entities of one brand (eToro Group vs Etoro Europe), not brands.
+OGOLNE = KRAJE | {
+    'global', 'group', 'international', 'int', 'markets', 'market', 'financial', 'finance',
+    'services', 'service', 'securities', 'holdings', 'holding', 'operations', 'technology', 'technologies',
 }
 
 # Words too common to point at one firm: a name made only of them names no brand.
@@ -78,7 +82,12 @@ def wspolne(a, b):
         return 0
     krotszy, dluzszy = sorted([a, b], key=lambda r: (len(r), len(r[0])))
     if dluzszy[:len(krotszy)] == krotszy:
-        return 0 if set(krotszy) <= POSPOLITE else len(krotszy)
+        if set(krotszy) <= POSPOLITE:
+            return 0
+        # A short brand word followed by another word is mostly a person or another product: tom, beta.
+        if len(krotszy) == 1 and len(krotszy[0]) < 5 and len(dluzszy) > 1:
+            return 0
+        return len(krotszy)
     # A one-word brand with a country glued on: plus500 and plus500cy, but not revolut and revolution.
     marka = krotszy[0]
     doklejone = dluzszy[0][len(marka):]
@@ -106,7 +115,11 @@ def sprawdz(reklamodawca):
     nazwa = klucz(reklamodawca or '')
     if not nazwa:
         return None
-    wpis = _PO_NAZWIE.get(nazwa) or _MARKI.get(nazwa)
+    # A brand with a country is the brand itself, but with a legal form it is another entity: Trading 212 UK Limited.
+    marka = None
+    if normalizuj(reklamodawca) == slowa(reklamodawca):
+        marka = ' '.join(s for s in nazwa.split() if s not in KRAJE)
+    wpis = _PO_NAZWIE.get(nazwa) or _MARKI.get(nazwa) or _PO_NAZWIE.get(marka) or _MARKI.get(marka)
     if wpis:
         return wynik('w_rejestrze', wpis)
     # There is no TFI list among the four, so a fund company cannot be checked here.

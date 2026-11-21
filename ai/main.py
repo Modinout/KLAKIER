@@ -16,6 +16,7 @@ from osadzenia import osadz
 from przewidz import przeucz, przewidz, znane_rodzaje
 from tekst import oczysc
 from rejestr import sprawdz, sygnaly
+from temat import platnik_do_sprawdzenia
 
 PROGI = pathlib.Path(__file__).with_name('progi.csv')
 # The classifier was trained and measured on ads. A video description is another kind of text, so it is not scored.
@@ -40,6 +41,7 @@ def zdrowie():
 def ocen(material: Material):
     wynik = BEZ_OCENY if material.zrodlo == 'youtube' else przewidz(material.tekst)
     rejestr = sprawdz(material.reklamodawca)
+    na_temat = platnik_do_sprawdzenia(material.tekst, material.reklamodawca, rejestr)
     return {
         'werdykt': wynik['werdykt'],
         'ryzyko': wynik['prawdopodobienstwa']['oszustwo'],
@@ -48,7 +50,7 @@ def ocen(material: Material):
         'rodzaj': wynik['rodzaj'],
         'rejestr': rejestr,
         'sygnaly': (
-            sygnaly(material.reklamodawca, rejestr, material.zrodlo)
+            (sygnaly(material.reklamodawca, rejestr, material.zrodlo) if na_temat else [])
             + wymogi.sygnaly(material.tekst, rejestr)
             + doradztwo.sygnaly(material.tekst, rejestr)
         ),

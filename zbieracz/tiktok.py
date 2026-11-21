@@ -3,7 +3,7 @@
 import sys
 import time
 from datetime import datetime, timezone
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 import rotacja
 import wysylka
@@ -25,17 +25,28 @@ def data(ms):
     return datetime.fromtimestamp(ms / 1000, timezone.utc).date()
 
 
-def rekord(reklama, zebrano):
+def domena(adres):
+    """Host of the address the ad leads to, or None when the ad gives none."""
+    return urlsplit(adres).hostname if adres else None
+
+
+def rekord(reklama, szczegoly, zebrano):
+    """Record from a search result and the ad's detail data; the payer, when shown, stands for the advertiser."""
     return {
         'zrodlo': 'tiktok_ads',
         'id_zrodla': reklama['id'],
         'platforma': 'tiktok',
-        'url': f'{BIBLIOTEKA}/ads/detail/?ad_id={reklama["id"]}',
-        'reklamodawca': reklama['name'],
+        'url': adres_szczegolow(reklama['id']),
+        'domena': domena(szczegoly['ad'].get('external_url')),
+        'reklamodawca': szczegoly['advertiser'].get('sponsor') or reklama['name'],
         'tekst': (reklama.get('title') or '').strip(),
         'zebrano': zebrano,
         'opublikowano': data(reklama['first_shown_date']).isoformat() if reklama.get('first_shown_date') else None,
     }
+
+
+def adres_szczegolow(id):
+    return f'{BIBLIOTEKA}/ads/detail/?ad_id={id}'
 
 
 def okladka(reklama):
@@ -47,7 +58,7 @@ def okladka(reklama):
 
 
 def reklamy(przegladarka, fraza):
-    """Returns the number of matching ads and up to NAJWIECEJ of them, each with its picture."""
+    """Returns the number of matching ads and up to NAJWIECEJ of them, each with its detail data and picture."""
     with przegladarka.new_context(locale='pl-PL', viewport={'width': 1280, 'height': 1400}, **rotacja.ustawienia()) as kontekst:
         karta = kontekst.new_page()
         # The first visit sets the cookies the search needs; a search without them is refused.
@@ -59,10 +70,21 @@ def reklamy(przegladarka, fraza):
             raise RuntimeError(f'wyszukiwanie w bibliotece TikToka odpowiedziało {wyszukiwanie.value.status}')
         wynik = wyszukiwanie.value.json()
         znalezione = []
-        for reklama in wynik['data'][:NAJWIECEJ]:
+        # The library leaves out the list when nothing matches.
+        for reklama in wynik.get('data', [])[:NAJWIECEJ]:
+            karta.wait_for_timeout(3000)
             adres = okladka(reklama)
-            znalezione.append((reklama, kontekst.request.get(adres).body() if adres else None))
+            znalezione.append((reklama, szczegoly(karta, reklama['id']), kontekst.request.get(adres).body() if adres else None))
     return wynik['total'], znalezione
+
+
+def szczegoly(karta, id):
+    """The ad's detail data, as its library page loads it: payer, landing address and the rest."""
+    with karta.expect_response(lambda odpowiedz: f'/api/v1/items/{id}/details' in odpowiedz.url, timeout=45000) as odpowiedz:
+        karta.goto(adres_szczegolow(id), wait_until='domcontentloaded', timeout=45000)
+    if not odpowiedz.value.ok:
+        raise RuntimeError(f'szczegóły reklamy TikTok {id}: odpowiedź {odpowiedz.value.status}')
+    return odpowiedz.value.json()['data']
 
 
 def obsluz(fraza, przegladarka):
@@ -71,8 +93,8 @@ def obsluz(fraza, przegladarka):
     try:
         zebrano = datetime.now(timezone.utc).isoformat(timespec='seconds')
         razem, znalezione = reklamy(przegladarka, fraza)
-        for reklama, obraz in znalezione:
-            nowy, z_obrazem = wysylka.wyslij(rekord(reklama, zebrano), obraz)
+        for reklama, dane, obraz in znalezione:
+            nowy, z_obrazem = wysylka.wyslij(rekord(reklama, dane, zebrano), obraz)
             dodane += nowy
             obrazy += z_obrazem
     except Exception as blad:

@@ -4,11 +4,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { NAZWY_MODULOW, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
+import { dzienCzytelny, NAZWY_MODULOW, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { ustalenia } from '../ustalenia.js'
 
-export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], moduly: [] }
+export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], moduly: [], tagi: [] }
 export const START_FILTRY = { ...PUSTE_FILTRY, statusy: ['nowa'], ryzyka: ['wysokie'] }
 
 function Chip({ etykieta, usun }) {
@@ -24,13 +24,21 @@ function Chip({ etykieta, usun }) {
 
 function PrzyciskFiltra({ nazwa, wybrane, wyczysc }) {
   return (
-    <div className="flex h-8 items-center gap-1 rounded-lg border border-dashed pr-1 text-xs">
+    <PoleFiltra wybrane={wybrane} wyczysc={wyczysc}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="h-full text-xs">
           <CirclePlus />
           {nazwa}
         </Button>
       </PopoverTrigger>
+    </PoleFiltra>
+  )
+}
+
+function PoleFiltra({ wybrane, wyczysc, children }) {
+  return (
+    <div className="flex h-8 items-center gap-1 rounded-lg border border-dashed pr-1 text-xs">
+      {children}
       {wybrane.length > 0 && <span className="mr-0.5 h-4 w-px bg-border" />}
       {wybrane.length > 2 ? (
         <Chip etykieta={'Wybrane: ' + wybrane.length} usun={wyczysc} />
@@ -66,14 +74,10 @@ function FiltrListy({ nazwa, opcje, wybrane, zmien }) {
   )
 }
 
-function dzienMiesiac(dzien) {
-  return dzien.slice(8, 10) + '.' + dzien.slice(5, 7)
-}
-
 function FiltrDaty({ od, doDnia, zmien }) {
   const chipy = [
-    od && { etykieta: 'od ' + dzienMiesiac(od), usun: () => zmien({ od: '' }) },
-    doDnia && { etykieta: 'do ' + dzienMiesiac(doDnia), usun: () => zmien({ do: '' }) },
+    od && { etykieta: 'od ' + dzienCzytelny(od), usun: () => zmien({ od: '' }) },
+    doDnia && { etykieta: 'do ' + dzienCzytelny(doDnia), usun: () => zmien({ do: '' }) },
   ].filter(Boolean)
 
   return (
@@ -124,6 +128,11 @@ export default function Filtry({ filtry, zmien, wyczysc, wiersze }) {
         wybrane={filtry.moduly}
         zmien={(moduly) => ustaw({ moduly })}
       />
+      {filtry.tagi.length > 0 && (
+        <PoleFiltra wybrane={filtry.tagi.map((t) => ({ etykieta: t, usun: () => ustaw({ tagi: filtry.tagi.filter((x) => x !== t) }) }))}>
+          <span className="px-2.5 font-medium">Powód</span>
+        </PoleFiltra>
+      )}
       {cosUstawione && (
         <Button variant="ghost" className="text-xs" onClick={wyczysc}>
           Wyczyść

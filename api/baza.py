@@ -28,11 +28,11 @@ def dodaj(reklama, ocena, drugi_sedzia):
     with polacz() as baza:
         return baza.execute(
             """
-            INSERT INTO reklamy (zrodlo, id_zrodla, platforma, url, reklamodawca, tekst, zebrano, opublikowano,
+            INSERT INTO reklamy (zrodlo, id_zrodla, platforma, url, domena, reklamodawca, tekst, zebrano, opublikowano,
                                  sygnaly_zbieracza,
                                  werdykt, ryzyko, pewny, rejestr, sygnaly, powody, rodzaj, drugi_sedzia)
-            VALUES (%(zrodlo)s, %(id_zrodla)s, %(platforma)s, %(url)s, %(reklamodawca)s, %(tekst)s, %(zebrano)s,
-                    %(opublikowano)s, %(sygnaly_zbieracza)s,
+            VALUES (%(zrodlo)s, %(id_zrodla)s, %(platforma)s, %(url)s, %(domena)s, %(reklamodawca)s, %(tekst)s,
+                    %(zebrano)s, %(opublikowano)s, %(sygnaly_zbieracza)s,
                     %(werdykt)s, %(ryzyko)s, %(pewny)s, %(rejestr)s, %(sygnaly)s, %(powody)s, %(rodzaj)s, %(drugi_sedzia)s)
             ON CONFLICT (zrodlo, id_zrodla) DO NOTHING
             RETURNING *

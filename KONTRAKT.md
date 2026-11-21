@@ -11,7 +11,8 @@ Jedno miejsce, w którym usługi uzgadniają kształt danych. Zmiana tutaj oznac
 | `zrodlo` | tekst | skąd pochodzi rekord, np. `plik`, `google_ads` |
 | `id_zrodla` | tekst | identyfikator reklamy w źródle; para `zrodlo` + `id_zrodla` jest unikalna |
 | `platforma` | tekst | gdzie reklamę wyświetlono, np. `facebook`, `google` |
-| `url` | tekst lub null | adres, do którego prowadzi reklama |
+| `url` | tekst lub null | adres rekordu w źródle, np. strona reklamy w bibliotece reklam |
+| `domena` | tekst lub null, można pominąć | domena, do której prowadzi reklama, sama nazwa hosta małymi literami, np. `www.pekao.com.pl`; null, gdy nie wiadomo |
 | `reklamodawca` | tekst lub null | nazwa podana w reklamie |
 | `tekst` | tekst | treść reklamy |
 | `zebrano` | data i czas (ISO 8601) | kiedy zbieracz ją zapisał |
@@ -39,6 +40,7 @@ Pola jak wyżej oraz:
 | `id` | liczba | numer w bazie |
 | `dodano` | data i czas | kiedy trafiła do bazy |
 | `opublikowano` | data lub null | jak od zbieracza; null, gdy zbieracz go nie podał |
+| `domena` | tekst lub null | dokąd prowadzi reklama; `url` zostaje adresem rekordu w źródle; można ją uzupełnić przez `PATCH /reklamy/{id}` |
 | `werdykt` | `ok`, `do_sprawdzenia`, `oszustwo` | z ryzyka: poniżej 0,3 `ok`, od 0,7 `oszustwo`, pomiędzy albo bez tekstu `do_sprawdzenia` |
 | `ryzyko` | liczba 0-1 | prawdopodobieństwo oszustwa |
 | `pewny` | prawda / fałsz | fałsz przy werdykcie `do_sprawdzenia`: ocenić powinien człowiek |
@@ -60,7 +62,7 @@ Pola jak wyżej oraz:
 | `POST /reklamy` | dodaje reklamę i od razu ją ocenia |
 | `GET /reklamy?werdykt=&status=&min_ryzyko=&od=` | lista od największego ryzyka; każdy filtr można pominąć; `od` (data i czas ISO 8601) zostawia tylko reklamy z `dodano` późniejszym niż `od`, więc panel po pierwszej pełnej liście pyta z `od` równym najnowszemu `dodano`, jakie ma |
 | `GET /reklamy/{id}` | jedna reklama |
-| `PATCH /reklamy/{id}` | zmiana statusu lub werdyktu analityka, treść: `{"status": "w_toku"}`, `{"werdykt_analityka": "oszustwo"}` albo oba pola; zmieniają się tylko wysłane pola, `"werdykt_analityka": null` go kasuje |
+| `PATCH /reklamy/{id}` | zmiana statusu, werdyktu analityka lub domeny, treść: `{"status": "w_toku"}`, `{"werdykt_analityka": "oszustwo"}`, `{"domena": "www.pekao.com.pl"}` albo kilka z tych pól; zmieniają się tylko wysłane pola, `"werdykt_analityka": null` go kasuje, `"domena": null` też; zmiana domeny nie ocenia reklamy od nowa |
 | `GET /reklamy/{id}/podobne` | do 50 innych reklam o podobnym początku tekstu (pierwsze 1000 znaków, `podobienstwo` od 0.5 do 1), od najbardziej podobnej; `503`, gdy szukanie trwa ponad 5 s |
 | `PUT /reklamy/{id}/obraz` | zapisuje obraz reklamy, treść: `{"obraz": "..."}` (PNG albo JPEG w base64), drugi obraz zastępuje pierwszy; gdy reklama ma pusty `tekst`, odczytuje go z obrazu i ocenia reklamę od nowa, reklama z tekstem go zachowuje; zwraca pełną reklamę; `404`, gdy nie ma reklamy, `422`, gdy to nie jest PNG ani JPEG, `503`, gdy tekst trzeba było odczytać, a usługa `odczyt` nie działa |
 | `GET /reklamy/{id}/obraz` | obraz reklamy z typem `image/png` albo `image/jpeg`; `404`, gdy reklama nie ma obrazu |

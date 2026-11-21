@@ -39,6 +39,7 @@ class NowaReklama(BaseModel):
     id_zrodla: str
     platforma: str
     url: str | None = None
+    domena: str | None = None
     reklamodawca: str | None = None
     tekst: str
     zebrano: datetime
@@ -92,11 +93,12 @@ class ZmianaReklamy(BaseModel):
 
     status: Status = None
     werdykt_analityka: Werdykt | None = None
+    domena: str | None = None
 
     @model_validator(mode='after')
     def cos_zmienia(self):
         if not self.model_fields_set:
-            raise ValueError('Podaj status albo werdykt_analityka')
+            raise ValueError('Podaj status, werdykt_analityka albo domena')
         return self
 
 

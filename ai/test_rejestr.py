@@ -37,6 +37,13 @@ PROBY = [
     ('Trade Republic Bank GmbH', 'bank', None),
     ('Revolution Trading Ltd', 'poza_listami', None),
     ('Erste Towarzystwo Funduszy Inwestycyjnych S.A.', 'tfi', None),
+    ('Tom Crosshill', 'poza_listami', None),
+    ("Tom's Personal Finance", 'poza_listami', None),
+    ('BETA ETF', 'poza_listami', None),
+    ('XTB Polska', 'w_rejestrze', 'XTB S.A.'),
+    ('ING Polska', 'w_rejestrze', 'ING BANK ŚLĄSKI S.A.'),
+    ('Finax Polska', 'w_rejestrze', 'Finax, o.c.p., a.s.'),
+    ('Trading 212 UK Limited', 'spoza_rejestru', 'Trading 212 EU GmbH'),
 ]
 zle = 0
 for platnik, stan, podmiot in PROBY:

@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { pobierzPodobne, zmienStatusy } from '../api.js'
-import { BLAD_ZAPISU, domena, ileReklam, NAZWY_STATUSOW } from '../nazwy.js'
+import { BLAD_ZAPISU, ileReklam, NAZWY_STATUSOW } from '../nazwy.js'
+import { tytul } from '../sprawy.js'
 import Potwierdzenie from './Potwierdzenie.jsx'
 import Sekcja from './Sekcja.jsx'
 
-export default function Podobne({ reklama, otworz, odswiez }) {
+export default function Podobne({ reklama, wSprawie, otworz, odswiez }) {
   const [podobne, setPodobne] = useState([])
 
   function wczytaj() {
     pobierzPodobne(reklama.id)
-      .then((lista) => setPodobne(lista.filter((p) => p.zrodlo !== 'test')))
+      .then((lista) => setPodobne(lista.filter((p) => p.zrodlo !== 'test' && !wSprawie.includes(p.id))))
       .catch(() => setPodobne([]))
   }
 
@@ -45,7 +46,7 @@ export default function Podobne({ reklama, otworz, odswiez }) {
         {podobne.map((p) => (
           <li key={p.id}>
             <button className="grid w-full grid-cols-[1fr_auto_auto] gap-4 px-3.5 py-2 text-left hover:bg-muted/50" onClick={() => otworz(p.id)}>
-              <span className="truncate">{p.reklamodawca ?? domena(p.url)}</span>
+              <span className="truncate">{tytul(p)}</span>
               <span className="font-mono text-xs leading-5 text-muted-foreground">{p.id}</span>
               <span className="w-20 text-muted-foreground">{NAZWY_STATUSOW[p.status]}</span>
             </button>

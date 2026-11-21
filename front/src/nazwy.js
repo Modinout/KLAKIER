@@ -23,6 +23,9 @@ const NAZWY_ZRODEL = {
   strony_doradcow: 'Strony doradców',
   patrol_ostrzezen: 'Lista ostrzeżeń KNF',
   panel: 'Dodane ręcznie',
+  csirt_knf: 'CSIRT KNF',
+  tiktok_ads: 'TikTok',
+  plik: 'Plik',
 }
 
 export const PLATFORMY = {
@@ -85,13 +88,34 @@ export function domena(url) {
   }
 }
 
+const BIBLIOTEKI = ['adstransparency.google.com', 'library.tiktok.com']
+
+// An ad library page shows the ad itself, not where the ad leads.
+export function zBiblioteki(url) {
+  return BIBLIOTEKI.includes(domena(url)) || url.includes('facebook.com/ads/library')
+}
+
+export function domenaDocelowa(reklama) {
+  if (reklama.domena) return reklama.domena.replace(/^www\./, '')
+  if (reklama.url && !zBiblioteki(reklama.url)) return domena(reklama.url)
+  return null
+}
+
+// One case of letters in the ending, so "dywidendy.Skorzystaj" is not taken for a domain.
+const DOMENA = /\b(?:[A-Za-z0-9-]+\.)+(?:[a-z]{2,}|[A-Z]{2,})\b/
+
+export function pierwszaDomena(tekst) {
+  const znaleziona = tekst.match(DOMENA)
+  return znaleziona && znaleziona[0].replace(/^www\./i, '').toLowerCase()
+}
+
 function dwie(liczba) {
   return String(liczba).padStart(2, '0')
 }
 
 export function data(iso) {
   const d = new Date(iso)
-  return dwie(d.getDate()) + '.' + dwie(d.getMonth() + 1) + ' ' + dwie(d.getHours()) + ':' + dwie(d.getMinutes())
+  return dzienCzytelny(dzien(d)) + ' ' + dwie(d.getHours()) + ':' + dwie(d.getMinutes())
 }
 
 export function dzien(iso) {

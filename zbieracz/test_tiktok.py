@@ -9,18 +9,35 @@ REKLAMA = {
     'image_urls': ['https://p19.tiktokcdn.com/obraz.jpeg'], 'title': 'Inwestowanie i relaks? To możliwe! ',
     'subject': 'Financial Services',
 }
+SZCZEGOLY = {
+    'ad': {'id': '1881897875265745', 'external_url': 'https://WWW.Finax.eu/pl?utm_source=tiktok&utm_medium=video',
+           'call_to_action': 'Dowiedz się więcej', 'subject': 'Financial Services'},
+    'advertiser': {'name': 'Finax, o.c.p., a. s.', 'registry_location': 'Słowacja', 'tt_user': None,
+                   'sponsor': 'HTTPOOL, d.o.o.'},
+}
+ZEBRANO = '2026-11-21T10:00:00+00:00'
 
 
-def test_rekord_z_wyniku_wyszukiwania():
-    assert tiktok.rekord(REKLAMA, '2026-11-21T10:00:00+00:00') == {
+def test_rekord_z_platnikiem_i_domena():
+    assert tiktok.rekord(REKLAMA, SZCZEGOLY, ZEBRANO) == {
         'zrodlo': 'tiktok_ads', 'id_zrodla': '1881897875265745', 'platforma': 'tiktok',
-        'url': 'https://library.tiktok.com/ads/detail/?ad_id=1881897875265745',
-        'reklamodawca': 'Finax, o.c.p., a. s.', 'tekst': 'Inwestowanie i relaks? To możliwe!',
-        'zebrano': '2026-11-21T10:00:00+00:00', 'opublikowano': '2026-11-15'}
+        'url': 'https://library.tiktok.com/ads/detail/?ad_id=1881897875265745', 'domena': 'www.finax.eu',
+        'reklamodawca': 'HTTPOOL, d.o.o.', 'tekst': 'Inwestowanie i relaks? To możliwe!',
+        'zebrano': ZEBRANO, 'opublikowano': '2026-11-15'}
+
+
+def test_bez_adresu_strony_domena_pusta():
+    szczegoly = {**SZCZEGOLY, 'ad': {**SZCZEGOLY['ad'], 'external_url': ''}}
+    assert tiktok.rekord(REKLAMA, szczegoly, ZEBRANO)['domena'] is None
+
+
+def test_bez_platnika_reklamodawca_z_wyniku():
+    szczegoly = {**SZCZEGOLY, 'advertiser': {**SZCZEGOLY['advertiser'], 'sponsor': ''}}
+    assert tiktok.rekord(REKLAMA, szczegoly, ZEBRANO)['reklamodawca'] == 'Finax, o.c.p., a. s.'
 
 
 def test_rekord_bez_podpisu_ma_pusty_tekst():
-    rekord = tiktok.rekord({**REKLAMA, 'title': None}, '2026-11-21T10:00:00+00:00')
+    rekord = tiktok.rekord({**REKLAMA, 'title': None}, SZCZEGOLY, ZEBRANO)
     assert rekord['tekst'] == ''
 
 

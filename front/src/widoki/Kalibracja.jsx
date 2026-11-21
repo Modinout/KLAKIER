@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { pobierzProgi } from '../api.js'
 import { liczba } from '../nazwy.js'
-import { wSprawy } from '../sprawy.js'
 import Uczenie from '../czesci/Uczenie.jsx'
 
 function Liczba({ tytul, wartosc, zIlu }) {
@@ -23,13 +22,13 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
   const krok = Math.round((wartosci[1] - wartosci[0]) * 100) / 100
   const wiersz = progi.progi.find((p) => Math.abs(p.prog - prog) < 0.001)
   const zlapane = Math.round(wiersz?.zlapane ?? 0)
-  const wysokie = useMemo(() => wSprawy(wiersze).filter((s) => s.poziom === 'wysokie').length, [wiersze])
+  const odProgu = useMemo(() => wiersze.filter((r) => r.ryzyko >= prog).length, [wiersze, prog])
 
   return (
     <div className="max-w-4xl rounded-lg border">
       <div className="p-6">
         <div className="mb-4 flex items-baseline justify-between">
-          <span className="font-medium">Próg ryzyka</span>
+          <span className="font-medium">Próg modelu</span>
           <span className="font-semibold tabular-nums">{liczba(prog)}</span>
         </div>
         <Slider
@@ -44,11 +43,16 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
           <span>{liczba(wartosci.at(-1))}</span>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-6 border-t p-6">
-        <Liczba tytul="Złapane oszustwa" wartosc={zlapane} zIlu={progi.oszustw} />
-        <Liczba tytul="Przeoczone oszustwa" wartosc={progi.oszustw - zlapane} zIlu={progi.oszustw} />
-        <Liczba tytul="Fałszywe alarmy" wartosc={Math.round(wiersz?.falszywe_alarmy ?? 0)} zIlu={progi.uczciwych} />
-        <Liczba tytul="Sprawy wysokiego ryzyka" wartosc={wysokie} />
+      <div className="border-t p-6">
+        <p className="mb-3 text-xs font-medium text-muted-foreground">Na zbiorze testowym</p>
+        <div className="grid grid-cols-3 gap-6">
+          <Liczba tytul="Złapane oszustwa" wartosc={zlapane} zIlu={progi.oszustw} />
+          <Liczba tytul="Przeoczone oszustwa" wartosc={progi.oszustw - zlapane} zIlu={progi.oszustw} />
+          <Liczba tytul="Fałszywe alarmy" wartosc={Math.round(wiersz?.falszywe_alarmy ?? 0)} zIlu={progi.uczciwych} />
+        </div>
+      </div>
+      <div className="border-t p-6">
+        <Liczba tytul="Reklamy w bazie od tego progu" wartosc={odProgu} />
       </div>
     </div>
   )

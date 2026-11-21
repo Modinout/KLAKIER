@@ -70,6 +70,17 @@ def test_data_publikacji_wraca_z_reklama():
     assert bez_daty['opublikowano'] is None
 
 
+def test_domena_wraca_z_reklama_i_zmienia_sie_przez_patch():
+    z_domena = httpx.post(f'{API}/reklamy', json={**nowa_reklama(), 'domena': 'www.pekao.com.pl'}, timeout=180).json()
+    assert z_domena['domena'] == 'www.pekao.com.pl'
+    bez_domeny = httpx.post(f'{API}/reklamy', json=nowa_reklama(), timeout=180).json()
+    assert bez_domeny['domena'] is None
+
+    httpx.patch(f'{API}/reklamy/{bez_domeny["id"]}', json={'status': 'w_toku'}).raise_for_status()
+    zmieniona = httpx.patch(f'{API}/reklamy/{bez_domeny["id"]}', json={'domena': 'zysk.example'}).json()
+    assert zmieniona['domena'] == 'zysk.example' and zmieniona['status'] == 'w_toku'
+
+
 def test_lista_od_daje_tylko_nowsze():
     pierwsza = httpx.post(f'{API}/reklamy', json=nowa_reklama(), timeout=180).json()
     druga = httpx.post(f'{API}/reklamy', json=nowa_reklama(), timeout=180).json()

@@ -95,7 +95,7 @@ def test_rekord_reklamy():
     rekord = patrol.rekord_reklamy('quomarkets.com', 'Quomarkets', reklama, '2026-11-01T10:00:00+00:00')
     assert {k: v for k, v in rekord.items() if k != 'sygnaly'} == {
         'zrodlo': 'google_ads', 'id_zrodla': 'CR1', 'platforma': 'google', 'url': 'https://quomarkets.com/',
-        'reklamodawca': 'Jan Kowalski', 'tekst': '', 'zebrano': '2026-11-01T10:00:00+00:00',
+        'domena': 'quomarkets.com', 'reklamodawca': 'Jan Kowalski', 'tekst': '', 'zebrano': '2026-11-01T10:00:00+00:00',
         'opublikowano': '2026-10-09'}
     sygnal, = rekord['sygnaly']
     assert sygnal['kod'] == 'reklama_domeny_z_ostrzezenia_knf'

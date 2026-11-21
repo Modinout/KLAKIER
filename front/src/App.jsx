@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { pobierzReklamy } from './api.js'
-import { poziomRyzyka } from './ryzyko.js'
+import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
 import DodajReklame from './czesci/DodajReklame.jsx'
 import Szczegoly from './czesci/Szczegoly.jsx'
@@ -26,6 +26,8 @@ export default function App() {
   const [otwarte, setOtwarte] = useState(null)
   const [obejrzane, setObejrzane] = useState(new Set())
   const najnowszeDodano = useRef(null)
+  // High-risk cases already there when the panel opened; only later ones count as new alerts.
+  const poczatkowe = useRef(null)
 
   function zapamietajNajnowsze(lista) {
     for (const r of lista) {
@@ -46,6 +48,7 @@ export default function App() {
     pobierzReklamy()
       .then((lista) => {
         zapamietajNajnowsze(lista)
+        poczatkowe.current ??= new Set(lista.filter((r) => r.poziom === 'wysokie').map(klucz))
         setReklamy(bezTestowych(lista))
       })
       .catch(() => toast.error(BLAD_LISTY, { id: 'lista' }))
@@ -64,12 +67,9 @@ export default function App() {
 
   useAlerty(dolacz)
 
-  const wiersze = useMemo(
-    () => reklamy?.map((r) => ({ ...r, poziom: poziomRyzyka(r, prog) })),
-    [reklamy, prog]
-  )
-  const alerty = useMemo(() => wiersze?.filter((r) => r.poziom === 'wysokie') ?? [], [wiersze])
-  const nieobejrzane = alerty.filter((r) => !obejrzane.has(r.id)).length
+  const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie'), [reklamy])
+  const nowyAlert = (s) => !poczatkowe.current?.has(s.klucz) && !s.reklamy.some((r) => obejrzane.has(r.id))
+  const nieobejrzane = alerty.filter(nowyAlert).length
 
   function podmien(nowa) {
     setReklamy((lista) => lista.map((r) => (r.id === nowa.id ? nowa : r)))
@@ -80,7 +80,7 @@ export default function App() {
     setObejrzane((zbior) => new Set(zbior).add(id))
   }
 
-  const otwarta = otwarte && wiersze?.find((r) => r.id === otwarte.id)
+  const otwarta = otwarte && reklamy?.find((r) => r.id === otwarte.id)
 
   return (
     <Tabs defaultValue="analityka" className="h-svh gap-0">
@@ -99,16 +99,16 @@ export default function App() {
         <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} />
       </header>
       <main className="flex min-h-0 flex-1 flex-col px-8 py-6">
-        {wiersze ? (
+        {reklamy ? (
           <>
             <TabsContent value="analityka" className="flex min-h-0 flex-col">
-              <Analityka wiersze={wiersze} otwarteId={otwarte?.id} otworz={otworz} />
+              <Analityka wiersze={reklamy} otwarteId={otwarte?.id} otworz={otworz} />
             </TabsContent>
             <TabsContent value="alerty" className="flex min-h-0 flex-col">
-              <Alerty alerty={alerty} obejrzane={obejrzane} otwarteId={otwarte?.id} otworz={otworz} />
+              <Alerty sprawy={alerty} nowe={nowyAlert} otwarteId={otwarte?.id} otworz={otworz} />
             </TabsContent>
             <TabsContent value="kalibracja" className="min-h-0 overflow-auto">
-              <Kalibracja prog={prog} ustawProg={setProg} wiersze={wiersze} odswiez={odswiez} />
+              <Kalibracja prog={prog} ustawProg={setProg} wiersze={reklamy} odswiez={odswiez} />
             </TabsContent>
           </>
         ) : (
@@ -118,7 +118,7 @@ export default function App() {
       {otwarta && (
         <Szczegoly
           reklama={otwarta}
-          wiersze={wiersze}
+          wiersze={reklamy}
           sprawy={otwarte.sprawy}
           otworz={(id) => otworz(id, otwarte.sprawy)}
           zamknij={() => setOtwarte(null)}
@@ -127,7 +127,7 @@ export default function App() {
         />
       )}
       {/* The open sheet makes the rest of the page inert; the undo button in a toast must stay clickable. */}
-      <Toaster position="top-right" className="toaster group pointer-events-auto" />
+      <Toaster position="top-center" className="toaster group pointer-events-auto" />
     </Tabs>
   )
 }
