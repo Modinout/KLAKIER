@@ -1,5 +1,7 @@
 # KLAKIER
 
+Kontrola Linków, Afiliacji, Kampanii I Ekspertów Rynku.
+
 Narzędzie dla analityka nadzoru finansowego. Zbiera reklamy inwestycyjne, ocenia ryzyko oszustwa i pokazuje je w panelu od najbardziej podejrzanych.
 
 Stan: szkielet. Działa jedna pełna ścieżka: plik z reklamami, ocena, baza, panel.
