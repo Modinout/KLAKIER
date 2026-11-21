@@ -9,7 +9,7 @@ import { POZIOMY } from '../ryzyko.js'
 import { ustalenia } from '../ustalenia.js'
 
 export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], moduly: [], tagi: [] }
-export const START_FILTRY = { ...PUSTE_FILTRY, statusy: ['nowa'], ryzyka: ['wysokie'] }
+export const START_FILTRY = { ...PUSTE_FILTRY, statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] }
 
 function Chip({ etykieta, usun }) {
   return (
@@ -101,14 +101,14 @@ function opcjeZ(nazwy) {
   return Object.entries(nazwy).map(([wartosc, etykieta]) => ({ wartosc, etykieta }))
 }
 
-export default function Filtry({ filtry, zmien, wyczysc, wiersze }) {
+export default function Filtry({ filtry, zmien, domyslny, wiersze }) {
   function ustaw(zmiana) {
     zmien({ ...filtry, ...zmiana })
   }
 
   const zrodla = [...new Set(wiersze.map((r) => r.zrodlo))].sort()
   const moduly = [...new Set(wiersze.flatMap((r) => ustalenia(r).map((s) => s.modul)))].sort()
-  const cosUstawione = JSON.stringify(filtry) !== JSON.stringify(PUSTE_FILTRY)
+  const zmienione = JSON.stringify(filtry) !== JSON.stringify(START_FILTRY)
 
   return (
     <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
@@ -128,15 +128,9 @@ export default function Filtry({ filtry, zmien, wyczysc, wiersze }) {
         wybrane={filtry.moduly}
         zmien={(moduly) => ustaw({ moduly })}
       />
-      {filtry.tagi.length > 0 && (
-        <PoleFiltra wybrane={filtry.tagi.map((t) => ({ etykieta: t, usun: () => ustaw({ tagi: filtry.tagi.filter((x) => x !== t) }) }))}>
-          <span className="px-2.5 font-medium">Powód</span>
-        </PoleFiltra>
-      )}
-      {cosUstawione && (
-        <Button variant="ghost" className="text-xs" onClick={wyczysc}>
-          Wyczyść
-          <X />
+      {zmienione && (
+        <Button variant="ghost" className="text-xs" onClick={domyslny}>
+          Domyślny widok
         </Button>
       )}
     </div>

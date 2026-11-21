@@ -33,10 +33,12 @@ export default function Ocena({ reklama, podmien }) {
   if (!otwarta) {
     return (
       <button className="mt-6 block text-[13px] text-muted-foreground hover:text-foreground" onClick={() => setOtwarta(true)}>
-        Popraw ocenę tekstu
+        Oceń tekst (uczy model)
       </button>
     )
   }
+
+  const obecna = reklama.werdykt_analityka ?? reklama.werdykt
 
   return (
     <div className="mt-6 flex items-center gap-1.5">
@@ -44,8 +46,8 @@ export default function Ocena({ reklama, podmien }) {
         <Button
           key={werdykt}
           size="xs"
-          variant={werdykt === reklama.werdykt_analityka ? 'default' : 'outline'}
-          aria-pressed={werdykt === reklama.werdykt_analityka}
+          variant={werdykt === obecna ? 'default' : 'outline'}
+          aria-pressed={werdykt === obecna}
           onClick={() => ustaw(werdykt)}
         >
           {nazwa}

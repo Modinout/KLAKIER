@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { uczModel, dodajRodzaj } from '../api.js'
-import { ileReklam, liczba } from '../nazwy.js'
+import { OPISY, ileReklam, liczba } from '../nazwy.js'
 import Potwierdzenie from './Potwierdzenie.jsx'
 
 function bladRodzaju(blad) {
@@ -53,13 +54,21 @@ export default function Uczenie({ decyzje, odswiez }) {
         </Potwierdzenie>
         <span className="text-muted-foreground">Decyzje analityków: {liczba(decyzje)}</span>
       </div>
-      <form className="mt-3 flex gap-2" onSubmit={dodaj}>
-        <Input placeholder="Nowy rodzaj oszustwa" value={nazwa} onChange={(e) => setNazwa(e.target.value)} required />
-        <Input placeholder="Opis" value={opis} onChange={(e) => setOpis(e.target.value)} required />
+      <p className="mt-2 text-muted-foreground">{OPISY.ucz}</p>
+      <form className="mt-5 flex items-end gap-2" onSubmit={dodaj}>
+        <div className="grid flex-1 gap-1.5">
+          <Label htmlFor="nazwa-rodzaju">Nazwa rodzaju</Label>
+          <Input id="nazwa-rodzaju" value={nazwa} onChange={(e) => setNazwa(e.target.value)} required />
+        </div>
+        <div className="grid flex-1 gap-1.5">
+          <Label htmlFor="opis-rodzaju">Opis</Label>
+          <Input id="opis-rodzaju" value={opis} onChange={(e) => setOpis(e.target.value)} required />
+        </div>
         <Button variant="outline" disabled={dodaje}>
           {dodaje ? 'Model pisze przykłady…' : 'Dodaj'}
         </Button>
       </form>
+      <p className="mt-2 text-muted-foreground">{OPISY.rodzaj}</p>
     </>
   )
 }

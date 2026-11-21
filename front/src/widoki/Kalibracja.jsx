@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { pobierzProgi } from '../api.js'
-import { liczba } from '../nazwy.js'
+import { OPISY, liczba } from '../nazwy.js'
 import Uczenie from '../czesci/Uczenie.jsx'
 
 function Liczba({ tytul, wartosc, zIlu }) {
@@ -44,7 +44,11 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
         </div>
       </div>
       <div className="border-t p-6">
-        <p className="mb-3 text-xs font-medium text-muted-foreground">Na zbiorze testowym</p>
+        <p className="text-xs font-medium text-muted-foreground">Na zbiorze testowym</p>
+        <p className="mb-3 text-muted-foreground">
+          {liczba(progi.oszustw + progi.uczciwych)} reklam ocenionych ręcznie: {liczba(progi.oszustw)} oszustw i{' '}
+          {liczba(progi.uczciwych)} uczciwych.
+        </p>
         <div className="grid grid-cols-3 gap-6">
           <Liczba tytul="Złapane oszustwa" wartosc={zlapane} zIlu={progi.oszustw} />
           <Liczba tytul="Przeoczone oszustwa" wartosc={progi.oszustw - zlapane} zIlu={progi.oszustw} />
@@ -52,7 +56,9 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
         </div>
       </div>
       <div className="border-t p-6">
-        <Liczba tytul="Reklamy w bazie od tego progu" wartosc={odProgu} />
+        <Liczba tytul="Reklamy w bazie, które model oznaczyłby jako oszustwo" wartosc={odProgu} />
+        <p className="mt-2 text-muted-foreground">{OPISY.suwak}</p>
+        <p className="mt-2 text-muted-foreground">{OPISY.twarde}</p>
       </div>
     </div>
   )
@@ -73,7 +79,8 @@ export default function Kalibracja({ prog, ustawProg, wiersze, odswiez }) {
 
   return (
     <>
-      <h1 className="mb-5 text-2xl font-bold tracking-tight">Kalibracja</h1>
+      <h1 className="mb-1 text-2xl font-bold tracking-tight">Kalibracja</h1>
+      <p className="mb-5 text-muted-foreground">{OPISY.kalibracja}</p>
       {blad && (
         <div className="flex max-w-4xl items-center justify-between rounded-lg border p-6">
           <p>Nie udało się wczytać progów. Spróbuj ponownie.</p>

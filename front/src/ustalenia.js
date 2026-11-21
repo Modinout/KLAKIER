@@ -1,26 +1,26 @@
-import { bezTekstu, liniaOszustwa, tag, TAGI, tagModelu } from './nazwy.js'
+import { bezTekstu, liniaOszustwa, tag, TAG_MODELU, TAGI, tagModelu } from './nazwy.js'
 
-// CERT notes say whether operators block the domain; they are not findings about the ad.
-export const KODY_CERT = ['brak_na_liscie_cert', 'na_liscie_cert']
+// Notes, not findings about the ad: whether operators block the domain (CERT), and a payer that is
+// a different company than the registered one with the same brand.
+const KODY_NOTATEK = ['brak_na_liscie_cert', 'na_liscie_cert', 'platnik_spoza_rejestru']
 
-const KOLEJNOSC_TAGOW = Object.values(TAGI)
+// The text model's finding outranks findings about the payer alone.
+const KOLEJNOSC_TAGOW = Object.values(TAGI).flatMap((t) => (t === TAGI.doradztwo_bez_zezwolenia ? [t, TAG_MODELU] : [t]))
 
 export function ustalenia(reklama) {
-  return reklama.sygnaly.filter((s) => !KODY_CERT.includes(s.kod))
+  return reklama.sygnaly.filter((s) => !KODY_NOTATEK.includes(s.kod))
 }
 
-export function notatkiCert(reklama) {
-  return reklama.sygnaly.filter((s) => KODY_CERT.includes(s.kod))
+export function notatki(reklama) {
+  return reklama.sygnaly.filter((s) => KODY_NOTATEK.includes(s.kod))
 }
 
 export function ocenaModelu(reklama) {
-  if (bezTekstu(reklama)) return null
-  if (reklama.werdykt === 'oszustwo') return liniaOszustwa(reklama)
-  if (reklama.werdykt === 'do_sprawdzenia') return 'Tekst reklamy budzi wątpliwości'
-  return null
+  if (bezTekstu(reklama) || reklama.werdykt !== 'oszustwo') return null
+  return liniaOszustwa(reklama)
 }
 
-function sila(t) {
+export function sila(t) {
   const i = KOLEJNOSC_TAGOW.indexOf(t)
   return i === -1 ? KOLEJNOSC_TAGOW.length : i
 }

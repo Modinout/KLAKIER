@@ -1,5 +1,5 @@
 import TabelaSpraw from '../czesci/TabelaSpraw.jsx'
-import { data, ileSpraw } from '../nazwy.js'
+import { OPISY, data, ileSpraw } from '../nazwy.js'
 import { odNajgorszych } from '../sprawy.js'
 
 function dodano(sprawa) {
@@ -13,7 +13,7 @@ export default function Alerty({ sprawy, przybyla, nowe, otwarteId, otworz }) {
   const wczesniejsze = sprawy.filter((s) => !przybyla(s)).sort(odNajgorszych)
   const wszystkie = [...nowych, ...wczesniejsze]
 
-  function tabela(lista, pusto) {
+  function tabela(lista) {
     return (
       <TabelaSpraw
         sprawy={lista}
@@ -23,16 +23,16 @@ export default function Alerty({ sprawy, przybyla, nowe, otwarteId, otworz }) {
         otwarteId={otwarteId}
         otworz={(s) => otworz(s.glowna.id, wszystkie)}
         wierszy={NA_STRONIE}
-        pusto={pusto}
       />
     )
   }
 
   return (
     <>
-      <h1 className="mb-5 text-2xl font-bold tracking-tight">Alerty</h1>
+      <h1 className="mb-1 text-2xl font-bold tracking-tight">Alerty</h1>
+      <p className="mb-5 text-muted-foreground">{OPISY.alerty}</p>
       <h2 className="mb-2 text-lg font-semibold">Nowe</h2>
-      {tabela(nowych, 'Brak nowych alertów od otwarcia panelu')}
+      {nowych.length > 0 ? tabela(nowych) : <p className="text-muted-foreground">Brak nowych spraw od otwarcia panelu</p>}
       <h2 className="mt-8 mb-2 text-lg font-semibold">Wcześniejsze</h2>
       {tabela(wczesniejsze)}
     </>

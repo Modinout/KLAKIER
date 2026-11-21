@@ -6,7 +6,10 @@ import { dzienReklamy, klucz } from '../sprawy.js'
 
 const DNI = 30
 
-const KONFIGURACJA = { ile: { label: 'Sprawy', color: 'var(--chart-3)' } }
+const KONFIGURACJA = { ile: { label: 'Sprawy wysokiego ryzyka', color: 'var(--chart-3)' } }
+
+// Days with a few cases stay visible next to the busiest day.
+const NAJNIZSZY_SLUPEK = 3
 
 function zlicz(reklamy) {
   const dni = Array.from({ length: DNI }, (_, i) => {
@@ -23,15 +26,25 @@ function zlicz(reklamy) {
 
 export default function Trend({ reklamy }) {
   const punkty = useMemo(() => zlicz(reklamy), [reklamy])
+  const szczyt = punkty.reduce((max, p) => (p.ile >= max.ile ? p : max))
 
   return (
-    <div className="mb-3 shrink-0">
-      <p className="text-xs text-muted-foreground">Wysokie ryzyko dziennie</p>
-      <ChartContainer config={KONFIGURACJA} className="aspect-auto h-[88px] w-full">
+    <div className="w-[420px] shrink-0">
+      <p className="text-xs text-muted-foreground">
+        Wysokie ryzyko dziennie, ostatnie {DNI} dni
+        {szczyt.ile > 0 && ' · najwięcej ' + szczyt.ile + ' (' + szczyt.kiedy.slice(0, 5) + ')'}
+      </p>
+      <ChartContainer config={KONFIGURACJA} className="aspect-auto h-[44px] w-full">
         <BarChart data={punkty} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
           <XAxis dataKey="kiedy" tickLine={false} axisLine={false} tickMargin={4} minTickGap={24} height={20} fontSize={11} />
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-          <Bar dataKey="ile" fill="var(--color-ile)" radius={2} maxBarSize={24} />
+          <Bar
+            dataKey="ile"
+            fill="var(--color-ile)"
+            radius={2}
+            maxBarSize={24}
+            minPointSize={(ile) => (ile > 0 ? NAJNIZSZY_SLUPEK : 0)}
+          />
         </BarChart>
       </ChartContainer>
     </div>

@@ -54,19 +54,20 @@ export const NAZWY_LIST_KNF = {
 export const TAGI = {
   reklama_domeny_z_ostrzezenia_knf: 'Domena z ostrzeżeń KNF',
   druga_domena_ostrzezonej_strony: 'Kopia strony z ostrzeżeń',
-  platnik_poza_listami: 'Płatnik poza listami KNF',
+  na_liscie_csirt_knf: 'Oszustwo z listy CSIRT KNF',
+  wielu_platnikow_domeny: 'Wielu płatników jednej domeny',
+  obca_domena: 'Marka z rejestru, obca domena',
   doradztwo_bez_zezwolenia: 'Doradztwo bez zezwolenia',
+  platnik_poza_listami: 'Płatnik poza listami KNF',
   zysk_bez_ryzyka: 'Obietnica zysku',
-  platnik_spoza_rejestru: 'Płatnik spoza rejestru KNF',
+  brak_ostrzezenia_cfd: 'Brak ostrzeżenia o stratach na CFD',
   podatki_bez_zastrzezenia: 'Podatki bez zastrzeżenia',
   wyniki_bez_zastrzezenia: 'Wyniki bez zastrzeżenia',
+  nadzor_jako_argument: 'Nadzór KNF jako argument',
   test_zbieracza: 'Sygnał testowy',
 }
 
-export const TAGI_MODELU = {
-  oszustwo: 'Treść typowa dla fałszywych inwestycji',
-  do_sprawdzenia: 'Tekst budzi wątpliwości',
-}
+export const TAG_MODELU = 'Treść typowa dla fałszywych inwestycji'
 
 function skroc(opis) {
   if (opis.length <= 40) return opis
@@ -79,18 +80,17 @@ function zWielkiej(tekst) {
 }
 
 export function tag(sygnal) {
-  return TAGI[sygnal.kod] ?? skroc(sygnal.opis)
+  return TAGI[sygnal.kod] ?? sygnal.opis
 }
 
 export function tagModelu(reklama) {
   const rodzaj = reklama.rodzaj?.trim()
-  if (reklama.werdykt === 'oszustwo' && rodzaj) return zWielkiej(skroc(rodzaj))
-  return TAGI_MODELU[reklama.werdykt]
+  return rodzaj ? zWielkiej(skroc(rodzaj)) : TAG_MODELU
 }
 
 export function liniaOszustwa(reklama) {
   const rodzaj = reklama.rodzaj?.trim()
-  return rodzaj ? TAGI_MODELU.oszustwo + ': ' + zWielkiej(rodzaj) : TAGI_MODELU.oszustwo
+  return rodzaj ? TAG_MODELU + ': ' + zWielkiej(rodzaj) : TAG_MODELU
 }
 
 export function nazwaZrodla(zrodlo) {
@@ -163,4 +163,17 @@ export function ileReklam(n) {
 
 export function ileSpraw(n) {
   return odmien(n, 'sprawa', 'sprawy', 'spraw')
+}
+
+export const OPISY = {
+  analityka:
+    'Reklamy inwestycyjne zebrane automatycznie i sprawdzone w rejestrach KNF. Najgroźniejsze sprawy są na górze: otwórz, przeczytaj ustalenia i zdecyduj.',
+  alerty: 'Sprawy wysokiego ryzyka. „Nowe” to te, które doszły, odkąd panel jest otwarty.',
+  kalibracja:
+    'Tu sprawdzasz, jak czuły jest model, który czyta tekst reklam. Niższy próg łapie więcej oszustw, ale daje więcej fałszywych alarmów. Wyższy odwrotnie.',
+  suwak: 'Suwak pokazuje, co by się zmieniło przy innym progu. Nie zmienia ocen spraw w kolejce.',
+  twarde: 'Twarde ustalenia, takie jak domena z listy ostrzeżeń KNF albo płatnik poza listami KNF, nie zależą od progu.',
+  ucz: 'Model uczy się z ocen tekstu poprawionych przez analityków i ocenia reklamy od nowa.',
+  rodzaj: 'Dodaje nowy rodzaj fałszywej inwestycji, który model ma rozpoznawać.',
+  dodaj: 'Wklej tekst reklamy albo wrzuć jej zrzut. Reklama trafi do kolejki od razu z oceną.',
 }

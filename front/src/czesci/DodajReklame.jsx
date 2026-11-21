@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { dodajReklame, odczytajObraz, zapiszObraz } from '../api.js'
-import { BLAD_ZAPISU, PLATFORMY } from '../nazwy.js'
+import { BLAD_ZAPISU, OPISY, PLATFORMY } from '../nazwy.js'
 
 const PUSTE = { reklamodawca: '', url: '', tekst: '', platforma: 'google', obraz: null }
 
@@ -93,6 +93,7 @@ export default function DodajReklame({ poDodaniu }) {
       </DialogTrigger>
       <DialogContent className="p-6 sm:max-w-lg" aria-describedby={undefined}>
         <DialogTitle className="text-lg font-semibold">Dodaj reklamę</DialogTitle>
+        <p className="text-muted-foreground">{OPISY.dodaj}</p>
         <form className="grid gap-4" onSubmit={wyslij}>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">

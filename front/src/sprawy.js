@@ -1,6 +1,6 @@
-import { domenaDocelowa, dzien, pierwszaDomena } from './nazwy.js'
+import { domenaDocelowa, dzien, pierwszaDomena, TAG_MODELU } from './nazwy.js'
 import { KOLEJNOSC } from './ryzyko.js'
-import { ocenaModelu, tagi, ustalenia } from './ustalenia.js'
+import { ocenaModelu, sila, tagi, ustalenia } from './ustalenia.js'
 
 export function dzienReklamy(reklama) {
   return reklama.opublikowano ?? dzien(reklama.zebrano)
@@ -12,13 +12,13 @@ function ostrzezonaDomena(reklama) {
   return domenaDocelowa(reklama) ?? pierwszaDomena(sygnal.opis)
 }
 
-// Ads leading to a warned domain form one case whoever paid for them.
+// Ads leading to a warned domain form one case whoever paid for them; otherwise one payer is one case.
 export function klucz(reklama) {
   const ostrzezona = ostrzezonaDomena(reklama)
   if (ostrzezona) return 'knf|' + ostrzezona
+  if (reklama.reklamodawca) return 'platnik|' + reklama.reklamodawca
   const cel = domenaDocelowa(reklama)
-  if (!reklama.reklamodawca && !cel) return 'id|' + reklama.id
-  return reklama.reklamodawca + '|' + (cel ?? '')
+  return cel ? 'domena|' + cel : 'id|' + reklama.id
 }
 
 export function tytul(reklama) {
@@ -62,22 +62,17 @@ export function wSprawy(reklamy) {
   return [...grupy.values()].map(sprawa)
 }
 
+// Cases flagged only by the text model share one reason, whatever kind of fraud it names.
 export function najmocniejszyTag(sprawa) {
-  return tagi(sprawa.glowna)[0]
-}
-
-const KODY_OSTRZEZONE = ['reklama_domeny_z_ostrzezenia_knf', 'druga_domena_ostrzezonej_strony']
-
-// Evidence behind a case: 0 warned domain, 1 any other finding, 2 text model only.
-function dowod(sprawa) {
-  if (sprawa.reklamy.some((r) => r.sygnaly.some((s) => KODY_OSTRZEZONE.includes(s.kod)))) return 0
-  return sprawa.reklamy.some((r) => ustalenia(r).length > 0) ? 1 : 2
+  const reklama = sprawa.glowna
+  if (ustalenia(reklama).length > 0) return tagi(reklama)[0]
+  return ocenaModelu(reklama) ? TAG_MODELU : undefined
 }
 
 export function odNajgorszych(a, b) {
   return (
     KOLEJNOSC[a.poziom] - KOLEJNOSC[b.poziom] ||
-    dowod(a) - dowod(b) ||
+    sila(najmocniejszyTag(a)) - sila(najmocniejszyTag(b)) ||
     b.dzien.localeCompare(a.dzien) ||
     b.glowna.id - a.glowna.id
   )

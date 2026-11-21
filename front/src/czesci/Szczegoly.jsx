@@ -7,7 +7,6 @@ import { zmienStatusy } from '../api.js'
 import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, liniaOszustwa, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
-import { tagi } from '../ustalenia.js'
 import ListaUstalen from './ListaUstalen.jsx'
 import Obraz from './Obraz.jsx'
 import Ocena from './Ocena.jsx'
@@ -35,24 +34,22 @@ function Wniosek({ reklama }) {
 
 function InneWSprawie({ reklama, reklamy, otworz }) {
   if (reklamy.length === 0) return null
+  const kilkuPlatnikow = new Set([reklama, ...reklamy].map((r) => r.reklamodawca)).size > 1
   return (
     <Sekcja tytul={'Inne reklamy w tej sprawie (' + reklamy.length + ')'}>
       <ul className="max-h-52 divide-y overflow-auto rounded-lg border">
-        {reklamy.map((r) => {
-          const lista = tagi(r)
-          return (
-            <li key={r.id}>
-              <button className="grid w-full grid-cols-[auto_1fr_auto] gap-4 px-3.5 py-2 text-left hover:bg-muted/50" onClick={() => otworz(r.id)}>
-                <span className="font-mono text-xs leading-5 text-muted-foreground">{r.id}</span>
-                <span className="truncate">
-                  {r.reklamodawca !== reklama.reklamodawca && r.reklamodawca && <span className="font-medium">{r.reklamodawca} · </span>}
-                  {lista.length > 0 ? lista.join(' · ') : <span className="text-muted-foreground">bez ustaleń</span>}
-                </span>
-                <span className="text-muted-foreground">{dzienCzytelny(dzienReklamy(r))}</span>
-              </button>
-            </li>
-          )
-        })}
+        {reklamy.map((r) => (
+          <li key={r.id}>
+            <button className="grid w-full grid-cols-[auto_1fr_auto] gap-4 px-3.5 py-2 text-left hover:bg-muted/50" onClick={() => otworz(r.id)}>
+              <span className="font-mono text-xs leading-5 text-muted-foreground">{r.id}</span>
+              <span className="truncate">
+                {kilkuPlatnikow && r.reklamodawca && <span className="font-medium">{r.reklamodawca} · </span>}
+                {bezTekstu(r) ? <span className="text-muted-foreground">Reklama graficzna</span> : r.tekst}
+              </span>
+              <span className="text-muted-foreground">{dzienCzytelny(dzienReklamy(r))}</span>
+            </button>
+          </li>
+        ))}
       </ul>
     </Sekcja>
   )
