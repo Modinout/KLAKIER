@@ -1,0 +1,91 @@
+:root {
+  --akcent: #b3261e;
+  --bursztyn: #b26a00;
+  --linia: #d0d0d0;
+}
+
+body {
+  margin: 0;
+  padding: 0 16px 16px;
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+.filtry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin-bottom: 16px;
+}
+
+.filtry label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blad {
+  color: var(--akcent);
+}
+
+main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--linia);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+tr.wybrany {
+  background: #eee;
+}
+
+.oszustwo {
+  color: var(--akcent);
+}
+
+.do_sprawdzenia {
+  color: var(--bursztyn);
+}
+
+aside {
+  border-left: 1px solid var(--linia);
+  padding-left: 16px;
+}
+
+.tekst {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  aside {
+    border-left: 0;
+    padding-left: 0;
+  }
+}

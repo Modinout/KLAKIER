@@ -1,0 +1,48 @@
+services:
+  baza:
+    image: public.ecr.aws/docker/library/postgres:17
+    environment:
+      POSTGRES_USER: klakier
+      POSTGRES_PASSWORD: ${HASLO_BAZY}
+      POSTGRES_DB: klakier
+    volumes:
+      - ./baza/schemat.sql:/docker-entrypoint-initdb.d/schemat.sql:ro
+      - dane_bazy:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U klakier"]
+      interval: 2s
+      retries: 15
+
+  ai:
+    build: ./ai
+
+  api:
+    build: ./api
+    environment:
+      BAZA_URL: postgresql://klakier:${HASLO_BAZY}@baza/klakier
+      AI_URL: http://ai:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      baza:
+        condition: service_healthy
+      ai:
+        condition: service_started
+
+  front:
+    build: ./front
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+  zbieracz:
+    build: ./zbieracz
+    profiles: [zbieracz]
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      - api
+
+volumes:
+  dane_bazy:
