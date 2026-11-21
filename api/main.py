@@ -187,14 +187,14 @@ def przelicz_wszystkie():
 
 
 def z_sygnalem_domeny(wiersze):
-    """Rows of the reklamy table with the finding that needs every ad of a domain.
+    """Rows of the reklamy table with the findings that compare payers with landing domains.
 
     Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad must show on the older ads
     of its domain at once.
     """
     sygnaly = platnicy_domeny.sygnaly_domen(baza.platnicy_domen())
-    return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + [sygnaly[wiersz['domena']]]} if wiersz['domena'] in sygnaly
-            else wiersz for wiersz in wiersze]
+    return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + platnicy_domeny.sygnaly_reklamy(wiersz, sygnaly)}
+            for wiersz in wiersze]
 
 
 def znaleziona(wiersz):

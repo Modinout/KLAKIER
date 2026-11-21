@@ -5,7 +5,7 @@ import pytest
 from test_sciezka import API, nowa_reklama
 
 TWARDE_USTALENIA = ['reklama_domeny_z_ostrzezenia_knf', 'druga_domena_ostrzezonej_strony', 'wielu_platnikow_domeny',
-                    'platnik_poza_listami', 'doradztwo_bez_zezwolenia']
+                    'platnik_poza_listami', 'doradztwo_bez_zezwolenia', 'obca_domena']
 MIEKKIE_USTALENIA = ['podatki_bez_zastrzezenia', 'platnik_spoza_rejestru']
 NIEWINNY_TEKST = 'Pizzeria Roma zaprasza na obiad. W każdy wtorek druga pizza za pół ceny, dowóz w Gdańsku.'
 OSZUSTWO = 'Zainwestuj 900 zł i zarabiaj 20 000 zł miesięcznie! Program dla każdego Polaka, zysk gwarantowany.'

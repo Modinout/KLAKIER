@@ -1,4 +1,5 @@
-# One landing domain paid for by many payers that are neither listed firms nor named after its brand.
+# Payers compared with the landing domains of their ads: one domain paid for by many payers that are neither listed
+# firms nor named after its brand, and a listed brand's name paying for a domain of another brand.
 from collections import defaultdict
 
 PROG = 3
@@ -18,14 +19,18 @@ def bez_znakow(tekst):
     return ''.join(znak for znak in tekst.lower() if znak.isalnum())
 
 
+def z_marka_domeny(nazwa, domena):
+    """True when the name holds the domain's brand; each part of a hyphenated one must be there, as for webull-uk."""
+    klucz = bez_znakow(nazwa)
+    return all(czesc in klucz for czesc in rdzen_marki(domena).split('-'))
+
+
 def niezwiazani_platnicy(domena, reklamy):
     """Sorted names of the payers that count; spellings of one name that differ only in case or punctuation are one payer."""
-    rdzen = bez_znakow(rdzen_marki(domena))
     platnicy = {}
     for reklama in reklamy:
-        klucz = bez_znakow(reklama['reklamodawca'])
-        if reklama['stan'] != 'w_rejestrze' and rdzen not in klucz:
-            platnicy.setdefault(klucz, reklama['reklamodawca'].strip())
+        if reklama['stan'] != 'w_rejestrze' and not z_marka_domeny(reklama['reklamodawca'], domena):
+            platnicy.setdefault(bez_znakow(reklama['reklamodawca']), reklama['reklamodawca'].strip())
     return sorted(platnicy.values(), key=str.casefold)
 
 
@@ -52,3 +57,26 @@ def sygnaly_domen(reklamy):
         if len(platnicy) >= PROG:
             sygnaly[domena] = sygnal(domena, platnicy)
     return sygnaly
+
+
+def obca_domena(reklama):
+    """Signal when the payer carries the name of a listed brand and the ad leads to a domain without that name."""
+    rejestr = reklama['rejestr']
+    if not reklama['domena'] or not rejestr or rejestr['stan'] != 'spoza_rejestru':
+        return None
+    if z_marka_domeny(reklama['reklamodawca'], reklama['domena']):
+        return None
+    return {
+        'modul': 'M1',
+        'kod': 'obca_domena',
+        'opis': f'Płatnik {reklama["reklamodawca"]} ma nazwę marki z rejestru KNF ({rejestr["podmiot"]}), '
+                f'ale reklama prowadzi do domeny {reklama["domena"]}, która tej nazwy nie zawiera.',
+        'podstawa': 'nazwa płatnika i domena, do której prowadzi reklama',
+    }
+
+
+def sygnaly_reklamy(reklama, domeny_z_sygnalem):
+    """Findings of one ad; domeny_z_sygnalem is the result of sygnaly_domen() over all stored ads."""
+    sygnaly = [domeny_z_sygnalem[reklama['domena']]] if reklama['domena'] in domeny_z_sygnalem else []
+    obca = obca_domena(reklama)
+    return sygnaly + [obca] if obca else sygnaly
