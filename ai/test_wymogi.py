@@ -1,4 +1,4 @@
-# Check of the M2 and M3 text rules. Run: docker compose run --rm ai python test_wymogi.py
+# Sprawdzenie reguł tekstowych M2 i M3. Uruchom: docker compose run --rm ai python test_wymogi.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import doradztwo
@@ -8,7 +8,7 @@ FIRMA = {'stan': 'w_rejestrze', 'podmiot': 'DOM MAKLERSKI X S.A.', 'panstwo': 'P
 MARKA = {'stan': 'spoza_rejestru', 'podmiot': 'X Europe Ltd', 'panstwo': 'Cypr', 'lista': 'notyfikowane_zagraniczne'}
 OBCY = {'stan': 'poza_listami', 'podmiot': None, 'panstwo': None, 'lista': None}
 
-# text, register result, expected codes
+# tekst, wynik rejestru, oczekiwane kody
 PROBY = [
     ('Zyskaj 12% rocznie na naszym portfelu.', FIRMA, ['zysk_bez_ryzyka']),
     ('Zyskaj 12% rocznie. Inwestowanie wiąże się z ryzykiem utraty kapitału.', FIRMA, []),

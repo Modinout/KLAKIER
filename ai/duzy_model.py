@@ -1,4 +1,4 @@
-# Client of the big open model behind an OpenAI-compatible chat completions endpoint.
+# Klient dużego otwartego modelu za punktem końcowym chat completions zgodnym z OpenAI.
 import json
 import os
 
@@ -22,5 +22,5 @@ def zapytaj(prosba, temperature, max_tokens):
 
 
 def obiekt_json(odpowiedz):
-    # Models often wrap the object in prose or a code fence.
+    # Modele często owijają obiekt w prozę albo w blok kodu.
     return json.loads(odpowiedz[odpowiedz.index('{'):odpowiedz.rindex('}') + 1])

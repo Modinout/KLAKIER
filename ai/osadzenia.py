@@ -1,4 +1,4 @@
-# Turns the text of an ad into a short vector, so that similar ads and repeats can be found by cosine.
+# Zamienia tekst reklamy na krótki wektor, żeby podobne reklamy i powtórki dało się znaleźć kosinusem.
 #   from osadzenia import osadz
 #   osadz('Zainwestuj 900 zł i zarabiaj 20 000 zł miesięcznie') -> 64 numbers of unit length
 import json
@@ -13,8 +13,8 @@ from ucz import REKLAMY
 
 WYMIARY = 64
 
-# Fitted once on the file shipped with the service and never again: vectors stored earlier
-# stay comparable with new ones after the classifier learns from the analysts.
+# Dopasowany raz na pliku dostarczonym z usługą i już nigdy więcej: wektory zapisane wcześniej
+# pozostają porównywalne z nowymi, gdy klasyfikator uczy się od analityków.
 with REKLAMY.open(encoding='utf-8') as _plik:
     _teksty = [json.loads(linia)['tekst'] for linia in _plik if linia.strip()]
 _model = make_pipeline(
@@ -25,7 +25,7 @@ _model = make_pipeline(
 
 
 def osadz(tekst):
-    """Unit vector of the text, or None when there is no text to place."""
+    """Wektor jednostkowy tekstu albo None, gdy nie ma tekstu do umieszczenia."""
     tekst = oczysc(tekst)
     if not tekst.strip():
         return None

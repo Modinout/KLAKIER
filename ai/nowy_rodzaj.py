@@ -1,4 +1,4 @@
-# A new scam type from a one-sentence description: the big model writes example ads, the small models learn them.
+# Nowy rodzaj oszustwa z opisu w jednym zdaniu: duży model pisze przykładowe reklamy, małe modele się ich uczą.
 import dopisane
 import duzy_model
 from przewidz import przeucz
@@ -22,7 +22,7 @@ def napisz(opis):
     teksty = []
     for styl in STYLE:
         odpowiedz = duzy_model.obiekt_json(duzy_model.zapytaj(PROSBA.format(opis=opis, styl=styl), temperature=1.0, max_tokens=6000))
-        # The model sometimes misspells the key, so take the first list whatever it is called.
+        # Model czasem przekręca nazwę klucza, więc bierzemy pierwszą listę, jakkolwiek się nazywa.
         reklamy = next((v for v in odpowiedz.values() if isinstance(v, list)), [])
         teksty += [oczysc(r) for r in reklamy if isinstance(r, str)]
     teksty = [t for t in teksty if t.strip()]

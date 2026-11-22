@@ -1,5 +1,5 @@
-# Trains the verdict model on every ad (scam or not), and the scam type model on the ads with a named type plus
-# the ads that are not scams. Those teach it when to name no type; a scam without a type teaches it nothing.
+# Uczy model werdyktu na każdej reklamie (oszustwo lub nie), a model rodzaju oszustwa na reklamach z nazwanym rodzajem oraz
+# na reklamach, które nie są oszustwami. Te uczą go, kiedy nie nazywać rodzaju; oszustwo bez rodzaju niczego go nie uczy.
 import json
 import pathlib
 
@@ -20,7 +20,7 @@ def wiersze():
 
 
 def _model_werdyktu():
-    # Character pieces survive spelling tricks and OCR errors, words and word pairs carry the phrases.
+    # Fragmenty znaków przeżywają sztuczki z pisownią i błędy OCR, a słowa i pary słów niosą frazy.
     znaki = TfidfVectorizer(analyzer='char_wb', ngram_range=(2, 5), sublinear_tf=True, min_df=2, preprocessor=normalizuj)
     slowa = TfidfVectorizer(analyzer='word', ngram_range=(1, 2), sublinear_tf=True, min_df=2, preprocessor=normalizuj,
                             token_pattern=r'(?u)\b\w+\b')

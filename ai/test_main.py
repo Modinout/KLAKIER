@@ -1,4 +1,4 @@
-# Endpoint test of the ai service, the big model replaced by fakes. Run: docker compose run --rm ai python test_main.py
+# Test punktów końcowych usługi ai, duży model zastąpiony atrapami. Uruchom: docker compose run --rm ai python test_main.py
 import json
 import os
 import sys
@@ -46,7 +46,7 @@ sprawdz(len(odp.json()) == 4, 'GET /rodzaje', len(odp.json()), 'names')
 
 
 def pisz_reklamy(prosba, temperature, max_tokens):
-    # A misspelled key, as the model sometimes writes it.
+    # Przekręcony klucz, tak jak model czasem go pisze.
     return json.dumps({'rekalmy': [f'Wygrałeś {n} 000 zł w loterii! Odbierz nagrodę po wpłacie opłaty {n * 10} zł, zostało {n} godzin.'
                                    for n in range(1, 11)]}, ensure_ascii=False)
 

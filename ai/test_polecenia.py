@@ -1,4 +1,4 @@
-# Check of the M1 rule on referral links in video descriptions. Run: docker compose run --rm ai python test_polecenia.py
+# Sprawdzenie reguły M1 o linkach polecających w opisach filmów. Uruchom: docker compose run --rm ai python test_polecenia.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 from fastapi.testclient import TestClient
@@ -16,7 +16,7 @@ LINK_SIEC = 'Broker do ETF bez prowizji:\nhttps://brokerx.prf.hn/click/camref:11
 KOD_PL = 'Rejestrując się w XTB z kodem "BUNKIER" otrzymasz darmowy kurs inwestowania.'
 KOD_EN = 'Get a free fractional share worth up to £100 with Trading 212, use promo code ISMAIL when you sign up.'
 
-# text, register result, expected codes
+# tekst, wynik rejestru, oczekiwane kody
 PROBY = [
     (LINK_212, OBCY, KOD),
     (LINK_REF, OBCY, KOD),

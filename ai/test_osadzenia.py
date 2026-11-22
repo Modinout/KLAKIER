@@ -1,4 +1,4 @@
-# Check of the ad vectors. Run: docker compose run --rm ai python test_osadzenia.py
+# Sprawdzenie wektorów reklam. Uruchom: docker compose run --rm ai python test_osadzenia.py
 import json
 import subprocess
 import sys
@@ -16,7 +16,7 @@ def cos(a, b):
 
 wektor = osadz(REKLAMA)
 bliska, daleka = cos(wektor, osadz(ZMIENIONA)), cos(wektor, osadz(INNA))
-# A second interpreter has to place the same text at the same point, or stored vectors would go stale.
+# Drugi interpreter musi umieścić ten sam tekst w tym samym punkcie, inaczej zapisane wektory się zdezaktualizują.
 drugi = json.loads(subprocess.run(
     [sys.executable, '-c', 'import json, sys, osadzenia; print(json.dumps(osadzenia.osadz(sys.argv[1])))', REKLAMA],
     capture_output=True, text=True, encoding='utf-8', check=True,

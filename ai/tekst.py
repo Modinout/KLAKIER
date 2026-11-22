@@ -1,5 +1,5 @@
-# Shared text cleaning for training (ucz.py) and prediction (przewidz.py): removes what tells the SOURCE of an ad
-# rather than its message (interface buttons, the "page name / Sponsored" header, Ad Library id lines).
+# Wspólne czyszczenie tekstu do uczenia (ucz.py) i predykcji (przewidz.py): usuwa to, co zdradza ŹRÓDŁO reklamy,
+# a nie jej treść (przyciski interfejsu, nagłówek "nazwa strony / Sponsored", linie z id z Ad Library).
 import re
 import unicodedata
 
@@ -8,7 +8,7 @@ _PRZYCISKI = {'learn more', 'see details', 'sign up', 'download', 'install now',
               'sprawdź', 'visit advertiser', 'skip', 'obejrzyj w youtube', 'active', 'różne wersje tej reklamy'}
 _WZORY = re.compile(r'^(spon[sz]or\w*|dowiedz się\W*|więcej infor\w*\W*|identyfikator\b.*|library id\b.*|[\d,. ]+ people like this)$')
 _NIEWIDOCZNE = re.compile('[­᠎​-‏‪-‮⁠-⁤﻿]')
-# Cyrillic and Greek letters that look like Latin ones, after lowercasing.
+# Litery cyrylicy i greckie podobne do łacińskich, po zamianie na małe.
 _PODOBNE = str.maketrans('аеіјорсухѕԁһӏвкмнтαεορτυνκχ', 'aeijopcyxsdhlbkmhtaeoptuvkx')
 _BEZ_ROZKLADU = str.maketrans('łđø', 'ldo')
 
@@ -20,7 +20,7 @@ def _interfejs(s):
 def oczysc(tekst):
     linie = [s.strip() for s in tekst.split('\n')]
     male = [s.lower() for s in linie]
-    # Facebook layout: page name, then the "Sponsored" marker -> the message starts after the marker
+    # Układ Facebooka: nazwa strony, potem znacznik "Sponsored" -> treść zaczyna się po znaczniku
     for k in range(min(3, len(male))):
         if k and re.match(r'spon[sz]or', male[k]):
             linie, male = linie[k + 1:], male[k + 1:]
@@ -29,8 +29,8 @@ def oczysc(tekst):
 
 
 def normalizuj(tekst):
-    # Scam ads dodge keyword filters with styled Unicode letters, look-alike letters and invisible characters,
-    # and often drop Polish diacritics. The model sees every such spelling as the plain one.
+    # Reklamy oszustów omijają filtry słów kluczowych stylizowanymi literami Unicode, literami łudząco podobnymi
+    # i niewidocznymi znakami, a często gubią polskie znaki. Model widzi każdą taką pisownię jako zwykłą.
     t = unicodedata.normalize('NFKC', tekst).lower()
     t = _NIEWIDOCZNE.sub('', t).translate(_PODOBNE)
     t = ''.join(z for z in unicodedata.normalize('NFD', t) if not unicodedata.combining(z))

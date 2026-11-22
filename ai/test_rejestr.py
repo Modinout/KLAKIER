@@ -1,4 +1,4 @@
-# Check of the KNF register match. Run: docker compose run --rm ai python test_rejestr.py
+# Sprawdzenie dopasowania do rejestru KNF. Uruchom: docker compose run --rm ai python test_rejestr.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 from rejestr import sprawdz, sygnaly

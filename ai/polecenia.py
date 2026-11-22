@@ -1,5 +1,5 @@
-# Module M1: finds a video description that sends viewers to a financial service with a referral link or code
-# and says nowhere that it is an ad or a paid cooperation.
+# Moduł M1: wykrywa opis filmu, który kieruje widzów do usługi finansowej z linkiem lub kodem polecającym
+# i nigdzie nie mówi, że to reklama albo płatna współpraca.
 #   from polecenia import sygnaly
 #   sygnaly('Załóż konto: https://www.trading212.com/join/ABC', {'stan': 'poza_listami', ...}, 'youtube')
 #   -> [{'modul': 'M1', 'kod': 'polecenie_bez_oznaczenia', 'opis': '...', 'podstawa': '...'}]
@@ -25,9 +25,9 @@ SIECI_AFILIACYJNE = (
     'awin1.com', 'tradedoubler.com', 'prf.hn', 'pxf.io', 'sjv.io', '7eer.net', 'linksynergy.com', 'shareasale.com',
     'convertiser.com', 'mylead.global',
 )
-# Brokers' own referral domains carry no referral word in the address.
+# Własne domeny polecające brokerów nie mają w adresie słowa o poleceniu.
 DOMENY_POLECEN = ('geolink.xtb.com', 'link-pso.xtb.com', 'freedom24.club')
-# An invite to a chat, a subreddit or a channel page is not a referral.
+# Zaproszenie do czatu, subreddita albo na stronę kanału nie jest poleceniem.
 SPOLECZNOSCI = ('youtube.com', 'youtu.be', 'discord.com', 'discord.gg', 't.me', 'whatsapp.com', 'reddit.com', 'patreon.com')
 
 KOD = re.compile(
@@ -36,7 +36,7 @@ KOD = re.compile(
     r'\s*[:–-]?\s*(?P<cudzyslow>["\'“”„«»]?)(?P<kod>\w{3,20})["\'“”„«»]?',
     re.I,
 )
-# Capitalised words that follow "kod" in finance talk without being a referral code.
+# Słowa pisane wielkimi literami, które w tekstach o finansach stoją po "kod", choć nie są kodem polecającym.
 NIE_KODY = {'ISIN', 'BLIK', 'PIN', 'SMS', 'QR', 'LEI', 'SWIFT', 'BIC', 'IBAN', 'CVV', 'PKD'}
 
 FINANSE = re.compile(
@@ -46,17 +46,17 @@ FINANSE = re.compile(
     r'|\bkantor\w*|\bwalut\w*|\bxtb\b|\bfreedom24\b|\blightyear\b|\brevolut\b|\bibkr\b|\betoro\b|\bdegiro\b|\bsaxo\b'
     r'|\bbinance\b|\bbybit\b|\bmexc\b|\bbingx\b|\bcoinbase\b|\bkraken\b|\bwalutomat\b|\bmbank\b|\bplus500\b'
 )
-# Parts of a host name that mark a financial service: vantagemarkets.com, fusionmarkets.com, gatesfx.com.
+# Fragmenty nazwy hosta, które znaczą usługę finansową: vantagemarkets.com, fusionmarkets.com, gatesfx.com.
 HOSTY_FINANSOWE = (
     'trading', 'trader', 'invest', 'broker', 'bank', 'markets', 'forex', 'fx', 'crypto', 'coin', 'stock', 'financ',
     'xtb', 'freedom24', 'lightyear', 'revolut', 'ibkr', 'etoro', 'degiro', 'saxo', 'binance', 'bybit', 'mexc',
     'bingx', 'kraken', 'walutomat', 'wise.com', 'mbank', 'plus500', 'myfund', 'parqet',
 )
-# A discount on a ticket to an investing conference is not a referral to a financial service.
+# Zniżka na bilet na konferencję o inwestowaniu nie jest poleceniem usługi finansowej.
 WYDARZENIE = re.compile(r'bilet\w*|ticket\w*|konferencj\w*|kongres\w*')
 _OTOCZENIE = 150
 
-# Bare "prowizja" or "commission" is not a disclosure: broker videos talk about fees all the time.
+# Samo "prowizja" lub "commission" nie jest oznaczeniem: filmy brokerów ciągle mówią o opłatach.
 OZNACZENIE = re.compile(
     r'\brek[li]am\w*|\badvert\w*|\bsponsor\w*|\bwspółprac\w*|\bwspolprac\w*|\bpartnersk\w*|\bpartnerem\b'
     r'|\bpartner\w* (?:odcink\w*|filmu|materiału|kanału)'
@@ -72,7 +72,7 @@ def w_domenie(host, domeny):
 
 
 def polecajacy(adres):
-    """True when the address carries a referral in its query, its path or its host."""
+    """Prawda, gdy adres niesie polecenie w zapytaniu, ścieżce albo hoście."""
     czesci = urlsplit(adres if '://' in adres else 'https://' + adres)
     host = (czesci.hostname or '').removeprefix('www.')
     if w_domenie(host, SPOLECZNOSCI):
@@ -90,8 +90,8 @@ def polecajacy(adres):
 
 
 def otoczenie(tekst, trafienie):
-    """The line of the match and the line above it, at most 150 characters each way."""
-    # Descriptions list one link per line, often under a heading line that names the service.
+    """Linia trafienia i linia nad nią, najwyżej 150 znaków w każdą stronę."""
+    # Opisy wymieniają po jednym linku w linii, często pod nagłówkiem z nazwą usługi.
     poczatek_linii = tekst.rfind('\n', 0, trafienie.start())
     poczatek = max(tekst.rfind('\n', 0, max(poczatek_linii, 0)) + 1, trafienie.start() - _OTOCZENIE)
     koniec_linii = tekst.find('\n', trafienie.end())
@@ -102,13 +102,13 @@ def otoczenie(tekst, trafienie):
 def finansowy(tekst, trafienie, host=''):
     if any(slowo in host for slowo in HOSTY_FINANSOWE):
         return True
-    # Only the words count: a link's own path or query names whatever its owner chose.
+    # Liczą się tylko słowa: ścieżka i zapytanie linku nazywają to, co wybrał jego właściciel.
     wokol = LINK.sub(' ', otoczenie(tekst, trafienie))
     return bool(FINANSE.search(wokol)) and not WYDARZENIE.search(wokol)
 
 
 def kod_polecajacy(trafienie):
-    """True when the word after "kod" looks like a code: quoted, or written in capitals, and is not a brand."""
+    """Prawda, gdy słowo po "kod" wygląda jak kod: w cudzysłowie albo pisane wielkimi literami i nie jest marką."""
     kod = trafienie.group('kod')
     if kod.upper() in NIE_KODY or kod.casefold() in HOSTY_FINANSOWE:
         return False
@@ -124,11 +124,11 @@ def sygnal(polecenie):
 
 
 def sygnaly(tekst, rejestr, zrodlo):
-    """One finding for a referral to a financial service in a video description with no disclosure."""
-    # A firm from the KNF lists linking its own offer is not an influencer.
+    """Jedno ustalenie dla polecenia usługi finansowej w opisie filmu bez oznaczenia."""
+    # Firma z list KNF linkująca własną ofertę nie jest influencerem.
     if zrodlo != 'youtube' or not tekst or (rejestr and rejestr['stan'] != 'poza_listami'):
         return []
-    # Addresses are cut out first: "partner" or "ref" inside a link is not a disclosure.
+    # Adresy wycina się najpierw: "partner" lub "ref" wewnątrz linku nie jest oznaczeniem.
     if OZNACZENIE.search(LINK.sub(' ', tekst).casefold()):
         return []
     for trafienie in LINK.finditer(tekst):
@@ -137,7 +137,7 @@ def sygnaly(tekst, rejestr, zrodlo):
         if polecajacy(adres) and finansowy(tekst, trafienie, host):
             cytat = re.sub(r'^(?:https?://)?(?:www\.)?', '', adres, flags=re.I)
             return sygnal(f'Opis filmu ma link polecający do {host.removeprefix("www.")} („{cytat}”)')
-    # Links are blanked to the same length, so match positions still point into the original text.
+    # Linki zastępuje się spacjami tej samej długości, więc pozycje trafień nadal wskazują w oryginalny tekst.
     for trafienie in KOD.finditer(LINK.sub(lambda link: ' ' * len(link.group()), tekst)):
         if kod_polecajacy(trafienie) and finansowy(tekst, trafienie):
             return sygnal(f'Opis filmu podaje kod polecający („{" ".join(trafienie.group().split())}”)')

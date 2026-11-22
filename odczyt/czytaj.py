@@ -1,4 +1,4 @@
-# Reads the text from an ad image with PP-OCR on the CPU. The models load once, when this module is imported.
+# Czyta tekst z obrazu reklamy za pomocą PP-OCR na CPU. Modele ładują się raz, przy imporcie tego modułu.
 #   from czytaj import czytaj
 #   czytaj(open('probka.png', 'rb').read())  ->  'Zainwestuj 900 zł i zarabiaj\n20 000 zł miesięcznie\n...'
 import io
@@ -9,15 +9,15 @@ import numpy as np
 from paddleocr import PaddleOCR
 from PIL import Image
 
-# A small file can unpack into a huge bitmap, so the size is read from the header before decoding.
+# Mały plik może się rozpakować w ogromną bitmapę, więc rozmiar czyta się z nagłówka przed dekodowaniem.
 NAJWIECEJ_PIKSELI = 25_000_000
 
-# oneDNN is off: with it this Paddle version fails on the CPU.
-# Four threads: with more, a read took longer and its time varied more on a busy machine.
+# oneDNN wyłączone: z nim ta wersja Paddle zawodzi na CPU.
+# Cztery wątki: przy większej liczbie odczyt trwał dłużej, a jego czas bardziej się wahał na zajętej maszynie.
 _ocr = PaddleOCR(text_detection_model_name='PP-OCRv6_medium_det', text_recognition_model_name='PP-OCRv6_medium_rec',
                  use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=True,
                  device='cpu', enable_mkldnn=False, cpu_threads=4)
-# The predictor must not run in two threads at once.
+# Predyktor nie może działać w dwóch wątkach naraz.
 _kolejka = threading.Lock()
 
 

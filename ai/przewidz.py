@@ -1,14 +1,14 @@
-# Small CPU classifier for the ai service, trained when this module is imported.
+# Mały klasyfikator na CPU dla usługi ai, uczony przy imporcie tego modułu.
 #   from przewidz import przewidz
 #   przewidz('Zainwestuj 900 zl i zarabiaj 20 000 zl miesiecznie')
 #   -> {'werdykt': 'oszustwo', 'prawdopodobienstwa': {'inne': .., 'oszustwo': ..}, 'pewny': True,
 #       'powody': [{'slowo': 'zarabiaj', 'waga': ..}, ..], 'rodzaj': ..}
-# The verdict follows the scam probability alone: 'ok' below PROG_DO_SPRAWDZENIA, 'oszustwo' from PROG_OSZUSTWA,
-# 'do_sprawdzenia' between them or when there is no text. Whether an honest broker ad lacks something the law
-# asks for is checked by the rules of modules M1-M3, not by this model.
-# 'pewny' False = a person rates the ad.
-# A reason is a word whose removal, in every spelling, lowers the scam log-odds by at least PROG_POWODU.
-# Reasons cost one prediction per word, so they are looked for only from PROG_RYZYKA_POWODOW up.
+# Werdykt zależy tylko od prawdopodobieństwa oszustwa: 'ok' poniżej PROG_DO_SPRAWDZENIA, 'oszustwo' od PROG_OSZUSTWA,
+# 'do_sprawdzenia' pomiędzy nimi albo gdy nie ma tekstu. To, czy w uczciwej reklamie brokera brakuje czegoś, czego
+# wymaga prawo, sprawdzają reguły modułów M1-M3, a nie ten model.
+# 'pewny' False = reklamę ocenia człowiek.
+# Powód to słowo, którego usunięcie, w każdej pisowni, obniża logarytm szans oszustwa o co najmniej PROG_POWODU.
+# Powody kosztują jedną predykcję na słowo, więc szuka się ich dopiero od PROG_RYZYKA_POWODOW wzwyż.
 import re
 
 import numpy as np
@@ -24,7 +24,7 @@ PROG_RODZAJU = 0.5
 PROG_POWODU = 0.2
 NAJWIECEJ_POWODOW = 5
 NAJWIECEJ_SLOW = 300
-# Words that tell the reader nothing about the offer: function words, possessives and the labels of sign-up forms.
+# Słowa, które nic nie mówią o ofercie: słowa funkcyjne, zaimki dzierżawcze i etykiety formularzy zapisu.
 NIE_POWODY = {normalizuj(s) for s in (
     'się jak dla oraz lub czy nie jest bez który która które której którego którym których the and for '
     'twój twoja twoje twoją twojego twojej twojemu twoim twoich swój swoja swoje swoją swojego swojej swojemu swoim swoich '
@@ -72,7 +72,7 @@ def _powody(model, tekst, p_oszustwa):
     slowa = tekst.split()
     rdzenie = [_BRZEGI.sub('', s) for s in slowa]
     klucze = [normalizuj(r) for r in rdzenie]
-    # 'ZARABIAJ', 'zarabiaj!' and 'zarabiać' are one candidate: removing only one spelling would leave the word in the text.
+    # 'ZARABIAJ', 'zarabiaj!' i 'zarabiać' to jeden kandydat: usunięcie tylko jednej pisowni zostawiłoby słowo w tekście.
     pokaz = {}
     for rdzen, klucz in zip(rdzenie, klucze):
         if _moze_byc_powodem(klucz):
@@ -80,7 +80,7 @@ def _powody(model, tekst, p_oszustwa):
     kandydaci = list(pokaz)[:NAJWIECEJ_SLOW]
     if not kandydaci:
         return []
-    # The char_wb features ignore the kind of whitespace, so rejoining with spaces changes nothing but the removed word.
+    # Cechy char_wb ignorują rodzaj białych znaków, więc łączenie spacjami zmienia tylko usunięte słowo.
     bez_slowa = [' '.join(s for s, k in zip(slowa, klucze) if k != kandydat) for kandydat in kandydaci]
     p_bez = model.predict_proba(bez_slowa)[:, list(model.classes_).index('oszustwo')]
     wagi = _logit(p_oszustwa) - _logit(p_bez)
@@ -89,7 +89,7 @@ def _powody(model, tekst, p_oszustwa):
 
 
 def _moze_byc_powodem(klucz):
-    # A link or domain is shown with the ad anyway, and a number or a word of one or two letters says nothing alone.
+    # Link albo domena i tak są pokazane przy reklamie, a liczba lub słowo z jednej czy dwóch liter nic same nie mówią.
     return (len(klucz) > 2 and any(z.isalpha() for z in klucz) and not any(z in klucz for z in './@')
             and klucz not in NIE_POWODY)
 

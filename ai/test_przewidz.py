@@ -1,4 +1,4 @@
-# Smoke test of the classifier. Run: docker compose run --rm ai python test_przewidz.py
+# Test dymny klasyfikatora. Uruchom: docker compose run --rm ai python test_przewidz.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import dopisane
@@ -36,7 +36,7 @@ for oczek, tekst in PROBY:
     sprawdz((w['werdykt'] == 'oszustwo') == (oczek == 'oszustwo') and (bool(tekst) or not w['pewny']),
             'expected', oczek.ljust(8), '| got', w['werdykt'].ljust(14), 'scam', format(w['prawdopodobienstwa']['oszustwo'], '.2f'),
             '| pewny', w['pewny'], '|', tekst.replace('\n', ' / ')[:70])
-    # A type the model is unsure of comes back as None, and an ad that is not a scam never gets one.
+    # Rodzaj, którego model nie jest pewien, wraca jako None, a reklama niebędąca oszustwem nigdy go nie dostaje.
     dobrze = w['rodzaj'] is None or (oczek == 'oszustwo' and w['rodzaj'] in rodzaje)
     sprawdz(dobrze, 'rodzaj', w['rodzaj'], '|', tekst.replace('\n', ' / ')[:70])
 
@@ -48,14 +48,14 @@ tekst = PROBY[0][1]
 powody = przewidz(tekst)['powody']
 sprawdz(bool(powody) and all(p['slowo'] in tekst for p in powody), 'powody', [(p['slowo'], round(p['waga'], 2)) for p in powody])
 sprawdz(przewidz(PROBY[3][1])['powody'] == [], 'low-risk ad -> no powody')
-# A reason is a plain word: no punctuation around it, no number, link or form label, each word once.
+# Powód to zwykłe słowo: bez interpunkcji wokół, bez liczby, linku i etykiety formularza, każde słowo raz.
 brudny = 'ZARABIAJ 6 500 zł tygodniowo! Zarabiaj z ORLEN. Gwarantowany dochód. Podaj imię, nazwisko i e-mail: orlen-zysk.pl/start'
 slowa = [p['slowo'] for p in przewidz(brudny)['powody']]
 male = [s.lower() for s in slowa]
 sprawdz(bool(slowa) and all(s.isalpha() and len(s) > 2 for s in slowa) and len(set(male)) == len(male)
         and not {'imię', 'nazwisko'} & set(male), 'plain powody', slowa)
 
-# Styled Unicode letters, look-alike Cyrillic letters and invisible characters must not hide a scam.
+# Stylizowane litery Unicode, podobne litery cyrylicy i niewidoczne znaki nie mogą ukryć oszustwa.
 pogrubione = ''.join(chr(0x1D41A + ord(z) - 97) if 'a' <= z <= 'z' else z for z in tekst)
 for nazwa, wersja in [('math bold letters', pogrubione), ('Cyrillic look-alikes', tekst.translate(str.maketrans('aeopcyx', 'аеорсух'))),
                       ('zero-width spaces', '​'.join(tekst))]:
@@ -67,7 +67,7 @@ sprawdz(w['werdykt'] == 'ok' and w['pewny'], 'ordinary broker ad -> got', w['wer
 pasma = [_werdykt('reklama', p) for p in (0.1, 0.5, 0.9)] + [_werdykt('', 0.9)]
 sprawdz(pasma == ['ok', 'do_sprawdzenia', 'oszustwo', 'do_sprawdzenia'], 'verdict by scam probability, no text last ->', pasma)
 
-# An analyst example must change the verdict after retraining, and removing it must change it back.
+# Przykład analityka musi zmienić werdykt po douczeniu, a jego usunięcie musi go zmienić z powrotem.
 sklep = PROBY[4][1]
 bylo = dopisane.PLIK.exists()
 przed = dopisane.czytaj()

@@ -1,4 +1,4 @@
-# Module M2: checks the text of an investment firm's own ad against the UKNF rules on risk information.
+# Moduł M2: sprawdza tekst reklamy firmy inwestycyjnej z regułami UKNF o informacji o ryzyku.
 #   from wymogi import sygnaly
 #   sygnaly('Zysk 12% rocznie bez wysiłku.', {'stan': 'w_rejestrze', ...})
 #   -> [{'modul': 'M2', 'kod': 'zysk_bez_ryzyka', 'opis': '...', 'podstawa': '...'}]
@@ -11,8 +11,8 @@ ZYSK = re.compile(
     r'|\bzysk\w* (?:gwarantowan\w+|pewn\w+)|\bgwarantowan\w+ (?:zysk\w*|doch\w+)'
     r'|\bzarob\w*|\bzarabia\w*|\bpasywn\w+ doch\w+|\bguaranteed (?:profits?|returns?)|\bearn (?:up to )?\d'
 )
-# Interest on an account or a deposit and a welcome bonus are not gains from investing:
-# the advertising rules of regulation 2017/565 do not cover them.
+# Odsetki od konta lub lokaty i bonus powitalny nie są zyskiem z inwestowania:
+# reguły reklamowe rozporządzenia 2017/565 ich nie obejmują.
 ODSETKI = re.compile(r'\blokat\w*|\boprocentowan\w*|\bodset\w*|\boszczędn\w*|\bpromocj\w*|\binterest\b|\bw skali roku')
 RYZYKO = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*|\brisk\w*|\blos[es]\w*')
 
@@ -21,11 +21,11 @@ PODSTAWA_CFD = (
     'zastąpiona krajową interwencją produktową KNF'
 )
 CFD = re.compile(r'\bcfd\b|\bkontrakt\w+ na różnic\w+|\bcontracts? for differences?\b|\bforex\b|\bfx\b')
-# Forex alone can be a currency exchange office; with trading words it is leveraged trading.
+# Samo forex może być kantorem walut; ze słowami o handlu to handel z dźwignią.
 HANDEL = re.compile(r'\bhandl\w*|\btrading\w*|\btrade\b|\btraduj\w*|\bdźwigni\w*|\bleverage\b|\bspread\w*|\bbroker\w*')
 KANTOR = re.compile(r'\bkantor\w*|\bwymian\w+ walut\w*')
 # "74% rachunków inwestorów detalicznych odnotowuje straty", "74% of retail investor accounts lose money",
-# and the short form allowed where the number of characters is limited.
+# oraz krótka forma dozwolona tam, gdzie liczba znaków jest ograniczona.
 OSTRZEZENIE_CFD = re.compile(
     r'\d+(?:[.,]\d+)?\s*%[^.!?]{0,120}(?:rachunk\w*|\w*kont\w*|accounts?|cuentas|inwestor\w*|investors?)'
     r'[^.!?]{0,120}(?:strat\w*|trac\w*|los[es]\w*|verlier\w*|pierden)'
@@ -48,14 +48,14 @@ NADZOR = re.compile(r'\bknf\b|komisj\w+ nadzoru finansowego|\bcysec\b|\bfca\b|\b
 BEZPIECZENSTWO = re.compile(r'\bbezpiecz\w*|\bgwaran\w*|\bpewn\w+ (?:zysk\w*|inwestycj\w*)|\bsafe\w*|\bsecure\b|\bguarantee\w*')
 
 _ZDANIE = re.compile(r'[^.!?\n]+')
-# A disclaimer names a thing only to deny it: "nie stanowi rekomendacji", "to nie tylko ulgi podatkowe".
+# Zastrzeżenie nazywa rzecz tylko po to, by jej zaprzeczyć: "nie stanowi rekomendacji", "to nie tylko ulgi podatkowe".
 _ZAPRZECZENIE = re.compile(r'\bnie\b|\bani\b|\bbez\b|\bżadn\w+|\bnot\b|\bno\b|\bnone\b|\bnothing\b|\bnever\b')
-# Counted in characters, not sentences: disclaimers are full of "art." and "S.A.".
+# Liczone w znakach, nie w zdaniach: zastrzeżenia są pełne "art." i "S.A.".
 _OKNO = 120
 
 
 def twierdzenie(wzor, male, przyjmij=lambda trafienie: True):
-    """The first match that the words before it do not deny and that the caller accepts."""
+    """Pierwsze trafienie, któremu nie przeczą słowa przed nim i które przyjmuje wywołujący."""
     for trafienie in wzor.finditer(male):
         if not _ZAPRZECZENIE.search(male[max(0, trafienie.start() - _OKNO):trafienie.start()]) and przyjmij(trafienie):
             return trafienie
@@ -63,12 +63,12 @@ def twierdzenie(wzor, male, przyjmij=lambda trafienie: True):
 
 
 def cytat(tekst, trafienie):
-    """The sentence around a match, as written in the ad."""
+    """Zdanie wokół trafienia, tak jak jest napisane w reklamie."""
     for zdanie in _ZDANIE.finditer(tekst):
         if zdanie.start() <= trafienie.start() < zdanie.end():
             break
     poczatek, koniec = zdanie.start(), zdanie.end()
-    # Page text often has no full stops: then the quote is the words around the match.
+    # Tekst strony często nie ma kropek: wtedy cytatem są słowa wokół trafienia.
     if koniec - poczatek > 200:
         poczatek, koniec = max(poczatek, trafienie.start() - 80), min(koniec, trafienie.end() + 80)
     return ' '.join(tekst[poczatek:koniec].split())
@@ -78,15 +78,15 @@ def sygnal(kod, opis, podstawa):
     return {'modul': 'M2', 'kod': kod, 'opis': opis, 'podstawa': podstawa}
 
 
-# A video description and a page of a firm's site are not ads: the warning may stand in the film or in a footer.
+# Opis filmu i strona serwisu firmy nie są reklamami: ostrzeżenie może stać w filmie albo w stopce.
 NIE_REKLAMY = ('youtube', 'strony_doradcow')
-# A caption with no risk line proves nothing: the warning usually stands in the picture, which is not read here.
-# A text that does speak of risk and leaves the number out is the advertiser's own shortened warning.
+# Podpis bez linii o ryzyku niczego nie dowodzi: ostrzeżenie zwykle stoi na obrazku, którego tu się nie czyta.
+# Tekst, który mówi o ryzyku, a pomija liczbę, to własne skrócone ostrzeżenie reklamodawcy.
 MOWA_O_RYZYKU = re.compile(r'\bryzyk\w*|\brisk\w*|\brisiko\w*|\briesgo\w*|\bstracić\b|\butrat\w+ (?:kapitału|pieniędzy|środków)')
 
 
 def sygnaly(tekst, rejestr, zrodlo=None):
-    """Findings on the risk information, only for a payer that is an investment firm from the KNF lists."""
+    """Ustalenia o informacji o ryzyku, tylko dla płatnika będącego firmą inwestycyjną z list KNF."""
     if not tekst or not rejestr or rejestr['stan'] not in ('w_rejestrze', 'spoza_rejestru'):
         return []
     male = tekst.casefold()
@@ -101,7 +101,7 @@ def sygnaly(tekst, rejestr, zrodlo=None):
         ))
 
     cfd = twierdzenie(CFD, male, lambda t: t.group() not in ('forex', 'fx') or (HANDEL.search(male) and not KANTOR.search(male)))
-    # Text read from an image breaks the warning over several lines.
+    # Tekst odczytany z obrazu łamie ostrzeżenie na kilka linii.
     o_ryzyku = zrodlo not in NIE_REKLAMY and MOWA_O_RYZYKU.search(male)
     if cfd and o_ryzyku and not OSTRZEZENIE_CFD.search(' '.join(male.split())):
         wynik.append(sygnal(

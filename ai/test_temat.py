@@ -1,4 +1,4 @@
-# Check of the topic gate. Run: docker compose run --rm ai python test_temat.py
+# Sprawdzenie bramki tematu. Uruchom: docker compose run --rm ai python test_temat.py
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 from temat import o_inwestycjach, platnik_do_sprawdzenia
@@ -6,7 +6,7 @@ from temat import o_inwestycjach, platnik_do_sprawdzenia
 OBCY = {'stan': 'poza_listami', 'podmiot': None, 'panstwo': None, 'lista': None}
 MARKA = {'stan': 'spoza_rejestru', 'podmiot': 'X Europe Ltd', 'panstwo': 'Cypr', 'lista': 'notyfikowane_zagraniczne'}
 
-# text, is it about investing
+# tekst, czy dotyczy inwestowania
 TEMATY = [
     ('Lowest spread forex broker', True),
     ('Forex-Investitionskonto mit niedrigen Gebühren', True),
@@ -20,7 +20,7 @@ TEMATY = [
     ('Kurs języka angielskiego online. Zapisz się na pierwszą lekcję za darmo już dziś.', False),
     ('Szukamy kierowców kat. C+E. Praca od zaraz, umowa o pracę, nowe ciągniki.', False),
 ]
-# text, payer, register result, does the register finding stay
+# tekst, płatnik, wynik rejestru, czy ustalenie z rejestru zostaje
 PLATNICY = [
     ('', 'Nieznana Sp. z o.o.', OBCY, False),
     ('Revolut Install Install', 'Revolut Ltd', MARKA, True),

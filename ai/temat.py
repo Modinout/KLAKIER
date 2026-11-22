@@ -1,4 +1,4 @@
-# Tells whether a text is about investment services or instruments at all.
+# Mówi, czy tekst w ogóle dotyczy usług lub instrumentów inwestycyjnych.
 #   from temat import o_inwestycjach
 #   o_inwestycjach('Lowest spread forex broker') -> True
 #   o_inwestycjach('Giełda odpadów: sprzedaj złom i makulaturę') -> False
@@ -18,12 +18,11 @@ INSTRUMENTY = re.compile(
 INWESTOWANIE = re.compile(
     r'\b(?:za)?inwest\w*|\binvest\w*|\bzarabiaj\w*|\bzysk\w*|\bpomnaż\w*|\bpasywn\w+ doch\w+|\bwypłać\b'
 )
-# Property and goods are sold with the same verbs but are no business of the financial supervisor.
+# Nieruchomości i towary sprzedaje się tymi samymi czasownikami, ale to nie sprawa nadzoru finansowego.
 INNE_RYNKI = re.compile(
     r'\bnieruchomo\w*|\bmieszkan\w*|\bapartament\w*|\bdział\w+ (?:budowlan\w+|roln\w+)|\bgrunt\w*|\bdewelop\w*'
     r'|\bimmobili\w*|\breal estate\b|\bproperty\b|\bodpad\w*|\bzłom\w*|\bsurowc\w+ wtórn\w+'
 )
-
 
 
 def o_inwestycjach(tekst):
@@ -34,9 +33,9 @@ def o_inwestycjach(tekst):
 
 
 def platnik_do_sprawdzenia(tekst, platnik, rejestr):
-    """Whether a register finding about the payer makes sense for an ad with this text."""
-    # A brand that the register knows under another entity sells financial services whatever the ad says.
+    """Czy ustalenie z rejestru o płatniku ma sens dla reklamy z tym tekstem."""
+    # Marka, którą rejestr zna pod innym podmiotem, sprzedaje usługi finansowe niezależnie od tego, co mówi reklama.
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         return True
-    # A text too short to tell its topic gives no finding: a missing licence matters only for an investment offer.
+    # Tekst zbyt krótki, by poznać temat, nie daje ustalenia: brak licencji ma znaczenie tylko dla oferty inwestycyjnej.
     return o_inwestycjach(tekst + ' ' + (platnik or ''))

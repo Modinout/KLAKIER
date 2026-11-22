@@ -1,4 +1,4 @@
-# Ads added at run time: analyst examples and generated ads of a new scam type.
+# Reklamy dopisane w trakcie działania: przykłady analityków.
 import json
 import pathlib
 

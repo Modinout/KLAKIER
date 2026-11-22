@@ -1,4 +1,4 @@
-# Second opinion on one ad from the big model.
+# Druga opinia dużego modelu o jednej reklamie.
 import duzy_model
 
 WERDYKTY = ('ok', 'do_sprawdzenia', 'oszustwo')

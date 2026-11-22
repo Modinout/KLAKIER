@@ -1,4 +1,4 @@
-# Smoke test of the reader. Run: docker compose run --rm odczyt python test_czytaj.py
+# Test dymny czytnika. Uruchom: docker compose run --rm odczyt python test_czytaj.py
 import io
 import sys
 sys.stdout.reconfigure(encoding='utf-8')

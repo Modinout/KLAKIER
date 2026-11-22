@@ -21,9 +21,9 @@ from rejestr import sprawdz, sygnaly
 from temat import platnik_do_sprawdzenia
 
 PROGI = pathlib.Path(__file__).with_name('progi.csv')
-# The classifier was trained and measured on ads. A video description is another kind of text, so it is not scored.
+# Klasyfikator uczono i mierzono na reklamach. Opis filmu to inny rodzaj tekstu, więc nie jest oceniany.
 BEZ_OCENY = {'werdykt': 'ok', 'prawdopodobienstwa': {'oszustwo': 0.0}, 'pewny': True, 'powody': [], 'rodzaj': None}
-# Two retrainings at once would overwrite each other's examples file.
+# Dwa jednoczesne douczania nadpisałyby sobie nawzajem plik z przykładami.
 _uczenie = threading.Lock()
 
 app = FastAPI(title='KLAKIER AI')
@@ -101,8 +101,8 @@ def ocen_drugim_sedzia(material: Tekst):
 
 @app.post('/ucz')
 def ucz_na_przykladach(zadanie: Przyklady):
-    # Each call carries the analysts' whole set, so it replaces the one stored before.
-    # An ad left for checking has no verdict yet, and the model would learn it as no scam.
+    # Każde wywołanie niesie cały zestaw analityków, więc zastępuje ten zapisany wcześniej.
+    # Reklama zostawiona do sprawdzenia nie ma jeszcze werdyktu, a model nauczyłby się jej jako nie-oszustwa.
     analityka = []
     for przyklad in zadanie.przyklady:
         tekst = oczysc(przyklad.tekst)
@@ -136,7 +136,7 @@ def dodaj_rodzaj(rodzaj: NowyRodzaj):
 def progi():
     with PROGI.open(encoding='utf-8') as plik:
         naglowek, *wiersze = csv.reader(plik, delimiter=';')
-    # The header names end with the test set sizes: oszustwa_zlapane_z_30, falszywe_alarmy_z_177.
+    # Nazwy w nagłówku kończą się rozmiarami zbioru testowego: oszustwa_zlapane_z_30, falszywe_alarmy_z_177.
     return {
         'oszustw': int(naglowek[1].rsplit('_', 1)[1]),
         'uczciwych': int(naglowek[2].rsplit('_', 1)[1]),

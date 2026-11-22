@@ -1,5 +1,5 @@
-# Checks the payer of an ad against the four KNF lists of investment firms in rejestr_knf.csv,
-# then against the ESMA register of crypto-asset service providers in rejestr_mica.csv.
+# Sprawdza płatnika reklamy na czterech listach firm inwestycyjnych KNF w rejestr_knf.csv,
+# potem w rejestrze ESMA dostawców usług w zakresie kryptoaktywów w rejestr_mica.csv.
 #   from rejestr import sprawdz
 #   sprawdz('Tickmill Ltd')
 #   -> {'stan': 'spoza_rejestru', 'podmiot': 'Tickmill Europe Ltd | Vipro Markets Ltd', 'panstwo': 'Cypr', 'lista': 'notyfikowane_zagraniczne'}
@@ -25,13 +25,13 @@ KRAJE = {
     'sg', 'singapore', 'hk', 'canada', 'ca', 'seychelles', 'sc', 'bvi', 'ae', 'za',
 }
 
-# Words that tell apart entities of one brand (eToro Group vs Etoro Europe), not brands.
+# Słowa odróżniające podmioty jednej marki (eToro Group vs Etoro Europe), a nie marki.
 OGOLNE = KRAJE | {
     'global', 'group', 'international', 'int', 'markets', 'market', 'financial', 'finance',
     'services', 'service', 'securities', 'holdings', 'holding', 'operations', 'technology', 'technologies',
 }
 
-# Words too common to point at one firm: a name made only of them names no brand.
+# Słowa zbyt pospolite, by wskazać jedną firmę: nazwa złożona tylko z nich nie nazywa żadnej marki.
 POSPOLITE = {
     'trade', 'trading', 'trader', 'capital', 'invest', 'investment', 'investments', 'prime', 'first', 'alpha',
     'asset', 'assets', 'wealth', 'management', 'partners', 'fx', 'forex', 'bank', 'broker', 'brokers', 'direct',
@@ -44,7 +44,7 @@ _NAWIAS = re.compile(r'\(([^)]*)\)')
 
 
 def slowa(nazwa):
-    # Dots go without a space so that S.A. and SA read the same.
+    # Kropki znikają bez spacji, żeby S.A. i SA czytały się tak samo.
     tekst = re.sub(r'[\W_]+', ' ', nazwa.casefold().replace('.', ''))
     return ' '.join(tekst.split())
 
@@ -54,7 +54,7 @@ def normalizuj(nazwa):
 
 
 def klucz(nazwa):
-    """Name for comparison. One made only of common words keeps its legal form: DOM MAKLERSKI INC S.A."""
+    """Nazwa do porównania. Ta złożona tylko z pospolitych słów zachowuje formę prawną: DOM MAKLERSKI INC S.A."""
     n = normalizuj(nazwa)
     if n and set(n.split()) <= POSPOLITE | OGOLNE:
         return slowa(nazwa)
@@ -62,7 +62,7 @@ def klucz(nazwa):
 
 
 def nazwy(wpis):
-    """All names of a register entry: KNF joins alternatives with ' | ' and puts another full name in brackets."""
+    """Wszystkie nazwy wpisu rejestru: KNF łączy warianty przez ' | ' i drugą pełną nazwę podaje w nawiasie."""
     wszystkie = []
     for czesc in wpis.split(' | '):
         inne = [n for n in _NAWIAS.findall(czesc) if normalizuj(n) != slowa(n)]
@@ -78,18 +78,18 @@ def rdzen(nazwa):
 
 
 def wspolne(a, b):
-    """How many brand words two name cores share, 0 when they are different brands."""
+    """Ile słów marki mają wspólnych dwa rdzenie nazw, 0 gdy to różne marki."""
     if not a or not b:
         return 0
     krotszy, dluzszy = sorted([a, b], key=lambda r: (len(r), len(r[0])))
     if dluzszy[:len(krotszy)] == krotszy:
         if set(krotszy) <= POSPOLITE:
             return 0
-        # A short brand word followed by another word is mostly a person or another product: tom, beta.
+        # Krótkie słowo marki z kolejnym słowem to najczęściej osoba albo inny produkt: tom, beta.
         if len(krotszy) == 1 and len(krotszy[0]) < 5 and len(dluzszy) > 1:
             return 0
         return len(krotszy)
-    # A one-word brand with a country glued on: plus500 and plus500cy, but not revolut and revolution.
+    # Jednowyrazowa marka z doklejonym krajem: plus500 i plus500cy, ale nie revolut i revolution.
     marka = krotszy[0]
     doklejone = dluzszy[0][len(marka):]
     if len(krotszy) == 1 and len(marka) >= 5 and marka not in POSPOLITE and dluzszy[0].startswith(marka) and doklejone in OGOLNE:
@@ -104,21 +104,21 @@ def wynik(stan, wpis=None):
 
 with pathlib.Path(__file__).with_name('rejestr_knf.csv').open(encoding='utf-8', newline='') as _plik:
     _NAZWY = [(wpis, nazwa) for wpis in csv.DictReader(_plik, delimiter=';') for nazwa in nazwy(wpis['nazwa']) if nazwa]
-# Reversed so that a name listed twice points at its first entry.
+# Odwrócone, żeby nazwa wymieniona dwa razy wskazywała pierwszy wpis.
 _PO_NAZWIE = {nazwa: wpis for wpis, nazwa in reversed(_NAZWY)}
 
-# Brands and short names of listed entities. A name misspelled against the register fails here, at import.
+# Marki i krótkie nazwy podmiotów z list. Nazwa z błędem względem rejestru kończy się błędem tutaj, przy imporcie.
 with pathlib.Path(__file__).with_name('marki_knf.csv').open(encoding='utf-8', newline='') as _plik:
     _MARKI = {klucz(r['marka']): _PO_NAZWIE[klucz(r['nazwa_w_rejestrze'])] for r in csv.DictReader(_plik, delimiter=';')}
 
-# Crypto-asset service providers authorised in an EU state under MiCA, from the ESMA interim register.
-# They may serve Poland on that licence, so they are not on the KNF lists.
+# Dostawcy usług w zakresie kryptoaktywów z zezwoleniem w państwie UE na mocy MiCA, z przejściowego rejestru ESMA.
+# Mogą obsługiwać Polskę na tej licencji, więc nie ma ich na listach KNF.
 STAN_MICA = '18.11.2026'
 with pathlib.Path(__file__).with_name('rejestr_mica.csv').open(encoding='utf-8', newline='') as _plik:
     _MICA = [{'nazwa': r['nazwa'], 'marka': r['marka'], 'panstwo': r['panstwo'], 'lista': 'mica'}
              for r in csv.DictReader(_plik, delimiter=';')]
 _MICA_PO_NAZWIE = {klucz(w['nazwa']): w for w in reversed(_MICA)}
-# A trade name stands for the licensed entity only when the payer gives no legal form: Revolut, not Revolut Ltd.
+# Nazwa handlowa oznacza podmiot z licencją tylko wtedy, gdy płatnik nie podaje formy prawnej: Revolut, a nie Revolut Ltd.
 _MICA_PO_MARCE = {klucz(w['marka']): w for w in reversed(_MICA) if klucz(w['marka'])}
 
 
@@ -126,14 +126,14 @@ def sprawdz(reklamodawca):
     nazwa = klucz(reklamodawca or '')
     if not nazwa:
         return None
-    # A brand with a country is the brand itself, but with a legal form it is another entity: Trading 212 UK Limited.
+    # Marka z krajem to ta sama marka, ale z formą prawną to już inny podmiot: Trading 212 UK Limited.
     marka = None
     if normalizuj(reklamodawca) == slowa(reklamodawca):
         marka = ' '.join(s for s in nazwa.split() if s not in KRAJE)
     wpis = _PO_NAZWIE.get(nazwa) or _MARKI.get(nazwa) or _PO_NAZWIE.get(marka) or _MARKI.get(marka)
     if wpis:
         return wynik('w_rejestrze', wpis)
-    # A bare brand is no sign of another company when the brand has one listed entity: CMC Markets.
+    # Sama marka nie wskazuje na inną firmę, gdy marka ma jeden podmiot na listach: CMC Markets.
     if marka is not None and rdzen(nazwa) and not set(rdzen(nazwa)) <= POSPOLITE:
         podmioty = {w['nazwa']: w for w, n in reversed(_NAZWY) if rdzen(n) == rdzen(nazwa)}
         if len(podmioty) == 1:
@@ -141,7 +141,7 @@ def sprawdz(reklamodawca):
     wpis = _MICA_PO_NAZWIE.get(nazwa) or _MICA_PO_NAZWIE.get(marka) or _MICA_PO_MARCE.get(marka)
     if wpis:
         return wynik('mica', wpis)
-    # There is no TFI list among the four, so a fund company cannot be checked here.
+    # Wśród czterech list nie ma listy TFI, więc towarzystwa funduszy nie da się tu sprawdzić.
     if 'tfi' in nazwa.split() or 'towarzystwo funduszy inwestycyjnych' in nazwa:
         return wynik('tfi')
     najlepszy, ile = None, 0
@@ -151,19 +151,19 @@ def sprawdz(reklamodawca):
             najlepszy, ile = wpis, w
     if najlepszy:
         return wynik('spoza_rejestru', najlepszy)
-    # The four lists hold investment firms and bank brokerages. A bank without a brokerage is supervised
-    # under another register, so it cannot be checked here.
+    # Cztery listy zawierają firmy inwestycyjne i biura maklerskie banków. Bank bez biura maklerskiego podlega
+    # nadzorowi w innym rejestrze, więc nie da się go tu sprawdzić.
     if 'bank' in nazwa.split():
         return wynik('bank')
     return wynik('poza_listami')
 
 
-# For these sources the name is the author of the material, not the payer of an ad: the register gives no finding.
+# W tych źródłach nazwa to autor materiału, a nie płatnik reklamy: rejestr nie daje ustalenia.
 AUTOR_ZAMIAST_PLATNIKA = ('youtube', 'strony_doradcow')
 
 
 def sygnaly(platnik, rejestr, zrodlo=None):
-    """Findings for the analyst: one signal when the payer is not on the lists, none otherwise."""
+    """Ustalenia dla analityka: jeden sygnał, gdy płatnika nie ma na listach, w przeciwnym razie żadnego."""
     if zrodlo in AUTOR_ZAMIAST_PLATNIKA:
         return []
     podstawa = f'Listy KNF, stan na {STAN_NA}'
