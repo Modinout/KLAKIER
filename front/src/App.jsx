@@ -6,7 +6,6 @@ import { pobierzReklamy } from './api.js'
 import { sledzSprawdzenie } from './sprawdzanieLinku.js'
 import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
-import Analityk from './czesci/Analityk.jsx'
 import DodajReklame from './czesci/DodajReklame.jsx'
 import Szczegoly from './czesci/Szczegoly.jsx'
 import Alerty from './widoki/Alerty.jsx'
@@ -126,7 +125,6 @@ export default function App() {
           <TabsTrigger value="kalibracja" className="px-3">Kalibracja</TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
-          <Analityk />
           <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} poZleceniu={poZleceniu} />
         </div>
       </header>

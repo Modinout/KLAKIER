@@ -1,5 +1,3 @@
-import { analityk } from './analityk.js'
-
 async function wyslij(url, opcje) {
   const odpowiedz = await fetch(url, opcje)
   if (!odpowiedz.ok) {
@@ -19,15 +17,8 @@ function json(metoda, dane) {
   }
 }
 
-// A header carries only Latin-1, so a name with Polish letters goes encoded.
-function podpis() {
-  const nazwa = analityk()
-  return nazwa ? { 'X-Analityk': encodeURIComponent(nazwa) } : {}
-}
-
 function zmienReklame(id, dane) {
-  const opcje = json('PATCH', dane)
-  return wyslij('/api/reklamy/' + id, { ...opcje, headers: { ...opcje.headers, ...podpis() } })
+  return wyslij('/api/reklamy/' + id, json('PATCH', dane))
 }
 
 export function pobierzReklamy(od) {
@@ -112,7 +103,7 @@ export function zapiszProg(prog) {
 }
 
 export function uczModel() {
-  return wyslij('/api/ucz', { method: 'POST', headers: podpis() })
+  return wyslij('/api/ucz', { method: 'POST' })
 }
 
 export function pobierzProgi() {

@@ -144,8 +144,12 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           <Rejestr reklama={reklama} />
           <ListaUstalen reklama={reklama} />
           <Notatka key={'notatka' + reklama.id} reklama={reklama} podmien={podmien} />
-          {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
-          <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
+          {(obraz || !bezTekstu(reklama)) && (
+            <Sekcja tytul="Reklama">
+              {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
+              <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
+            </Sekcja>
+          )}
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Powiazane reklama={reklama} otworz={otworz} />
           <Podobne key={'podobne' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />

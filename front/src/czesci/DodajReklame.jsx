@@ -31,7 +31,6 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
   const [pola, setPola] = useState(PUSTE)
   const [czyta, setCzyta] = useState(false)
   const [wysyla, setWysyla] = useState(false)
-  const [link, setLink] = useState('')
   const [zleca, setZleca] = useState(false)
   const [bladLinku, setBladLinku] = useState('')
 
@@ -43,7 +42,6 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
     setOtwarte(czy)
     if (czy) return
     setPola(PUSTE)
-    setLink('')
     setBladLinku('')
   }
 
@@ -51,9 +49,9 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
     setBladLinku('')
     setZleca(true)
     try {
-      const { id } = await zlecSprawdzenie(link)
+      const { id } = await zlecSprawdzenie(pola.url)
       otworz(false)
-      poZleceniu(id, domena(link))
+      poZleceniu(id, domena(pola.url))
     } catch (e) {
       setBladLinku(bladSprawdzenia(e))
     } finally {
@@ -123,10 +121,10 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
         <DialogTitle className="text-lg font-semibold">Dodaj reklamę</DialogTitle>
         <p className="text-muted-foreground">{OPISY.dodaj}</p>
         <div className="grid gap-1.5">
-          <Label htmlFor="link">Link do sprawdzenia</Label>
+          <Label htmlFor="link">Link do strony</Label>
           <div className="flex gap-2">
-            <Input id="link" type="url" placeholder="https://" value={link} onChange={(e) => setLink(e.target.value)} />
-            <Button type="button" variant="outline" disabled={!link.trim() || zleca} onClick={sprawdzLink}>
+            <Input id="link" type="url" placeholder="https://" value={pola.url} onChange={(e) => ustaw('url', e.target.value)} />
+            <Button type="button" variant="outline" disabled={!pola.url.trim() || zleca} onClick={sprawdzLink}>
               Sprawdź link
             </Button>
           </div>
@@ -153,10 +151,6 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="adres">Adres strony (URL)</Label>
-            <Input id="adres" value={pola.url} onChange={(e) => ustaw('url', e.target.value)} />
           </div>
           <label
             className="flex h-20 cursor-pointer items-center justify-center rounded-lg border border-dashed text-muted-foreground hover:bg-muted/50"
