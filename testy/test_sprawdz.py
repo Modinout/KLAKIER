@@ -1,4 +1,5 @@
-# A link pasted in the panel, on a running stack with the patrol profile: the robotnik opens it, the api keeps it.
+# A link pasted in the panel, on a running stack: the robotnik opens it, the api keeps it.
+# Needs the internet, because the robotnik refuses the stack's own addresses.
 import hashlib
 import io
 import json
@@ -13,9 +14,7 @@ import pytest
 from test_sciezka import API
 
 REPO = Path(__file__).resolve().parent.parent
-# Reachable from the robotnik without the internet; the api answers the trailing slash with a redirect.
-STRONA = 'http://api:8000/zdrowie/'
-KONIEC_STRONY = 'http://api:8000/zdrowie'
+STRONA = 'https://example.com/'
 
 
 def psql(polecenie):
@@ -32,10 +31,10 @@ def numery():
     numery = []
     yield numery
     # By the link: a check cut short can leave a record its row does not point to.
-    psql("DELETE FROM reklamy WHERE zrodlo = 'panel' AND id_zrodla LIKE 'http://api:8000/%'")
+    psql("DELETE FROM reklamy WHERE zrodlo = 'panel' AND id_zrodla LIKE 'https://example.com/%'")
     if numery:
         psql(f'DELETE FROM sprawdzenia WHERE id IN ({",".join(map(str, numery))})')
-    psql("DELETE FROM strony WHERE domena = 'api'")
+    psql("DELETE FROM strony WHERE domena = 'example.com'")
 
 
 def zlec(url, numery):
@@ -56,14 +55,15 @@ def test_link_daje_reklame_z_dowodami_z_obu_widokow(numery):
     stan = zlec(STRONA, numery)
     assert stan['stan'] == 'gotowe' and stan['blad'] is None
     reklama = httpx.get(f'{API}/reklamy/{stan["reklama_id"]}').json()
-    assert (reklama['zrodlo'], reklama['url'], reklama['domena'], reklama['ma_obraz']) == ('panel', STRONA, 'api', True)
-    assert 'ok' in reklama['tekst']
-    assert psql("SELECT count(*) FROM strony WHERE domena = 'api'") == '1'
+    assert (reklama['zrodlo'], reklama['url'], reklama['domena'], reklama['ma_obraz']) == (
+        'panel', STRONA, 'example.com', True)
+    assert 'Example Domain' in reklama['tekst']
+    assert psql("SELECT count(*) FROM strony WHERE domena = 'example.com'") == '1'
 
     pierwsze = httpx.get(f'{API}/reklamy/{reklama["id"]}/dowody').json()
     assert [dowod['rodzaj'] for dowod in pierwsze] == ['komputer', 'telefon']
     for dowod in pierwsze:
-        assert dowod['lancuch'] == [STRONA, KONIEC_STRONY] and dowod['adres'] == KONIEC_STRONY
+        assert dowod['lancuch'] == [STRONA] and dowod['adres'] == STRONA
         obraz = httpx.get(f'{API}/dowody/{dowod["id"]}/obraz')
         assert obraz.headers['content-type'] == 'image/png'
         assert hashlib.sha256(obraz.content).hexdigest() == dowod['sha256']['obraz']
@@ -92,13 +92,19 @@ def test_link_daje_reklame_z_dowodami_z_obu_widokow(numery):
 
 
 def test_strona_z_kodem_bledu_nie_daje_reklamy(numery):
-    url = 'http://api:8000/nie-ma-takiej-strony'
+    url = 'https://example.com/nie-ma-takiej-strony'
     assert zlec(url, numery) == {'stan': 'blad', 'reklama_id': None, 'blad': 'Strona odpowiedziała kodem błędu 404.'}
     assert psql(f"SELECT count(*) FROM reklamy WHERE zrodlo = 'panel' AND id_zrodla = '{url}'") == '0'
 
 
 def test_adres_bez_http_daje_422():
     assert httpx.post(f'{API}/sprawdz', json={'url': 'zla.example/oferta'}).status_code == 422
+
+
+def test_adres_sieci_wewnetrznej_daje_422():
+    for url in ('http://api:8000/zdrowie', 'http://localhost:8000/', 'http://127.0.0.1:8000/', 'http://[::1]/',
+                'http://169.254.169.254/latest/meta-data/', 'http://host.docker.internal:8000/'):
+        assert httpx.post(f'{API}/sprawdz', json={'url': url}).status_code == 422, url
 
 
 def test_nieznane_sprawdzenie_i_dowod_daja_404():

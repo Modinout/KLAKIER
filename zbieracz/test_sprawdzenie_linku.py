@@ -2,6 +2,7 @@ import httpx
 
 import kolejka
 import lista_cert
+import siec
 import sprawdzenie_linku
 
 OSTRZEZENIA = {'zla.com': 'Zła sp. z o.o.'}
@@ -20,6 +21,35 @@ def test_kod_bledu_przegladarki_trafia_do_powodu():
         'Strona nie otworzyła się (net::ERR_NAME_NOT_RESOLVED).')
     assert sprawdzenie_linku.powod_bledu('Timeout 30000ms exceeded.') == 'Strona nie otworzyła się w ciągu 30 sekund.'
     assert sprawdzenie_linku.powod_bledu('Target page, context or browser has been closed') == 'Strona nie otworzyła się.'
+
+
+def test_adres_sieci_wewnetrznej_to_odmowa():
+    for adres in ('http://127.0.0.1:8000/', 'http://localhost:8080/', 'http://10.0.0.5/', 'http://[::1]/',
+                  'http://169.254.169.254/latest/meta-data/'):
+        assert siec.prowadzi_do_wewnetrznego(['https://8.8.8.8/', adres]), adres
+    assert not siec.prowadzi_do_wewnetrznego(['https://8.8.8.8/', 'about:blank'])
+    assert sprawdzenie_linku.powod_bledu('net::ERR_BLOCKED_BY_CLIENT at http://api:8000/') == sprawdzenie_linku.WEWNETRZNY
+
+
+class Trasa:
+    """Records what the guard did with one request."""
+
+    def __init__(self, url):
+        self.request = type('Zadanie', (), {'url': url})()
+        self.wynik = None
+
+    def abort(self, powod):
+        self.wynik = powod
+
+    def continue_(self):
+        self.wynik = 'dalej'
+
+
+def test_straz_zatrzymuje_tylko_adresy_sieci_wewnetrznej():
+    for url, wynik in (('http://169.254.169.254/latest/', 'blockedbyclient'), ('https://8.8.8.8/', 'dalej')):
+        trasa = Trasa(url)
+        sprawdzenie_linku.straz(trasa)
+        assert trasa.wynik == wynik
 
 
 def test_odpowiedz_z_bledem_albo_sprawdzenie_czlowieka_to_odmowa():

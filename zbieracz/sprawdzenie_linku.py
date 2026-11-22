@@ -10,18 +10,20 @@ from urllib.parse import urlsplit
 import httpx
 
 import patrol
+import siec
 import strony_docelowe
 import wysylka
 
 # As druga_domena.py: the model judges texts the length of an ad, not whole pages.
 NAJWIECEJ_ZNAKOW = 1500
+WEWNETRZNY = 'Link prowadzi do adresu w sieci wewnętrznej, a sprawdzamy tylko strony w internecie.'
 
 
 def obsluz(zadanie, ostrzezenia, przegladarka, z_cert):
     """Checks one link from the queue and reports to the api how it went; returns the line to print."""
     zadanie = json.loads(zadanie)
-    zapisz_stan(zadanie['id'], {'stan': 'w_toku'})
     try:
+        zapisz_stan(zadanie['id'], {'stan': 'w_toku'})
         reklama_id, powod = sprawdz(zadanie['url'], ostrzezenia, przegladarka, z_cert)
     except Exception as blad:
         reklama_id, powod = None, 'Nie udało się sprawdzić linku: ' + ' '.join(str(blad).split())[:200]
@@ -55,7 +57,9 @@ def odwiedz(przegladarka, url, widok):
     """What the browser saw on the link in one view, or {'blad': reason} when the page did not open."""
     from playwright.sync_api import Error
 
-    kontekst = przegladarka.new_context(locale='pl-PL', **strony_docelowe.WIDOKI[widok])
+    # Service workers would fetch past the route below.
+    kontekst = przegladarka.new_context(locale='pl-PL', service_workers='block', **strony_docelowe.WIDOKI[widok])
+    kontekst.route('**/*', straz)
     karta = kontekst.new_page()
     lancuch = []
 
@@ -74,22 +78,36 @@ def odwiedz(przegladarka, url, widok):
     try:
         odpowiedz = karta.goto(url, wait_until='domcontentloaded', timeout=30000)
         karta.wait_for_timeout(5000)
-        wizyta = {
-            'kiedy': kiedy, 'rodzaj': widok, 'status': odpowiedz.status, 'adres': karta.url, 'lancuch': lancuch,
-            'tytul': karta.title().strip(),
-            'tekst': ' '.join(karta.evaluate('document.body.innerText').split()),
-            'pomiar': karta.evaluate(strony_docelowe.POMIAR),
-            'html': karta.content(),
-            'zrzut': karta.screenshot(full_page=True),
-        }
+        # The route sees only the first address of a server redirect, so the whole chain is checked here.
+        if siec.prowadzi_do_wewnetrznego(lancuch + [karta.url]):
+            wizyta = {'blad': WEWNETRZNY}
+        else:
+            wizyta = {
+                'kiedy': kiedy, 'rodzaj': widok, 'status': odpowiedz.status, 'adres': karta.url, 'lancuch': lancuch,
+                'tytul': karta.title().strip(),
+                'tekst': ' '.join(karta.evaluate('document.body.innerText').split()),
+                'pomiar': karta.evaluate(strony_docelowe.POMIAR),
+                'html': karta.content(),
+                'zrzut': karta.screenshot(full_page=True),
+            }
     except Error as blad:
         wizyta = {'blad': powod_bledu(blad.message)}
     kontekst.close()
     return wizyta
 
 
+def straz(trasa):
+    """Lets a request of the page through only when it goes to the public internet."""
+    if siec.prowadzi_do_wewnetrznego([trasa.request.url]):
+        trasa.abort('blockedbyclient')
+    else:
+        trasa.continue_()
+
+
 def powod_bledu(komunikat):
     """Short Polish reason from a browser error; the net:: code tells apart e.g. a domain that does not exist."""
+    if 'ERR_BLOCKED_BY_CLIENT' in komunikat:
+        return WEWNETRZNY
     if 'Timeout' in komunikat:
         return 'Strona nie otworzyła się w ciągu 30 sekund.'
     kod = re.search(r'net::ERR_\w+', komunikat)

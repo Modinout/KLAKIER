@@ -17,6 +17,8 @@ def pracuj(tylko_linki):
         print('Czekam na zadania.', flush=True)
         while True:
             lista, zadanie = kolejka.pobierz(tylko_linki)
+            if not przegladarka.is_connected():
+                przegladarka = playwright.chromium.launch(headless=True)
             if lista == kolejka.LINKI:
                 linia = sprawdzenie_linku.obsluz(zadanie, ostrzezenia, przegladarka, z_cert)
             else:

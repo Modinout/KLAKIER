@@ -1,3 +1,4 @@
+import ipaddress
 from datetime import date, datetime
 from typing import Literal
 from urllib.parse import urlsplit
@@ -192,7 +193,17 @@ class Zlecenie(BaseModel):
         czesci = urlsplit(self.url)
         if czesci.scheme not in ('http', 'https') or not czesci.hostname:
             raise ValueError('Podaj adres strony zaczynający się od http:// albo https://')
+        if adres_wewnetrzny(czesci.hostname):
+            raise ValueError('Link prowadzi do adresu w sieci wewnętrznej, a sprawdzamy tylko strony w internecie.')
         return self
+
+
+def adres_wewnetrzny(host):
+    """A host of the local network; names that need DNS are checked again by the robotnik before it opens them."""
+    try:
+        return not ipaddress.ip_address(host).is_global
+    except ValueError:
+        return '.' not in host or host.endswith(('.local', '.internal', '.localhost'))
 
 
 class NoweSprawdzenie(BaseModel):
