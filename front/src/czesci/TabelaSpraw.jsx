@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ileReklam, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
+import { najmocniejszyTag } from '../sprawy.js'
 import { tagi } from '../ustalenia.js'
 
 const NAGLOWEK = 44
@@ -27,6 +28,22 @@ function ZIkona({ ikona, children }) {
     <div className="flex items-center gap-2">
       {ikona}
       {children}
+    </div>
+  )
+}
+
+function Powod({ sprawa }) {
+  const powod = najmocniejszyTag(sprawa)
+  if (!powod) return null
+  const inne = tagi(sprawa.glowna).slice(1)
+  return (
+    <div className="flex max-w-[320px] items-center">
+      <span className="truncate" title={powod}>{powod}</span>
+      {inne.length > 0 && (
+        <span className="ml-1.5 shrink-0 text-muted-foreground" title={inne.join(' · ')}>
+          +{inne.length}
+        </span>
+      )}
     </div>
   )
 }
@@ -69,6 +86,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <Naglowek className="w-full">Sprawa</Naglowek>
+                <Naglowek>Powód</Naglowek>
                 <Naglowek>Źródło</Naglowek>
                 <Naglowek>Ryzyko</Naglowek>
                 <Naglowek>Status</Naglowek>
@@ -78,7 +96,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
             <TableBody>
               {naStronie.length === 0 && (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     {pusto}
                   </TableCell>
                 </TableRow>
@@ -97,8 +115,10 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
                       {s.reklamy.length > 1 && (
                         <span className="shrink-0 text-xs text-muted-foreground">{ileReklam(s.reklamy.length)}</span>
                       )}
-                      <span className="min-w-0 truncate text-muted-foreground">{tagi(s.glowna).join(' · ')}</span>
                     </div>
+                  </TableCell>
+                  <TableCell className="px-3">
+                    <Powod sprawa={s} />
                   </TableCell>
                   <TableCell className="px-3">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
                   <TableCell className="px-3">

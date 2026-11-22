@@ -4,13 +4,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { dzienCzytelny, NAZWY_MODULOW, nazwaZrodla } from '../nazwy.js'
+import { dzienCzytelny, liczba, NAZWY_MODULOW, nazwaZrodla } from '../nazwy.js'
+import { POZIOMY } from '../ryzyko.js'
 import { ustalenia } from '../ustalenia.js'
 
-export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], moduly: [], tagi: [] }
+export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], poziomy: [], moduly: [], tagi: [] }
 
-// Status and risk belong to the view, so clearing the filters keeps them.
-const POLA = ['szukaj', 'od', 'do', 'zrodla', 'moduly', 'tagi']
+// Status and the risk range belong to the view, so clearing the filters keeps them.
+const POLA = ['szukaj', 'od', 'do', 'zrodla', 'poziomy', 'moduly', 'tagi']
 
 function Chip({ etykieta, usun }) {
   return (
@@ -62,12 +63,15 @@ function FiltrListy({ nazwa, opcje, wybrane, zmien }) {
   return (
     <Popover>
       <PrzyciskFiltra nazwa={nazwa} wybrane={chipy} wyczysc={() => zmien([])} />
-      <PopoverContent align="start" className="w-auto min-w-48 gap-0 p-1">
+      <PopoverContent align="start" className="w-auto max-w-md min-w-48 gap-0 p-1">
         {opcje.map((o) => (
           <Label key={o.wartosc} className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 font-normal hover:bg-muted">
             <Checkbox checked={wybrane.includes(o.wartosc)} onCheckedChange={() => przelacz(o.wartosc)} />
             {o.krotka && <span className="font-medium">{o.krotka}</span>}
-            {o.etykieta}
+            <span className="truncate leading-normal" title={o.etykieta}>
+              {o.etykieta}
+            </span>
+            {o.ile !== undefined && <span className="ml-auto pl-4 tabular-nums text-muted-foreground">{liczba(o.ile)}</span>}
           </Label>
         ))}
       </PopoverContent>
@@ -98,7 +102,7 @@ function FiltrDaty({ od, doDnia, zmien }) {
   )
 }
 
-export default function Filtry({ filtry, zmien, wiersze }) {
+export default function Filtry({ filtry, zmien, wiersze, powody }) {
   function ustaw(zmiana) {
     zmien({ ...filtry, ...zmiana })
   }
@@ -118,11 +122,25 @@ export default function Filtry({ filtry, zmien, wiersze }) {
         zmien={(zrodla) => ustaw({ zrodla })}
       />
       <FiltrListy
+        nazwa="Ryzyko"
+        opcje={Object.entries(POZIOMY).map(([poziom, nazwa]) => ({ wartosc: poziom, etykieta: nazwa }))}
+        wybrane={filtry.poziomy}
+        zmien={(poziomy) => ustaw({ poziomy })}
+      />
+      <FiltrListy
         nazwa="Moduł"
         opcje={moduly.map((m) => ({ wartosc: m, krotka: m, etykieta: NAZWY_MODULOW[m] }))}
         wybrane={filtry.moduly}
         zmien={(moduly) => ustaw({ moduly })}
       />
+      {powody.length > 0 && (
+        <FiltrListy
+          nazwa="Powód"
+          opcje={powody.map(([tag, ile]) => ({ wartosc: tag, etykieta: tag, ile }))}
+          wybrane={filtry.tagi}
+          zmien={(tagi) => ustaw({ tagi })}
+        />
+      )}
       {zmienione && (
         <Button variant="ghost" className="text-xs" onClick={() => zmien({ ...PUSTE_FILTRY, statusy: filtry.statusy, ryzyka: filtry.ryzyka })}>
           Wyczyść filtry

@@ -1,28 +1,21 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { pobierzProgi } from '../api.js'
-import { OPISY, liczba } from '../nazwy.js'
+import { OPISY, ileAlarmow, ilePrzeoczonych, liczba } from '../nazwy.js'
+import BliskoProgu from '../czesci/BliskoProgu.jsx'
 import Uczenie from '../czesci/Uczenie.jsx'
-
-function Liczba({ tytul, wartosc, zIlu }) {
-  return (
-    <div>
-      <p className="text-muted-foreground">{tytul}</p>
-      <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
-        {liczba(wartosc)}
-        {zIlu !== undefined && <span className="text-base font-normal text-muted-foreground"> z {liczba(zIlu)}</span>}
-      </p>
-    </div>
-  )
-}
+import WykresProgow from '../czesci/WykresProgow.jsx'
 
 function Progi({ progi, prog, ustawProg, wiersze }) {
   const wartosci = progi.progi.map((p) => p.prog)
   const krok = Math.round((wartosci[1] - wartosci[0]) * 100) / 100
-  const wiersz = progi.progi.find((p) => Math.abs(p.prog - prog) < 0.001)
-  const zlapane = Math.round(wiersz?.zlapane ?? 0)
-  const odProgu = useMemo(() => wiersze.filter((r) => r.ryzyko >= prog).length, [wiersze, prog])
+  const punkty = progi.progi.map((p) => ({
+    prog: p.prog,
+    przeoczone: Math.round(progi.oszustw - p.zlapane),
+    alarmy: Math.round(p.falszywe_alarmy),
+  }))
+  const punkt = punkty.find((p) => Math.abs(p.prog - prog) < 0.001)
 
   return (
     <div className="max-w-4xl rounded-lg border">
@@ -44,21 +37,17 @@ function Progi({ progi, prog, ustawProg, wiersze }) {
         </div>
       </div>
       <div className="border-t p-6">
-        <p className="text-xs font-medium text-muted-foreground">Na zbiorze testowym</p>
-        <p className="mb-3 text-muted-foreground">
-          {liczba(progi.oszustw + progi.uczciwych)} reklam ocenionych ręcznie: {liczba(progi.oszustw)} oszustw i{' '}
-          {liczba(progi.uczciwych)} uczciwych.
+        <h2 className="mb-2 font-medium">Test na {liczba(progi.oszustw + progi.uczciwych)} reklamach z etykietą</h2>
+        <WykresProgow punkty={punkty} prog={prog} oszustw={progi.oszustw} uczciwych={progi.uczciwych} />
+        <p className="mt-3">
+          Przy progu {liczba(prog)}: {ilePrzeoczonych(punkt.przeoczone)}, {ileAlarmow(punkt.alarmy)}.
         </p>
-        <div className="grid grid-cols-3 gap-6">
-          <Liczba tytul="Złapane oszustwa" wartosc={zlapane} zIlu={progi.oszustw} />
-          <Liczba tytul="Przeoczone oszustwa" wartosc={progi.oszustw - zlapane} zIlu={progi.oszustw} />
-          <Liczba tytul="Fałszywe alarmy" wartosc={Math.round(wiersz?.falszywe_alarmy ?? 0)} zIlu={progi.uczciwych} />
-        </div>
       </div>
       <div className="border-t p-6">
-        <Liczba tytul="Reklamy w bazie, które model oznaczyłby jako oszustwo" wartosc={odProgu} />
-        <p className="mt-2 text-muted-foreground">{OPISY.suwak}</p>
-        <p className="mt-2 text-muted-foreground">{OPISY.twarde}</p>
+        <BliskoProgu wiersze={wiersze} prog={prog} />
+      </div>
+      <div className="border-t p-6">
+        <p className="text-muted-foreground">{OPISY.suwak}</p>
       </div>
     </div>
   )
@@ -92,7 +81,7 @@ export default function Kalibracja({ prog, ustawProg, wiersze, odswiez }) {
       {!blad && !progi && <p className="text-muted-foreground">Wczytywanie…</p>}
       {!blad && progi && <Progi progi={progi} prog={prog} ustawProg={ustawProg} wiersze={wiersze} />}
       <div className="mt-6 max-w-4xl rounded-lg border p-6">
-        <h2 className="mb-3 font-medium">Uczenie modelu</h2>
+        <h2 className="mb-1 font-medium">Douczanie modelu</h2>
         <Uczenie decyzje={wiersze.filter((r) => r.werdykt_analityka).length} odswiez={odswiez} />
       </div>
     </>

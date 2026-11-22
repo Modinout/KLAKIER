@@ -67,7 +67,7 @@ export default function App() {
 
   useAlerty(dolacz)
 
-  const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie'), [reklamy])
+  const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie' && s.glowna.status !== 'zamknieta'), [reklamy])
   const przybyla = (s) => !poczatkowe.current?.has(s.klucz)
   const nowyAlert = (s) => przybyla(s) && !s.reklamy.some((r) => obejrzane.has(r.id))
   const nieobejrzane = alerty.filter(nowyAlert).length

@@ -2,10 +2,10 @@ import { liczba } from '../nazwy.js'
 
 // The first view is the start view.
 export const WIDOKI = [
-  { nazwa: 'Do przejrzenia', zakres: { statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] } },
+  { nazwa: 'Podejrzane', zakres: { statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] } },
+  { nazwa: 'Niskie ryzyko', zakres: { statusy: ['nowa'], ryzyka: ['niskie'] } },
   { nazwa: 'W toku', zakres: { statusy: ['w_toku'], ryzyka: [] } },
   { nazwa: 'Zamknięte', zakres: { statusy: ['zamknieta'], ryzyka: [] } },
-  { nazwa: 'Niskie ryzyko', zakres: { statusy: ['nowa'], ryzyka: ['niskie'] } },
 ]
 
 function wybrany(widok, filtry) {

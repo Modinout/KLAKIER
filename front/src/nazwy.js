@@ -52,22 +52,25 @@ export const NAZWY_LIST_KNF = {
 
 // Ordered from the strongest finding to the weakest.
 export const TAGI = {
-  reklama_domeny_z_ostrzezenia_knf: 'Domena z ostrzeżeń KNF',
-  druga_domena_ostrzezonej_strony: 'Kopia strony z ostrzeżeń',
-  na_liscie_csirt_knf: 'Oszustwo z listy CSIRT KNF',
-  wielu_platnikow_domeny: 'Wielu płatników jednej domeny',
-  obca_domena: 'Marka z rejestru, obca domena',
-  doradztwo_bez_zezwolenia: 'Doradztwo bez zezwolenia',
-  platnik_poza_listami: 'Płatnik poza listami KNF',
-  zysk_bez_ryzyka: 'Obietnica zysku',
-  brak_ostrzezenia_cfd: 'Brak ostrzeżenia o stratach na CFD',
-  podatki_bez_zastrzezenia: 'Podatki bez zastrzeżenia',
-  wyniki_bez_zastrzezenia: 'Wyniki bez zastrzeżenia',
-  nadzor_jako_argument: 'Nadzór KNF jako argument',
+  reklama_domeny_z_ostrzezenia_knf: 'Strona jest na liście ostrzeżeń KNF',
+  druga_domena_ostrzezonej_strony: 'Kopia strony z listy ostrzeżeń KNF',
+  na_liscie_csirt_knf: 'Oszustwo zgłoszone przez CSIRT KNF',
+  wielu_platnikow_domeny: 'Za jedną stronę płaci kilka firm',
+  obca_domena: 'Znana firma reklamuje cudzą stronę',
+  doradztwo_bez_zezwolenia: 'Doradza bez zezwolenia KNF',
+  platnik_poza_listami: 'Firmy nie ma w rejestrach KNF',
+  zysk_bez_ryzyka: 'Obiecuje zysk bez ryzyka',
+  brak_ostrzezenia_cfd: 'CFD bez ostrzeżenia o stratach',
+  ostrzezenie_nieczytelne: 'Ostrzeżenie o ryzyku trudno zauważyć',
+  brak_ostrzezenia_strony: 'Strona nie ostrzega o ryzyku',
+  polecenie_bez_oznaczenia: 'Link polecający bez oznaczenia reklamy',
+  podatki_bez_zastrzezenia: 'Korzyść podatkowa bez zastrzeżenia',
+  wyniki_bez_zastrzezenia: 'Dawne zyski bez zastrzeżenia',
+  nadzor_jako_argument: 'Zachwala się nadzorem KNF',
   test_zbieracza: 'Sygnał testowy',
 }
 
-export const TAG_MODELU = 'Treść typowa dla fałszywych inwestycji'
+export const TAG_MODELU = 'Tekst jak w fałszywych inwestycjach'
 
 function skroc(opis) {
   if (opis.length <= 40) return opis
@@ -165,13 +168,20 @@ export function ileSpraw(n) {
   return odmien(n, 'sprawa', 'sprawy', 'spraw')
 }
 
+export function ilePrzeoczonych(n) {
+  return odmien(n, 'przeoczone oszustwo', 'przeoczone oszustwa', 'przeoczonych oszustw')
+}
+
+export function ileAlarmow(n) {
+  return odmien(n, 'fałszywy alarm', 'fałszywe alarmy', 'fałszywych alarmów')
+}
+
 export const OPISY = {
   alerty: 'Sprawy wysokiego ryzyka.',
-  kalibracja:
-    'Tu sprawdzasz, jak czuły jest model, który czyta tekst reklam. Niższy próg łapie więcej oszustw, ale daje więcej fałszywych alarmów. Wyższy odwrotnie.',
-  suwak: 'Suwak pokazuje, co by się zmieniło przy innym progu. Nie zmienia ocen spraw w kolejce.',
-  twarde: 'Twarde ustalenia, takie jak domena z listy ostrzeżeń KNF albo płatnik poza listami KNF, nie zależą od progu.',
-  ucz: 'Model uczy się z ocen tekstu poprawionych przez analityków i ocenia reklamy od nowa.',
-  rodzaj: 'Dodaje nowy rodzaj fałszywej inwestycji, który model ma rozpoznawać.',
+  kalibracja: 'Tu sprawdzasz, jak model oceniający tekst reklam zachowuje się przy różnych progach.',
+  suwak:
+    'Suwak służy tylko do symulacji i nie zmienia ocen spraw w kolejce. Twarde ustalenia, takie jak domena z listy ostrzeżeń KNF albo płatnik poza listami KNF, nie zależą od progu.',
+  ucz: 'Gdy ustawisz lub poprawisz ocenę tekstu w szczegółach sprawy, możesz tu douczyć model i ponownie ocenić wszystkie reklamy w bazie.',
+  uczPusto: 'Brak ocen do nauki. Otwórz sprawę i ustaw lub popraw ocenę tekstu, aby odblokować przycisk.',
   dodaj: 'Wklej tekst reklamy albo wrzuć jej zrzut. Reklama trafi do kolejki od razu z oceną.',
 }

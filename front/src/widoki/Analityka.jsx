@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import Filtry, { PUSTE_FILTRY } from '../czesci/Filtry.jsx'
-import Powody from '../czesci/Powody.jsx'
 import TabelaSpraw from '../czesci/TabelaSpraw.jsx'
 import Trend from '../czesci/Trend.jsx'
 import Widoki, { WIDOKI } from '../czesci/Widoki.jsx'
@@ -28,6 +27,7 @@ function pasujeReklama(r, filtry) {
 function pasujeSprawa(s, filtry) {
   if (!s.reklamy.some((r) => pasujeReklama(r, filtry))) return false
   if (filtry.ryzyka.length && !filtry.ryzyka.includes(s.poziom)) return false
+  if (filtry.poziomy.length && !filtry.poziomy.includes(s.poziom)) return false
   if (filtry.tagi.length && !filtry.tagi.includes(najmocniejszyTag(s))) return false
   return true
 }
@@ -72,18 +72,11 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
   return (
     <>
       <div className="mb-5 flex shrink-0 items-end justify-between gap-8">
-        <h1 className="text-2xl font-bold tracking-tight">Sprawdzone automatycznie: {ileReklam(wiersze.length)}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Sprawdzone automatycznie: {ileReklam(wiersze.length)} w {liczba(wszystkie.length)} sprawach</h1>
         <Trend reklamy={dlaTrendu} />
       </div>
       <Widoki filtry={filtry} zmien={setFiltry} ile={ile} />
-      <Filtry filtry={filtry} zmien={setFiltry} wiersze={wiersze} />
-      {(powody.length > 1 || filtry.tagi.length > 0) && (
-        <Powody
-          powody={powody}
-          wybrane={filtry.tagi}
-          przelacz={(tag) => setFiltry({ ...filtry, tagi: filtry.tagi.includes(tag) ? [] : [tag] })}
-        />
-      )}
+      <Filtry filtry={filtry} zmien={setFiltry} wiersze={wiersze} powody={powody} />
       <TabelaSpraw
         key={JSON.stringify(filtry)}
         sprawy={sprawy}

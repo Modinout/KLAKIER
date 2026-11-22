@@ -57,10 +57,6 @@ export function uczModel() {
   return wyslij('/api/ucz', { method: 'POST' })
 }
 
-export function dodajRodzaj(nazwa, opis) {
-  return wyslij('/api/rodzaje', json('POST', { nazwa, opis }))
-}
-
 export function pobierzProgi() {
   return wyslij('/api/progi')
 }
