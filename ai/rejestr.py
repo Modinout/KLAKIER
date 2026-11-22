@@ -1,4 +1,4 @@
-# Sprawdza płatnika reklamy na czterech listach firm inwestycyjnych KNF w rejestr_knf.csv,
+# Sprawdza płatnika reklamy w czterech rejestrach firm inwestycyjnych KNF z rejestr_knf.csv,
 # potem w rejestrze ESMA dostawców usług w zakresie kryptoaktywów w rejestr_mica.csv.
 #   from rejestr import sprawdz
 #   sprawdz('Tickmill Ltd')
@@ -107,12 +107,12 @@ with pathlib.Path(__file__).with_name('rejestr_knf.csv').open(encoding='utf-8', 
 # Odwrócone, żeby nazwa wymieniona dwa razy wskazywała pierwszy wpis.
 _PO_NAZWIE = {nazwa: wpis for wpis, nazwa in reversed(_NAZWY)}
 
-# Marki i krótkie nazwy podmiotów z list. Nazwa z błędem względem rejestru kończy się błędem tutaj, przy imporcie.
+# Marki i krótkie nazwy podmiotów z rejestrów. Nazwa z błędem względem rejestru kończy się błędem tutaj, przy imporcie.
 with pathlib.Path(__file__).with_name('marki_knf.csv').open(encoding='utf-8', newline='') as _plik:
     _MARKI = {klucz(r['marka']): _PO_NAZWIE[klucz(r['nazwa_w_rejestrze'])] for r in csv.DictReader(_plik, delimiter=';')}
 
 # Dostawcy usług w zakresie kryptoaktywów z zezwoleniem w państwie UE na mocy MiCA, z przejściowego rejestru ESMA.
-# Mogą obsługiwać Polskę na tej licencji, więc nie ma ich na listach KNF.
+# Mogą obsługiwać Polskę na tej licencji, więc nie ma ich w rejestrach KNF.
 STAN_MICA = '18.11.2026'
 with pathlib.Path(__file__).with_name('rejestr_mica.csv').open(encoding='utf-8', newline='') as _plik:
     _MICA = [{'nazwa': r['nazwa'], 'marka': r['marka'], 'panstwo': r['panstwo'], 'lista': 'mica'}
@@ -133,7 +133,7 @@ def sprawdz(reklamodawca):
     wpis = _PO_NAZWIE.get(nazwa) or _MARKI.get(nazwa) or _PO_NAZWIE.get(marka) or _MARKI.get(marka)
     if wpis:
         return wynik('w_rejestrze', wpis)
-    # Sama marka nie wskazuje na inną firmę, gdy marka ma jeden podmiot na listach: CMC Markets.
+    # Sama marka nie wskazuje na inną firmę, gdy marka ma jeden podmiot w rejestrach: CMC Markets.
     if marka is not None and rdzen(nazwa) and not set(rdzen(nazwa)) <= POSPOLITE:
         podmioty = {w['nazwa']: w for w, n in reversed(_NAZWY) if rdzen(n) == rdzen(nazwa)}
         if len(podmioty) == 1:
@@ -163,15 +163,15 @@ AUTOR_ZAMIAST_PLATNIKA = ('youtube', 'strony_doradcow')
 
 
 def sygnaly(platnik, rejestr, zrodlo=None):
-    """Ustalenia dla analityka: jeden sygnał, gdy płatnika nie ma na listach, w przeciwnym razie żadnego."""
+    """Ustalenia dla analityka: jeden sygnał, gdy płatnika nie ma w rejestrach, w przeciwnym razie żadnego."""
     if zrodlo in AUTOR_ZAMIAST_PLATNIKA:
         return []
-    podstawa = f'Listy KNF, stan na {STAN_NA}'
+    podstawa = f'Rejestry KNF, stan na {STAN_NA}'
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         opis = f'Płatnik „{platnik}” nie figuruje w rejestrach KNF. Marka odpowiada wpisowi „{rejestr["podmiot"]}” ({rejestr["panstwo"]}).'
         return [{'modul': 'M1', 'kod': 'platnik_spoza_rejestru', 'opis': opis, 'podstawa': podstawa}]
     if rejestr and rejestr['stan'] == 'poza_listami':
-        opis = f'Płatnik „{platnik}” nie figuruje na żadnej z czterech list firm inwestycyjnych KNF ani w rejestrze MiCA (ESMA).'
+        opis = f'Płatnik „{platnik}” nie figuruje w żadnym z czterech rejestrów firm inwestycyjnych KNF ani w rejestrze MiCA (ESMA).'
         podstawa += f'; rejestr MiCA (ESMA), stan na {STAN_MICA}'
         return [{'modul': 'M1', 'kod': 'platnik_poza_listami', 'opis': opis, 'podstawa': podstawa}]
     return []

@@ -125,7 +125,7 @@ def sygnal(polecenie):
 
 def sygnaly(tekst, rejestr, zrodlo):
     """Jedno ustalenie dla polecenia usługi finansowej w opisie filmu bez oznaczenia."""
-    # Firma z list KNF linkująca własną ofertę nie jest influencerem.
+    # Firma z rejestrów KNF linkująca własną ofertę nie jest influencerem.
     if zrodlo != 'youtube' or not tekst or (rejestr and rejestr['stan'] != 'poza_listami'):
         return []
     # Adresy wycina się najpierw: "partner" lub "ref" wewnątrz linku nie jest oznaczeniem.

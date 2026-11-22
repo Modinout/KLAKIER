@@ -1,4 +1,4 @@
-# Moduł M3: wykrywa mowę o doradztwie inwestycyjnym lub zarządzaniu portfelem od płatnika spoza list KNF.
+# Moduł M3: wykrywa mowę o doradztwie inwestycyjnym lub zarządzaniu portfelem od płatnika spoza rejestrów KNF.
 #   from doradztwo import sygnaly
 #   sygnaly('Family office dla zamożnych rodzin.', {'stan': 'poza_listami', ...})
 #   -> [{'modul': 'M3', 'kod': 'doradztwo_bez_zezwolenia', 'opis': '...', 'podstawa': '...'}]
@@ -29,20 +29,20 @@ def oferta(tekst, trafienie):
     wokol = tekst[max(0, trafienie.start() - _OTOCZENIE):trafienie.end() + _OTOCZENIE]
     slowa = [s for s in wokol.split() if s[0].isalpha()]
     # Menu to ciąg etykiet pisanych wielką literą, a zdanie jest głównie małymi.
-    menu = sum(s[0].isupper() for s in slowa) > 0.4 * len(slowa)
+    menu = sum(s[0].isupper() for s in slowa) > 0.4 * len(slowa) or 'menu' in wokol.casefold().split()
     return not menu and bool(ZACHETA.search(wokol.casefold())) and not OBSLUGA_PRAWNA.search(tekst.casefold())
 
 
 def sygnaly(tekst, rejestr):
-    """Jedno ustalenie, gdy oferta pochodzi od płatnika, którego nie zna żadna lista firm inwestycyjnych KNF."""
-    # Płatnik, którego marka jest na listach pod innym podmiotem, to ustalenie modułu M1.
+    """Jedno ustalenie, gdy oferta pochodzi od płatnika, którego nie zna żaden rejestr firm inwestycyjnych KNF."""
+    # Płatnik, którego marka jest w rejestrach pod innym podmiotem, to ustalenie modułu M1.
     if not tekst or (rejestr and rejestr['stan'] != 'poza_listami'):
         return []
     trafienie = twierdzenie(OFERTA, tekst.casefold(), lambda t: oferta(tekst, t))
     if not trafienie:
         return []
     if rejestr:
-        uprawnienia = 'Firmy, która to oferuje, nie ma na listach firm inwestycyjnych KNF.'
+        uprawnienia = 'Firmy, która to oferuje, nie ma w rejestrach firm inwestycyjnych KNF.'
     else:
         uprawnienia = 'Nie wiadomo, kto stoi za tym tekstem, więc zezwolenia nie da się potwierdzić.'
     opis = f'Tekst mówi o doradztwie inwestycyjnym lub zarządzaniu portfelem („{cytat(tekst, trafienie)}”). {uprawnienia}'

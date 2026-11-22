@@ -52,6 +52,7 @@ _ZDANIE = re.compile(r'[^.!?\n]+')
 _ZAPRZECZENIE = re.compile(r'\bnie\b|\bani\b|\bbez\b|\bżadn\w+|\bnot\b|\bno\b|\bnone\b|\bnothing\b|\bnever\b')
 # Liczone w znakach, nie w zdaniach: zastrzeżenia są pełne "art." i "S.A.".
 _OKNO = 120
+_POWTORZENIE = re.compile(r'(\S.{14,}?) \1(?= |$)')
 
 
 def twierdzenie(wzor, male, przyjmij=lambda trafienie: True):
@@ -68,10 +69,19 @@ def cytat(tekst, trafienie):
         if zdanie.start() <= trafienie.start() < zdanie.end():
             break
     poczatek, koniec = zdanie.start(), zdanie.end()
-    # Tekst strony często nie ma kropek: wtedy cytatem są słowa wokół trafienia.
+    przed = po = ''
+    # Tekst strony często nie ma kropek: wtedy cytatem są całe słowa wokół trafienia.
     if koniec - poczatek > 200:
-        poczatek, koniec = max(poczatek, trafienie.start() - 80), min(koniec, trafienie.end() + 80)
-    return ' '.join(tekst[poczatek:koniec].split())
+        od, do = max(poczatek, trafienie.start() - 80), min(koniec, trafienie.end() + 80)
+        if od > poczatek:
+            od, przed = tekst.find(' ', od, trafienie.start()) + 1 or od, '…'
+        if do < koniec:
+            spacja = tekst.rfind(' ', trafienie.end(), do)
+            do, po = (spacja if spacja > 0 else do), '…'
+        poczatek, koniec = od, do
+    slowa = ' '.join(tekst[poczatek:koniec].split())
+    # Strony powtarzają tytuł obok siebie; w cytacie wystarczy raz.
+    return przed + _POWTORZENIE.sub(r'\1', slowa) + po
 
 
 def sygnal(kod, opis, podstawa):
@@ -86,7 +96,7 @@ MOWA_O_RYZYKU = re.compile(r'\bryzyk\w*|\brisk\w*|\brisiko\w*|\briesgo\w*|\bstra
 
 
 def sygnaly(tekst, rejestr, zrodlo=None):
-    """Ustalenia o informacji o ryzyku, tylko dla płatnika będącego firmą inwestycyjną z list KNF."""
+    """Ustalenia o informacji o ryzyku, tylko dla płatnika będącego firmą inwestycyjną z rejestrów KNF."""
     if not tekst or not rejestr or rejestr['stan'] not in ('w_rejestrze', 'spoza_rejestru'):
         return []
     male = tekst.casefold()

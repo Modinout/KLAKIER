@@ -1,4 +1,5 @@
 # Sprawdzenie reguł tekstowych M2 i M3. Uruchom: docker compose run --rm ai python test_wymogi.py
+import re
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import doradztwo
@@ -89,5 +90,21 @@ dobrze = '„Zyskaj 12% rocznie na portfelu”' in cytat
 zle += not dobrze
 print('OK  ' if dobrze else 'FAIL', 'the finding quotes the sentence as written |', cytat)
 
-print(f'{len(PROBY) + 5 - zle} of {len(PROBY) + 5} checks passed')
+dlugi = ('Family Office nowa usługa na polskim rynku Family Office nowa usługa na polskim rynku ' + 'słowo ' * 30
+         + 'oferujemy zarządzanie majątkiem dla rodzin ' + 'koniec ' * 40)
+wycinek = wymogi.cytat(dlugi, re.search('zarządzanie', dlugi))
+slowa_tekstu = set(dlugi.split())
+dobrze = wycinek.startswith('…') and wycinek.endswith('…') and all(s in slowa_tekstu for s in wycinek.strip('…').split())
+zle += not dobrze
+print('OK  ' if dobrze else 'FAIL', 'a long quote is cut at word boundaries and marked with … |', wycinek)
+powtorka = wymogi.cytat('Family Office nowa usługa Family Office nowa usługa', re.search('usługa', 'Family Office nowa usługa'))
+zle += powtorka != 'Family Office nowa usługa'
+print('OK  ' if powtorka == 'Family Office nowa usługa' else 'FAIL', 'a phrase repeated side by side is quoted once |', powtorka)
+
+menu = 'Szukaj pl menu dostępności wysoki kontrast oferujemy family office dla rodzin i firm w regionie'
+mam = doradztwo.sygnaly(menu, {'stan': 'poza_listami', 'podmiot': None, 'panstwo': None, 'lista': None})
+zle += mam != []
+print('OK  ' if mam == [] else 'FAIL', 'a site menu next to the phrase gives no finding |', [s['kod'] for s in mam])
+
+print(f'{len(PROBY) + 8 - zle} of {len(PROBY) + 8} checks passed')
 sys.exit(1 if zle else 0)
