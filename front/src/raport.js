@@ -53,10 +53,10 @@ function wiersz(sprawa, reklama) {
   ]
 }
 
-// A leading = + - @ would make a spreadsheet run the ad text as a formula.
+// A leading = + - @, tab or carriage return would make a spreadsheet run the ad text as a formula.
 function komorka(wartosc) {
   const tekst = String(wartosc ?? '')
-  const bezpieczny = /^[=+\-@]/.test(tekst) ? "'" + tekst : tekst
+  const bezpieczny = /^[=+\-@\t\r]/.test(tekst) ? "'" + tekst : tekst
   return '"' + bezpieczny.replaceAll('"', '""') + '"'
 }
 

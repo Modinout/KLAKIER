@@ -25,7 +25,13 @@ function procent(ryzyko) {
   return p === 0 ? 'poniżej 1%' : p + '%'
 }
 
+// The model does not score video descriptions.
+function opisFilmu(reklama) {
+  return reklama.zrodlo === 'youtube'
+}
+
 function linia(reklama) {
+  if (opisFilmu(reklama)) return 'Model KAPSEL: nie ocenia opisów filmów'
   if (bezTekstu(reklama)) return 'Model KAPSEL: brak tekstu do oceny'
   const analityk = WERDYKTY_ANALITYKA[reklama.werdykt_analityka]
   return (
@@ -35,7 +41,7 @@ function linia(reklama) {
 
 export default function Ocena({ reklama, podmien }) {
   const [otwarta, setOtwarta] = useState(Boolean(reklama.werdykt_analityka))
-  const zTekstem = !bezTekstu(reklama)
+  const zTekstem = !bezTekstu(reklama) && !opisFilmu(reklama)
 
   if (zTekstem && !reklama.werdykt) return null
 

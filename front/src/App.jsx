@@ -40,7 +40,7 @@ export default function App() {
   }
 
   const dolacz = useCallback((nowe) => {
-    zapamietajNajnowsze(nowe)
+    if (nowe.length === 0) return
     setReklamy((lista) => {
       const poId = new Map((lista ?? []).map((r) => [r.id, r]))
       for (const r of bezTestowych(nowe)) poId.set(r.id, r)
@@ -62,8 +62,12 @@ export default function App() {
     odswiez()
     const zegar = setInterval(() => {
       if (!najnowszeDodano.current) return odswiez()
+      // Only polled ads move the mark: an alert or an added ad can be newer than ads not fetched yet.
       pobierzReklamy(najnowszeDodano.current)
-        .then(dolacz)
+        .then((nowe) => {
+          zapamietajNajnowsze(nowe)
+          dolacz(nowe)
+        })
         .catch(() => toast.error(BLAD_LISTY, { id: 'lista' }))
     }, CO_ILE_MS)
     return () => clearInterval(zegar)

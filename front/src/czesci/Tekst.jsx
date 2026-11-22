@@ -35,7 +35,7 @@ export default function Tekst({ reklama, obraz }) {
   return (
     <>
       {(!obraz || caly) && (
-        <p ref={akapit} className={'whitespace-pre-wrap' + (zwiniety ? ' line-clamp-3' : '')}>
+        <p ref={akapit} className={'whitespace-pre-wrap break-words' + (zwiniety ? ' line-clamp-3' : '')}>
           {tekst}
         </p>
       )}

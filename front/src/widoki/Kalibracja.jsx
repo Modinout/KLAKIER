@@ -16,6 +16,7 @@ function Progi({ progi, prog, ustawProg, zapisany, zapisz, wiersze }) {
     przeoczone: Math.round(progi.oszustw - p.zlapane),
     alarmy: Math.round(p.falszywe_alarmy),
   }))
+  // A threshold saved through the api may fall between the tested points.
   const punkt = punkty.find((p) => Math.abs(p.prog - prog) < 0.001)
   const zmienia = wiersze.filter((r) => !bezTekstu(r) && r.ryzyko >= prog && r.poziom !== 'wysokie').length
 
@@ -48,9 +49,11 @@ function Progi({ progi, prog, ustawProg, zapisany, zapisz, wiersze }) {
       <div className="border-t p-6">
         <h2 className="mb-2 font-medium">Test na {liczba(progi.oszustw + progi.uczciwych)} reklamach z etykietą</h2>
         <WykresProgow punkty={punkty} prog={prog} oszustw={progi.oszustw} uczciwych={progi.uczciwych} />
-        <p className="mt-3">
-          Przy progu {liczba(prog)}: {ilePrzeoczonych(punkt.przeoczone)}, {ileAlarmow(punkt.alarmy)}.
-        </p>
+        {punkt && (
+          <p className="mt-3">
+            Przy progu {liczba(prog)}: {ilePrzeoczonych(punkt.przeoczone)}, {ileAlarmow(punkt.alarmy)}.
+          </p>
+        )}
         <p>{zdanieZapisu(zmienia)}</p>
       </div>
       <div className="border-t p-6">

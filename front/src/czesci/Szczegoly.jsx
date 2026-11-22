@@ -148,7 +148,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Powiazane reklama={reklama} otworz={otworz} />
-          <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
+          <Podobne key={'podobne' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
           <Dowody reklama={reklama} />
           <Historia key={'historia' + reklama.id} reklama={reklama} />
         </div>
