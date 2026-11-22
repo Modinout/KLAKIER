@@ -6,14 +6,14 @@ const KTO = {
   patrol_ostrzezen: 'Właściciel strony',
 }
 
-// Dla tych źródeł nazwa to autor, a nie płatnik, więc trafienie na listach KNF ma tylko charakter informacyjny.
+// Dla tych źródeł nazwa to autor, a nie płatnik, więc trafienie w rejestrach KNF ma tylko charakter informacyjny.
 const AUTORZY = ['youtube', 'strony_doradcow']
 
 export const STANY_REJESTRU = {
-  w_rejestrze: 'na liście KNF',
+  w_rejestrze: 'w rejestrze KNF',
   spoza_rejestru: 'inna spółka niż w rejestrze',
-  poza_listami: 'brak na listach KNF',
-  bank: 'bank, poza listami firm inwestycyjnych',
+  poza_listami: 'brak w rejestrach KNF',
+  bank: 'bank, poza rejestrami firm inwestycyjnych',
   mica: 'licencja MiCA w innym kraju UE',
 }
 
@@ -28,7 +28,7 @@ export function stanRejestru(reklama) {
   return null
 }
 
-// Dostawca kryptoaktywów z licencją w innym państwie UE jest w rejestrze ESMA, a nie na listach KNF.
+// Dostawca kryptoaktywów z licencją w innym państwie UE jest w rejestrze ESMA, a nie w rejestrach KNF.
 export function nazwaRejestru(rejestr) {
   return rejestr.lista === 'mica' ? 'W rejestrze MiCA' : 'W rejestrze KNF'
 }

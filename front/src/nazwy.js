@@ -59,7 +59,7 @@ export const TAGI = {
   wielu_platnikow_domeny: 'Za jedną stronę płaci kilka firm',
   obca_domena: 'Znana firma reklamuje cudzą stronę',
   doradztwo_bez_zezwolenia: 'Możliwe doradztwo bez zezwolenia KNF',
-  platnik_poza_listami: 'Brak na 4 listach firm inwestycyjnych KNF',
+  platnik_poza_listami: 'Brak w 4 rejestrach firm inwestycyjnych KNF',
   mloda_domena: 'Strona założona tuż przed reklamą',
   zysk_bez_ryzyka: 'Obiecuje zysk bez ryzyka',
   brak_ostrzezenia_cfd: 'CFD bez ostrzeżenia o stratach',
