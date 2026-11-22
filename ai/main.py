@@ -48,6 +48,9 @@ def ocen(material: Material):
     # Linki polecające są tylko w tekście opisu.
     tekst = '\n'.join(filter(None, [material.tekst, material.mowa]))
     wynik = BEZ_OCENY if material.zrodlo == 'youtube' else przewidz(tekst)
+    # Mowa, której model nie zna (na przykład po angielsku), nie może rozmyć ryzyka samego tekstu.
+    if material.mowa and material.zrodlo != 'youtube':
+        wynik = max(wynik, przewidz(material.tekst), key=lambda w: w['prawdopodobienstwa']['oszustwo'])
     rejestr = sprawdz(material.reklamodawca)
     na_temat = platnik_do_sprawdzenia(tekst, material.reklamodawca, rejestr)
     return {

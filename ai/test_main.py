@@ -94,5 +94,9 @@ bez_mowy = klient.post('/ocen', json=post).json()
 z_mowa = klient.post('/ocen', json={**post, 'mowa': 'Zainwestuj 900 zł z Orlenem i zarabiaj 20 000 zł miesięcznie, gwarantowany dochód.'}).json()
 sprawdz(bez_mowy['werdykt'] != 'oszustwo' and z_mowa['werdykt'] == 'oszustwo', 'speech in the recording changes the verdict ->',
         bez_mowy['werdykt'], z_mowa['werdykt'])
+oszustwo = {**post, 'tekst': 'Zainwestuj 900 zł z Orlenem i zarabiaj 20 000 zł miesięcznie, gwarantowany dochód.'}
+sam_tekst = klient.post('/ocen', json=oszustwo).json()['ryzyko']
+z_obca_mowa = klient.post('/ocen', json={**oszustwo, 'mowa': 'Thanks for watching, see you next week.'}).json()['ryzyko']
+sprawdz(z_obca_mowa >= sam_tekst, 'unrelated speech does not lower the text risk ->', round(sam_tekst, 2), round(z_obca_mowa, 2))
 print('MAIN', liczba - zle, 'of', liczba, 'passed')
 sys.exit(1 if zle else 0)
