@@ -15,6 +15,7 @@ TEMATY = [
     ('Zainwestuj 900 zł i zarabiaj 20 000 zł miesięcznie.', True),
     ('Obligacje oszczędnościowe Skarbu Państwa: jak działają', True),
     ('Lotos daje szansę zarobić 21 000 zł każdemu Polakowi.', True),
+    ('kantor.pl najkorzystniejsza platforma wymiany walut', False),
     ('Praca od zaraz, dobre zarobki i umowa o pracę.', False),
     ('Ty masz odpady, ktoś ich szuka. Darmowa giełda odpadów bez pośredników', False),
     ('Szukasz nieruchomości komercyjnej z potencjałem inwestycyjnym? 1 183 m² powierzchni.', False),

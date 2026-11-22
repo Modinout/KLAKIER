@@ -13,7 +13,7 @@ INSTRUMENTY = re.compile(
     r'|\bfundusz\w* (?:akcji|obligacji|etf)|\bzarządzani\w+ (?:majątkiem|aktywami|portfel\w+)|\bfamily office|\bwealth management'
     r'|\bstocks?\b|\bshares\b|\bbonds\b|\bsecurities\b|\binvestment (?:account|advice|fund|platform)|\basset management'
     r'|\baktien\w*|\banleihen\b|\bbörse\w*|\bwertpapier\w*|\binvestitionskonto\b|\bdepot\b'
-    r'|\bmarkets\b|\bfinancial\b|\bwymian\w+ walut\w*|\bkantor\w*|\bgold\b|\boil\b|\bфорекс\w*|\bинвест\w*|\bзолото\b|\bнефть\b'
+    r'|\bmarkets\b|\bfinancial\b|\bgold\b|\boil\b|\bфорекс\w*|\bинвест\w*|\bзолото\b|\bнефть\b'
 )
 INWESTOWANIE = re.compile(
     r'\b(?:za)?inwest\w*|\binvest\w*|\bzarabiaj\w*|\bzarobi\w*|\bzysk\w*|\bpomnaż\w*|\bpasywn\w+ doch\w+|\bwypłać\b'
