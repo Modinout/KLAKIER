@@ -29,10 +29,15 @@ def obsluz(zadanie, ostrzezenia, przegladarka, z_cert):
     except Exception as blad:
         reklama_id, powod = None, 'Nie udało się sprawdzić linku: ' + ' '.join(str(blad).split())[:200]
     if powod:
-        zapisz_stan(zadanie['id'], {'stan': 'blad', 'blad': powod})
-        return f'{zadanie["url"]}: błąd: {powod}'
-    zapisz_stan(zadanie['id'], {'stan': 'gotowe', 'reklama_id': reklama_id})
-    return f'{zadanie["url"]}: reklama {reklama_id}'
+        stan, linia = {'stan': 'blad', 'blad': powod}, f'{zadanie["url"]}: błąd: {powod}'
+    else:
+        stan, linia = {'stan': 'gotowe', 'reklama_id': reklama_id}, f'{zadanie["url"]}: reklama {reklama_id}'
+    # Wyjątek stąd zatrzymałby robotnika, a zadanie jest już zdjęte z kolejki.
+    try:
+        zapisz_stan(zadanie['id'], stan)
+    except httpx.HTTPError as blad:
+        return f'{linia}; nie udało się zapisać wyniku: ' + ' '.join(str(blad).split())[:200]
+    return linia
 
 
 def sprawdz(url, ostrzezenia, przegladarka, z_cert):

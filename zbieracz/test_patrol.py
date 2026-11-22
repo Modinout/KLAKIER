@@ -110,6 +110,7 @@ def test_rekord_drugiej_domeny():
     assert rekord['id_zrodla'] == 'goldflame.io'
     assert rekord['platforma'] == 'www'
     assert rekord['url'] == 'https://goldflame.io/'
+    assert rekord['domena'] == 'goldflame.io'
     assert rekord['reklamodawca'] is None
     assert rekord['opublikowano'] is None
     assert rekord['tekst'] == 'Broker Handel'

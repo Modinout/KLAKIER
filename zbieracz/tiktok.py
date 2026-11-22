@@ -16,6 +16,8 @@ MIESIAC_MS = 30 * 24 * 3600 * 1000
 # ta sama reklama dostaje Financial Services, Apps albo nic.
 TEMATY_POZA = {'Business Services', 'Home Improvement'}
 SLOWA_POZA = ('nieruchomo', 'mieszkan', 'apartament', 'dewelop')
+# Api przyjmuje obraz tylko w PNG albo JPEG, a CDN TikToka oddaje też WebP.
+SYGNATURY_OBRAZU = (b'\x89PNG\r\n\x1a\n', b'\xff\xd8\xff')
 
 
 def adres_wyszukiwania(fraza, teraz_ms):
@@ -93,8 +95,15 @@ def reklamy(przegladarka, fraza):
         for reklama in wybrane:
             karta.wait_for_timeout(3000)
             adres = okladka(reklama)
-            znalezione.append((reklama, szczegoly(karta, reklama['id']), kontekst.request.get(adres).body() if adres else None))
+            znalezione.append((reklama, szczegoly(karta, reklama['id']), pobierz_okladke(kontekst, adres) if adres else None))
     return wynik['total'], znalezione, poza_tematem
+
+
+def pobierz_okladke(kontekst, adres):
+    """Okładka w PNG albo JPEG albo None; Playwright nie zgłasza błędu przy odpowiedzi 4xx / 5xx."""
+    odpowiedz = kontekst.request.get(adres)
+    tresc = odpowiedz.body() if odpowiedz.ok else b''
+    return tresc if tresc.startswith(SYGNATURY_OBRAZU) else None
 
 
 def szczegoly(karta, id):

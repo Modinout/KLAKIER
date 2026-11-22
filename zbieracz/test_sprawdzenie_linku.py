@@ -161,6 +161,18 @@ def test_blad_api_konczy_sprawdzenie_bledem(monkeypatch):
     assert wywolania[-1] == ('stan', 3, {'stan': 'blad', 'blad': 'Nie udało się sprawdzić linku: connection refused'})
 
 
+def test_blad_api_przy_zapisie_wyniku_nie_wychodzi_z_obsluz(monkeypatch):
+    def zapisz_stan(id, stan):
+        if stan['stan'] != 'w_toku':
+            raise httpx.ConnectError('connection refused')
+
+    for komputer in (wizyta(), wizyta(status=404)):
+        obsluz_z_atrapami(monkeypatch, komputer, wizyta(rodzaj='telefon'))
+        monkeypatch.setattr(sprawdzenie_linku, 'zapisz_stan', zapisz_stan)
+        linia = sprawdzenie_linku.obsluz('{"id": 3, "url": "%s"}' % LINK, OSTRZEZENIA, None, False)
+        assert linia.endswith('nie udało się zapisać wyniku: connection refused')
+
+
 class Redis:
     """Zapisuje listy, na które czeka robotnik."""
 

@@ -70,6 +70,76 @@ def test_okladka_obraz_przed_filmem():
     assert tiktok.okladka({**REKLAMA, 'image_urls': [], 'videos': []}) is None
 
 
+class Odpowiedz:
+    def __init__(self, tresc=b'', status=200, dane=None):
+        self.tresc, self.status, self.ok, self.dane = tresc, status, 200 <= status < 300, dane
+
+    def body(self):
+        return self.tresc
+
+    def json(self):
+        return self.dane
+
+
+class Karta:
+    """Strona biblioteki: odpowiedź na wyszukiwanie albo na szczegóły, zależnie od ostatniego adresu."""
+
+    def __init__(self, wynik):
+        self.wynik = wynik
+        self.value = None
+
+    def goto(self, adres, **_):
+        self.value = Odpowiedz(dane={'data': SZCZEGOLY} if '/ads/detail/' in adres else self.wynik)
+
+    def wait_for_timeout(self, _):
+        pass
+
+    def expect_response(self, *_, **__):
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        pass
+
+
+class Kontekst:
+    def __init__(self, wynik, okladki):
+        self.karta = Karta(wynik)
+        self.request = type('Zadania', (), {'get': lambda _, adres: okladki[adres]})()
+
+    def new_page(self):
+        return self.karta
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        pass
+
+
+def test_okladka_inna_niz_png_i_jpeg_nie_idzie_do_api(monkeypatch):
+    lista = [{**REKLAMA, 'id': str(i), 'image_urls': [f'https://p19.tiktokcdn.com/{i}']} for i in range(4)]
+    okladki = {
+        'https://p19.tiktokcdn.com/0': Odpowiedz(b'RIFF\x00\x00\x00\x00WEBPVP8 '),
+        'https://p19.tiktokcdn.com/1': Odpowiedz(b'\xff\xd8\xff<html>Access Denied</html>', status=403),
+        'https://p19.tiktokcdn.com/2': Odpowiedz(b'\x89PNG\r\n\x1a\nobraz'),
+        'https://p19.tiktokcdn.com/3': Odpowiedz(b'\xff\xd8\xffobraz'),
+    }
+    przegladarka = type('Przegladarka', (), {
+        'new_context': lambda _, **__: Kontekst({'data': lista, 'total': 4}, okladki)})()
+    dodane, obrazy = [], []
+    monkeypatch.setattr(tiktok.rotacja, 'ustawienia', lambda: {})
+    monkeypatch.setattr(tiktok.wysylka, 'dodaj', lambda rekord: (
+        dodane.append(rekord['id_zrodla']) or True, {'id': rekord['id_zrodla'], 'ma_obraz': False, 'tekst': ''}))
+    monkeypatch.setattr(tiktok.wysylka, 'wyslij_obraz', lambda id, obraz: obrazy.append(id))
+    wynik = tiktok.obsluz('inwestowanie', przegladarka)
+    assert wynik[:3] == (4, 0, 0)
+    assert dodane == ['0', '1', '2', '3']
+    assert obrazy == ['2', '3']
+
+
 def test_adres_wyszukiwania():
     adres = tiktok.adres_wyszukiwania('giełda', 1795298400000)
     assert adres.startswith('https://library.tiktok.com/ads?region=PL&start_time=1792706400000&end_time=1795298400000')

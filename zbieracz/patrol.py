@@ -54,6 +54,7 @@ def rekord_drugiej_domeny(domena, wpis, druga, zebrano):
         'id_zrodla': druga['domena'],
         'platforma': 'www',
         'url': f'https://{druga["domena"]}/',
+        'domena': druga['domena'],
         'reklamodawca': None,
         'tekst': f'{druga["tytul"]} {druga["tekst"]}',
         'zebrano': zebrano,
