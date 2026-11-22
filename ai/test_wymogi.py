@@ -37,6 +37,12 @@ PROBY = [
     ('Najtańszy broker w Polsce. Otwórz konto i handluj akcjami. Inwestowanie wiąże się z ryzykiem.', FIRMA, ['porownanie_bez_podstawy']),
     ('Najtańszy broker w Polsce według rankingu z 2026 r. Inwestowanie wiąże się z ryzykiem.', FIRMA, []),
     ('Sprawdź naszą najlepszą ofertę pożyczki.', FIRMA, []),
+    ('Kontrakty CFD są złożonymi instrumentami i wiążą się z dużym ryzykiem szybkiej utraty pieniędzy z powodu dźwigni finansowej. '
+     '74% rachunków inwestorów detalicznych odnotowuje straty pieniężne w wyniku handlu kontraktami CFD u niniejszego dostawcy.', FIRMA, []),
+    ('Inwestowanie w instrumenty finansowe, w tym w szczególności w instrumenty pochodne charakteryzujące się wysokim poziomem '
+     'dźwigni finansowej, wiąże się z ryzykiem utraty części lub całości zainwestowanych środków, przy czym wyniki historyczne '
+     'nie stanowią gwarancji osiągnięcia podobnych wyników w przyszłości, a klient powinien rozważyć, czy rozumie zasady działania '
+     'tych instrumentów oraz czy może pozwolić sobie na wysokie ryzyko utraty środków.', FIRMA, ['ostrzezenie_niezrozumiale']),
     ('Handluj kontraktami CFD na akcje i indeksy. Inwestowanie wiąże się z ryzykiem.', FIRMA, ['brak_ostrzezenia_cfd']),
     ('Handluj kontraktami CFD na akcje i indeksy z niskim spreadem.', FIRMA, []),
     ('Handluj na Złocie CFD', FIRMA, []),

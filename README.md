@@ -6,7 +6,7 @@ KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaj
 
 KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
 
-M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 11 sprawdzamy w pełni, 6 częściowo, 2 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
+M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 11 sprawdzamy w pełni, 7 częściowo, 1 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
 
 ## Uruchomienie
 
@@ -48,7 +48,7 @@ Lista pochodzi z materiałów UKNF („Kryteria oceny informacji o ryzyku”). T
 | 6 Ukrywanie ryzyka | częściowo | strona: ukryty element liczy się jako niewidoczny; przypisu ani zakładki „Legal” nie oznaczamy |
 | 7 Dostępność za jednym kliknięciem | częściowo | strona: ostrzeżenie w zwiniętym elemencie liczy się jako brak; klikania nie testujemy |
 | 8 Responsywność | częściowo | komputer, tablet i telefon; przycięcia nie sprawdzamy |
-| 9 Zrozumiałość | jeszcze nie | |
+| 9 Zrozumiałość | częściowo | `ostrzezenie_niezrozumiale`, tylko w reklamach: zdanie ostrzeżenia dłuższe niż 45 słów albo ponad 20 słów, z których ponad jedna czwarta to bardzo długie słowa; listy żargonu nie ma, bo wymagane ostrzeżenie samo zawiera „CFD” i „dźwignię” |
 | 10 Spójność językowa | jest | `ryzyko_w_innym_jezyku`: polska reklama z ostrzeżeniem tylko po angielsku |
 | 11 Porównania produktów | jest | `porownanie_bez_podstawy`: „lepszy niż”, „w porównaniu z”, „najtańszy”, „najniższe prowizje”, „nr 1” bez źródła, rankingu ani daty |
 | 12a Wyniki historyczne: okres i źródło | jest | `wyniki_bez_okresu`, gdy reklama podaje wynik w procentach |
@@ -60,7 +60,7 @@ Lista pochodzi z materiałów UKNF („Kryteria oceny informacji o ryzyku”). T
 | 17 Aprobata organu nadzoru | jest | `nadzor_jako_argument`: „zatwierdzony”, „rekomendowany” albo „approved” obok KNF, CySEC lub FCA |
 | 18 Nadzór jako argument bezpieczeństwa | jest | `nadzor_jako_argument` |
 
-Razem 11 punktów jest, 6 częściowo, 2 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
+Razem 11 punktów jest, 7 częściowo, 1 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
 
 ### Jak trafne są ustalenia
 

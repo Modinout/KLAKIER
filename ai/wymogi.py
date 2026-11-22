@@ -52,6 +52,10 @@ PROGNOZA = re.compile(
     r'|\b(?:wzrośnie|wzrosną|spadnie|osiągnie|podwoi)\b'
 )
 ZASTRZEZENIE_PROGNOZY = re.compile(ZASTRZEZENIE_HISTORII.pattern + r'|prognoz\w* (?:nie|mogą się nie)|forecasts? (?:are|is) not')
+# Zdanie ostrzeżenia, którego przeciętny odbiorca nie przeczyta: bardzo długie albo pełne długich słów.
+# Standardowe ostrzeżenie ESMA o CFD ma około 30 słów, więc próg leży wyraźnie wyżej.
+NAJWIECEJ_SLOW_OSTRZEZENIA = 45
+DLUGIE_SLOWO = 13
 # Ostrzeżenie po angielsku w polskiej reklamie: polski przekaz rozpoznaje się po częstych słowach.
 POLSKIE_SLOWA = re.compile(r'\b(?:się|jest|nie|dla|oraz|już|dziś|twoje?|twój|nasz\w*|inwestuj\w*|kont[ao]|koncie|zł)\b')
 RYZYKO_PL = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*')
@@ -193,6 +197,18 @@ def sygnaly(tekst, rejestr, zrodlo=None):
             f'Reklama jest po polsku, a informacja o ryzyku po angielsku („{cytat(tekst, RYZYKO_EN.search(male))}”).',
             f'art. 44 ust. 2 lit. f {ROZPORZADZENIE}; kryterium UKNF nr 10',
         ))
+
+    # Tekst strony i opis filmu często nie mają kropek, więc ich „zdaniem” bywa całe menu.
+    for zdanie in _ZDANIE.finditer(tekst if zrodlo not in NIE_REKLAMY else ''):
+        slowa = zdanie.group().split()
+        dlugie = sum(len(s.strip('.,;:()')) >= DLUGIE_SLOWO for s in slowa)
+        if RYZYKO_PL.search(zdanie.group().casefold()) and (len(slowa) > NAJWIECEJ_SLOW_OSTRZEZENIA or (len(slowa) > 20 and dlugie > 0.25 * len(slowa))):
+            wynik.append(sygnal(
+                'ostrzezenie_niezrozumiale',
+                f'Ostrzeżenie o ryzyku jest trudne do przeczytania: {len(slowa)} słów w jednym zdaniu, {dlugie} bardzo długich („{cytat(tekst, zdanie)}”).',
+                f'art. 44 ust. 2 lit. d {ROZPORZADZENIE}; kryterium UKNF nr 9',
+            ))
+            break
 
     porownanie = twierdzenie(POROWNANIE, male)
     if porownanie and not PODSTAWA_POROWNANIA.search(male):
