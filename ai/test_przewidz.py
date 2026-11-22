@@ -49,6 +49,13 @@ powody = przewidz(tekst)['powody']
 sprawdz(bool(powody) and all(p['slowo'] in tekst for p in powody), 'powody', [(p['slowo'], round(p['waga'], 2)) for p in powody])
 sprawdz(przewidz(PROBY[3][1])['powody'] == [], 'low-risk ad -> no powody')
 
+# Styled Unicode letters, look-alike Cyrillic letters and invisible characters must not hide a scam.
+pogrubione = ''.join(chr(0x1D41A + ord(z) - 97) if 'a' <= z <= 'z' else z for z in tekst)
+for nazwa, wersja in [('math bold letters', pogrubione), ('Cyrillic look-alikes', tekst.translate(str.maketrans('aeopcyx', 'аеорсух'))),
+                      ('zero-width spaces', '​'.join(tekst))]:
+    w = przewidz(wersja)
+    sprawdz(w['werdykt'] == 'oszustwo', 'scam written with', nazwa, '-> got', w['werdykt'], format(w['prawdopodobienstwa']['oszustwo'], '.2f'))
+
 w = przewidz(PROBY[2][1])
 sprawdz(w['werdykt'] == 'ok' and w['pewny'], 'ordinary broker ad -> got', w['werdykt'], '| pewny', w['pewny'])
 pasma = [_werdykt('reklama', p) for p in (0.1, 0.5, 0.9)] + [_werdykt('', 0.9)]

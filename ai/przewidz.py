@@ -1,11 +1,11 @@
 # Small CPU classifier for the ai service, trained when this module is imported.
 #   from przewidz import przewidz
 #   przewidz('Zainwestuj 900 zl i zarabiaj 20 000 zl miesiecznie')
-#   -> {'werdykt': 'oszustwo', 'prawdopodobienstwa': {'ok': .., 'do_sprawdzenia': .., 'oszustwo': ..}, 'pewny': True,
+#   -> {'werdykt': 'oszustwo', 'prawdopodobienstwa': {'inne': .., 'oszustwo': ..}, 'pewny': True,
 #       'powody': [{'slowo': 'zarabiaj', 'waga': ..}, ..], 'rodzaj': ..}
 # The verdict follows the scam probability alone: 'ok' below PROG_DO_SPRAWDZENIA, 'oszustwo' from PROG_OSZUSTWA,
-# 'do_sprawdzenia' between them or when there is no text. The middle class the model learns is not shown:
-# from text alone it only repeats how broker ads look, and those are checked by the rules of modules M1-M3.
+# 'do_sprawdzenia' between them or when there is no text. Whether an honest broker ad lacks something the law
+# asks for is checked by the rules of modules M1-M3, not by this model.
 # 'pewny' False = a person rates the ad.
 # A reason is a word whose removal lowers the scam log-odds by at least PROG_POWODU.
 # Reasons cost one prediction per word, so they are looked for only from PROG_RYZYKA_POWODOW up.

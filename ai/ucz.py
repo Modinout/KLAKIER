@@ -1,13 +1,14 @@
-# Trains the verdict model on every ad, and the scam type model on the ads with a named type plus the ads
-# that are not scams. Those teach it when to name no type; a scam without a type teaches it nothing.
+# Trains the verdict model on every ad (scam or not), and the scam type model on the ads with a named type plus
+# the ads that are not scams. Those teach it when to name no type; a scam without a type teaches it nothing.
 import json
 import pathlib
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline, make_union
 
 import dopisane
+from tekst import normalizuj
 
 REKLAMY = pathlib.Path(__file__).parent / 'dane' / 'reklamy.jsonl'
 BEZ_RODZAJU = ''
@@ -18,7 +19,15 @@ def wiersze():
         return [json.loads(linia) for linia in plik] + dopisane.czytaj()
 
 
-def _nowy_model():
+def _model_werdyktu():
+    # Character pieces survive spelling tricks and OCR errors, words and word pairs carry the phrases.
+    znaki = TfidfVectorizer(analyzer='char_wb', ngram_range=(2, 5), sublinear_tf=True, min_df=2, preprocessor=normalizuj)
+    slowa = TfidfVectorizer(analyzer='word', ngram_range=(1, 2), sublinear_tf=True, min_df=2, preprocessor=normalizuj,
+                            token_pattern=r'(?u)\b\w+\b')
+    return make_pipeline(make_union(znaki, slowa), LogisticRegression(C=20.0, max_iter=5000, class_weight='balanced'))
+
+
+def _model_rodzaju():
     return make_pipeline(TfidfVectorizer(analyzer='char_wb', ngram_range=(2, 5), sublinear_tf=True, min_df=2),
                          LogisticRegression(C=20.0, max_iter=3000, class_weight='balanced'))
 
@@ -26,6 +35,7 @@ def _nowy_model():
 def ucz():
     dane = wiersze()
     do_rodzaju = [w for w in dane if w['rodzaj'] or w['werdykt'] != 'oszustwo']
-    model_werdyktu = _nowy_model().fit([w['tekst'] for w in dane], [w['werdykt'] for w in dane])
-    model_rodzaju = _nowy_model().fit([w['tekst'] for w in do_rodzaju], [w['rodzaj'] or BEZ_RODZAJU for w in do_rodzaju])
+    model_werdyktu = _model_werdyktu().fit([w['tekst'] for w in dane],
+                                           ['oszustwo' if w['werdykt'] == 'oszustwo' else 'inne' for w in dane])
+    model_rodzaju = _model_rodzaju().fit([w['tekst'] for w in do_rodzaju], [w['rodzaj'] or BEZ_RODZAJU for w in do_rodzaju])
     return model_werdyktu, model_rodzaju
