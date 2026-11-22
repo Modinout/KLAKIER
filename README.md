@@ -65,6 +65,8 @@ docker compose --profile patrol run --rm --no-deps patrol python -m pytest test_
 
 Test z katalogu `testy` wymaga działających usług. Reklamy testowe, które dodaje do bazy, usuwa na końcu. Model zostawia taki, jaki był.
 
+GitHub Actions (`.github/workflows/sprawdzenie.yml`) przy każdym pushu i pull requeście buduje panel, uruchamia testy `ai` i `zbieracz`, które nie potrzebują działających usług, i skanuje zależności (`npm audit`, `pip-audit`). Dependabot (`.github/dependabot.yml`) co tydzień proponuje aktualizacje bibliotek, obrazów Dockera i akcji.
+
 ## Gdzie co dopisać
 
 - Nowe źródło reklam: nowy plik w `zbieracz/`, który wysyła rekordy na `POST /reklamy`.
