@@ -1,4 +1,4 @@
-# Check of the risk level on a running stack: docker compose up, then pytest testy.
+# Sprawdzenie poziomu ryzyka na działającym stosie: docker compose up, potem pytest testy.
 import httpx
 import pytest
 

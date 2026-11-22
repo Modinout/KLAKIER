@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.put('/domeny/{domena}', response_model=Domena)
 def zapisz_rejestracje(domena: str, rejestracja: RejestracjaDomeny):
-    """Replaces an earlier date of the domain."""
+    """Zastępuje wcześniejszą datę domeny."""
     with baza.polacz() as polaczenie:
         return polaczenie.execute(
             """
@@ -21,7 +21,7 @@ def zapisz_rejestracje(domena: str, rejestracja: RejestracjaDomeny):
 
 
 def daty():
-    """Registration dates by domain."""
+    """Daty rejestracji według domeny."""
     with baza.polacz() as polaczenie:
         return {wiersz['domena']: wiersz['zarejestrowano']
                 for wiersz in polaczenie.execute('SELECT domena, zarejestrowano FROM domeny').fetchall()}

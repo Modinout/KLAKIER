@@ -125,9 +125,9 @@ def test_sygnal_cert(monkeypatch):
 
 
 def obsluz_z_atrapami(monkeypatch, rekordy, w_api):
-    """Runs obsluz with a stubbed check and api; w_api maps id_zrodla to (is new, has picture[, text]).
+    """Uruchamia obsluz z podstawionym sprawdzeniem i api; w_api mapuje id_zrodla na (czy nowa, czy ma obraz[, tekst]).
 
-    Returns the result and the ids that got a picture.
+    Zwraca wynik i id, które dostały obraz.
     """
     wyslane = []
 
@@ -237,7 +237,7 @@ def test_rotacja_bez_ustawien_zostawia_przegladarke(monkeypatch):
 
 
 class Karta:
-    """A page stub that shows the given selectors; a screenshot returns the selector it was taken of."""
+    """Atrapa strony pokazująca podane selektory; zrzut ekranu zwraca selektor, z którego został zrobiony."""
 
     def __init__(self, widoczne):
         self.widoczne = widoczne

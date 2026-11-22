@@ -1,5 +1,5 @@
-# Checks domains from the KNF public warning list and sends what it finds to the api.
-# Usage: python patrol.py [domena ...]; with no domains it checks the whole list.
+# Sprawdza domeny z publicznej listy ostrzeżeń KNF i wysyła to, co znajdzie, do api.
+# Użycie: python patrol.py [domena ...]; bez domen sprawdza całą listę.
 import csv
 import sys
 from datetime import datetime, timezone
@@ -30,7 +30,7 @@ def rekord_reklamy(domena, wpis, reklama, zebrano):
         'url': f'https://{domena}/',
         'domena': domena,
         'reklamodawca': reklama['reklamodawca'],
-        # Google draws the ad as a picture; the api reads the text from it when the picture arrives.
+        # Google rysuje reklamę jako obraz; api czyta z niego tekst, gdy obraz dotrze.
         'tekst': '',
         'zebrano': zebrano,
         'opublikowano': reklama['pierwsza'].isoformat(),
@@ -73,7 +73,7 @@ def sygnal_cert(domena):
 
 
 def sprawdz(domena, wpis, przegladarka, ostrzezenia, z_cert):
-    """Runs the checks for one domain; returns the ad counter text, the ads, the second domain and (record, picture) pairs."""
+    """Wykonuje sprawdzenia jednej domeny; zwraca tekst licznika reklam, reklamy, drugą domenę i pary (rekord, obraz)."""
     zebrano = datetime.now(timezone.utc).isoformat(timespec='seconds')
     licznik, reklamy = reklamy_google.reklamy(przegladarka, domena)
     druga = druga_domena.znajdz(przegladarka, domena, ostrzezenia)
@@ -87,7 +87,7 @@ def sprawdz(domena, wpis, przegladarka, ostrzezenia, z_cert):
 
 
 def obsluz(domena, ostrzezenia, przegladarka, z_cert):
-    """Checks one domain and sends its records and pictures; returns added, skipped, errors (0 or 1) and the line to print."""
+    """Sprawdza jedną domenę i wysyła jej rekordy i obrazy; zwraca dodane, pominięte, błędy (0 lub 1) i linię do wydruku."""
     dodane = obrazy = 0
     try:
         licznik, reklamy, druga, rekordy = sprawdz(domena, ostrzezenia[domena], przegladarka, ostrzezenia, z_cert)
@@ -104,7 +104,7 @@ def obsluz(domena, ostrzezenia, przegladarka, z_cert):
 
 
 def wczytaj_cert():
-    """True when the CERT Polska list loaded."""
+    """True, gdy lista CERT Polska się wczytała."""
     try:
         lista_cert.wczytaj()
         return True

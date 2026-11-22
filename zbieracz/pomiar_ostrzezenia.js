@@ -1,7 +1,7 @@
-// Measures the risk warning of a page as the browser draws it. Returns the font size that prevails in the visible
-// text, whether the visible text mentions CFDs, and the most prominent copy of the warning: its font size and
-// weight, its contrast with what is behind it, whether it is visible and whether it shows without scrolling.
-// Plain loops instead of array methods: some pages replace Array.prototype.reduce or sort with broken versions.
+// Mierzy ostrzeżenie o ryzyku na stronie tak, jak rysuje je przeglądarka. Zwraca rozmiar czcionki przeważający
+// w widocznym tekście, informację, czy widoczny tekst wspomina o CFD, oraz najbardziej wyeksponowaną kopię
+// ostrzeżenia: jej rozmiar i grubość czcionki, kontrast z tłem, czy jest widoczna i czy pokazuje się bez przewijania.
+// Zwykłe pętle zamiast metod tablic: niektóre strony podmieniają Array.prototype.reduce lub sort na zepsute wersje.
 () => {
   const OSTRZEZENIE = /inwestorów detalicznych|szybkiej utraty|retail investor accounts|losing money rapidly|Privatanleger|investisseurs particuliers|particuliere beleggers|retailových investorů|inversores minoristas|investitori al dettaglio/i;
   const CFD = /\bCFDs?\b|kontrakt\w* na różnic|contracts? for difference/i;
@@ -9,7 +9,7 @@
   const OBRAZ = /^(img|video|canvas|picture|svg)$/i;
   const plotno = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
 
-  // Any CSS colour, oklch() included, as sRGB channels 0-255 and alpha 0-1.
+  // Dowolny kolor CSS, razem z oklch(), jako kanały sRGB 0-255 i alfa 0-1.
   function rgba(kolor) {
     plotno.clearRect(0, 0, 1, 1);
     plotno.fillStyle = 'rgba(0, 0, 0, 0)';
@@ -24,10 +24,10 @@
     return { r: kanal('r'), g: kanal('g'), b: kanal('b'), a: 1 };
   }
 
-  // Whether a picture is drawn under the middle of the element above the first solid colour. The picture need not
-  // belong to an ancestor, e.g. a photo with a negative z-index. The middle of a wrapped text can fall between its
-  // lines, so the layers are counted from the first one that holds the element. The colours of html and body usually
-  // paint the canvas under every picture, so they are not taken to hide one.
+  // Czy obraz jest rysowany pod środkiem elementu nad pierwszym jednolitym kolorem. Obraz nie musi należeć do
+  // przodka, np. zdjęcie z ujemnym z-index. Środek zawiniętego tekstu może wypaść między jego liniami, więc warstwy
+  // liczy się od pierwszej, która zawiera element. Kolory html i body zwykle malują kanwę pod każdym obrazem, więc
+  // nie uważa się ich za ukrywające obraz.
   function obrazPod(element) {
     const prostokat = element.getBoundingClientRect();
     if (!prostokat.width) return false;
@@ -42,8 +42,8 @@
     return false;
   }
 
-  // Colour behind the element, or null when it is unknown: a picture or a gradient is behind it, or see-through
-  // layers have no solid colour under them, so a photo drawn by another element may show through.
+  // Kolor za elementem albo null, gdy jest nieznany: za nim jest obraz lub gradient albo przezroczyste warstwy
+  // nie mają pod sobą jednolitego koloru, więc zdjęcie rysowane przez inny element może przeświecać.
   function tlo(element) {
     if (obrazPod(element)) return null;
     const warstwy = [];
@@ -55,7 +55,7 @@
       if (kolor.a === 1) break;
     }
     if (warstwy.length && warstwy[warstwy.length - 1].a < 1) return null;
-    // With no layer at all the text sits on the white page.
+    // Bez żadnej warstwy tekst leży na białej stronie.
     let wynik = { r: 255, g: 255, b: 255, a: 1 };
     for (let i = warstwy.length - 1; i >= 0; i--) wynik = nalozony(warstwy[i], wynik);
     return wynik;
@@ -69,7 +69,7 @@
     return 0.2126 * liniowy(kolor.r) + 0.7152 * liniowy(kolor.g) + 0.0722 * liniowy(kolor.b);
   }
 
-  // WCAG contrast ratio, from 1 to 21.
+  // Współczynnik kontrastu WCAG, od 1 do 21.
   function kontrast(element) {
     const za = tlo(element);
     if (!za) return null;
@@ -79,7 +79,7 @@
     return Math.round(stosunek * 100) / 100;
   }
 
-  // Screen reader text is clipped to 1 px and pushed-off text sits left of the page.
+  // Tekst dla czytników ekranu jest przycięty do 1 px, a tekst wypchnięty leży na lewo od strony.
   function widoczny(element) {
     const prostokat = element.getBoundingClientRect();
     return prostokat.width > 1 && prostokat.height > 1 && prostokat.right > 0
@@ -90,7 +90,7 @@
     return element.getBoundingClientRect().top + scrollY;
   }
 
-  // Cookie banners and bars pinned to the window are not the text of the page itself.
+  // Banery cookies i paski przypięte do okna nie są tekstem samej strony.
   function naNakladce(element) {
     for (let el = element; el; el = el.parentElement) {
       const pozycja = getComputedStyle(el).position;
@@ -99,7 +99,7 @@
     return false;
   }
 
-  // The most prominent copy counts: a visible one before a hidden one, then the largest, then the highest.
+  // Liczy się najbardziej wyeksponowana kopia: widoczna przed ukrytą, potem największa, potem najwyższa.
   function wyrazniejsza(a, b) {
     if (a.widac !== b.widac) return a.widac;
     if (a.px !== b.px) return a.px > b.px;
@@ -115,7 +115,8 @@
     if (!tekst || !element || POMIJANE[element.tagName]) continue;
     const px = Math.round(parseFloat(getComputedStyle(element).fontSize) * 10) / 10;
     const widac = widoczny(element);
-    // The warning is left out of the prevailing size, so a long warning cannot set the size it is measured against.
+    // Ostrzeżenie jest wyłączone z rozmiaru przeważającego, więc długie ostrzeżenie nie ustali rozmiaru,
+    // względem którego jest mierzone.
     if (OSTRZEZENIE.test(tekst)) {
       const kopia = { element, tekst, px, widac };
       if (!naj || wyrazniejsza(kopia, naj)) naj = kopia;

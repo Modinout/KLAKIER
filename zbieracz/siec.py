@@ -1,12 +1,12 @@
-# The link checker runs inside the stack, so a pasted link could otherwise reach the stack's own services
-# or the local network.
+# Sprawdzacz linków działa wewnątrz stosu, więc wklejony link mógłby inaczej dotrzeć do własnych usług stosu
+# lub do sieci lokalnej.
 import ipaddress
 import socket
 from urllib.parse import urlsplit
 
 
 def wewnetrzny(host):
-    """True when the host is, or resolves to, an address outside the public internet."""
+    """True, gdy host jest adresem spoza publicznego internetu albo się do takiego rozwiązuje."""
     try:
         adresy = {informacja[4][0] for informacja in socket.getaddrinfo(host, None)}
     except (socket.gaierror, UnicodeError):
@@ -15,5 +15,5 @@ def wewnetrzny(host):
 
 
 def prowadzi_do_wewnetrznego(adresy):
-    """True when any of the addresses points into the local network."""
+    """True, gdy którykolwiek z adresów wskazuje do sieci lokalnej."""
     return any(wewnetrzny(host) for host in {urlsplit(adres).hostname for adres in adresy} if host)

@@ -40,7 +40,7 @@ from schematy import (
 
 AI_URL = os.environ['AI_URL']
 ODCZYT_URL = os.environ['ODCZYT_URL']
-# The odczyt service reads one picture at a time and takes up to minutes per picture.
+# Usługa odczyt czyta jeden obraz naraz i potrafi zająć nawet minuty na obraz.
 ODCZYT_PO_KOLEI = threading.Lock()
 
 app = FastAPI(title='KLAKIER API')
@@ -65,7 +65,7 @@ def zdrowie():
 
 @app.post('/reklamy', response_model=Reklama, status_code=201)
 def dodaj_reklame(reklama: NowaReklama):
-    # Checked before scoring so a re-run of the collector costs no model calls.
+    # Sprawdzane przed oceną, żeby ponowne uruchomienie zbieracza nie kosztowało wywołań modelu.
     if baza.jest(reklama.zrodlo, reklama.id_zrodla):
         raise HTTPException(409, 'Ta reklama jest już w bazie')
     ocena = ocen(reklama.model_dump())
@@ -174,7 +174,7 @@ def ocen(reklama, klient=httpx):
 
 
 def drugi_sedzia(tekst):
-    """Verdict of the big model, or None when it is not configured or did not answer."""
+    """Werdykt dużego modelu albo None, gdy nie jest skonfigurowany lub nie odpowiedział."""
     odpowiedz = httpx.post(f'{AI_URL}/drugi_sedzia', json={'tekst': tekst}, timeout=120)
     if odpowiedz.status_code == 503:
         return None
@@ -182,7 +182,7 @@ def drugi_sedzia(tekst):
 
 
 def odczytaj_tekst(obraz):
-    """Text of a base64 picture, read by the odczyt service."""
+    """Tekst obrazu w base64, odczytany przez usługę odczyt."""
     try:
         with ODCZYT_PO_KOLEI:
             odpowiedz = httpx.post(f'{ODCZYT_URL}/odczytaj', json={'obraz': obraz}, timeout=300)
@@ -198,7 +198,7 @@ def odczytaj_tekst(obraz):
 
 
 def odkoduj_obraz(obraz):
-    """Content type and bytes of a base64 PNG or JPEG, told apart by the first bytes of the file."""
+    """Typ zawartości i bajty obrazu PNG lub JPEG w base64, rozpoznane po pierwszych bajtach pliku."""
     try:
         dane = base64.b64decode(obraz, validate=True)
     except binascii.Error as blad:
@@ -211,26 +211,26 @@ def odkoduj_obraz(obraz):
 
 
 def przelicz_wszystkie():
-    """Scores every stored ad again with the current model and returns how many there were."""
+    """Ocenia ponownie każdą zapisaną reklamę obecnym modelem i zwraca, ile ich było."""
     reklamy = baza.do_oceny()
-    # One client for the whole run: opening a new one per ad takes longer than scoring the ad.
+    # Jeden klient na cały przebieg: otwieranie nowego dla każdej reklamy trwa dłużej niż jej ocena.
     with httpx.Client() as klient:
         baza.zapisz_oceny([{'id': reklama['id'], **ocen(reklama, klient)} for reklama in reklamy])
     return len(reklamy)
 
 
 def oceny_modelu():
-    """Model verdict and risk level of every ad by id, as the panel shows them."""
+    """Werdykt modelu i poziom ryzyka każdej reklamy według id, tak jak pokazuje je panel."""
     reklamy = map(Reklama.model_validate, z_sygnalem_domeny(baza.lista(None, None, 0, None)))
     return {reklama.id: reklama.model_dump(include={'werdykt', 'poziom'}) for reklama in reklamy}
 
 
 def z_sygnalem_domeny(wiersze):
-    """Rows of the reklamy table with the findings about their landing domain: payers compared with the domain, the
-    risk warning on its page and its age; and with whether the text model's risk reaches the threshold of GET /prog.
+    """Wiersze tabeli reklamy z ustaleniami o ich domenie docelowej: płatnicy porównani z domeną, ostrzeżenie o ryzyku
+    na jej stronie i jej wiek; oraz z informacją, czy ryzyko modelu tekstowego sięga progu z GET /prog.
 
-    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad, a new measurement of
-    the page, a new date of the domain or a new threshold must show on the older ads at once.
+    Liczone przy każdym odczycie, nie zapisywane: ponowna ocena nadpisuje zapisane sygnały, a nowa reklama, nowy pomiar
+    strony, nowa data domeny lub nowy próg muszą od razu pokazać się na starszych reklamach.
     """
     sygnaly = platnicy_domeny.sygnaly_domen(baza.platnicy_domen())
     strony = baza.strony()

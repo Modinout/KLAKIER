@@ -1,4 +1,4 @@
-# Links an analyst pastes in the panel: the api queues them and the robotnik reports back how each check went.
+# Linki wklejane przez analityka w panelu: api kolejkuje je, a robotnik zgłasza, jak poszło każde sprawdzenie.
 import json
 import os
 
@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException
 import baza
 from schematy import NoweSprawdzenie, Sprawdzenie, Zlecenie
 
-# The robotnik takes this list before the patrol's domains (zbieracz/kolejka.py).
+# Robotnik bierze tę listę przed domenami patrolu (zbieracz/kolejka.py).
 LINKI = 'patrol:linki'
 KOLEJKA = redis.Redis.from_url(os.environ['KOLEJKA_URL'])
 
@@ -33,7 +33,7 @@ def stan(id: int):
 
 @router.put('/sprawdz/{id}', response_model=Sprawdzenie)
 def zapisz_stan(id: int, sprawdzenie: Sprawdzenie):
-    """The robotnik reports here how the check goes."""
+    """Robotnik zgłasza tu, jak idzie sprawdzenie."""
     return znalezione(baza.zapisz_sprawdzenie(id, sprawdzenie.model_dump()))
 
 

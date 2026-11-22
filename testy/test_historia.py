@@ -1,4 +1,4 @@
-# Check of the change history on a running stack: docker compose up, then pytest testy.
+# Sprawdzenie historii zmian na działającym stosie: docker compose up, potem pytest testy.
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'api'))
 
 from opis_zmian import zmiany_modelu  # noqa: E402
 
-# How the panel sends a name with Polish letters: a header carries only Latin-1.
+# Tak panel wysyła nazwę z polskimi literami: nagłówek niesie tylko Latin-1.
 LUCJA = {'X-Analityk': '%C5%81ucja%20Wi%C5%9Bniewska'}
 
 

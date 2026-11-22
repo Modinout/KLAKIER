@@ -22,7 +22,7 @@ def jest(zrodlo, id_zrodla):
 
 
 def dodaj(reklama, ocena, drugi_sedzia):
-    """Returns the stored row, or None when this ad (zrodlo + id_zrodla) is already stored."""
+    """Zwraca zapisany wiersz albo None, gdy ta reklama (zrodlo + id_zrodla) jest już zapisana."""
     pola = {**reklama, **kolumny_oceny(ocena), 'sygnaly_zbieracza': Jsonb(reklama['sygnaly']),
             'drugi_sedzia': Jsonb(drugi_sedzia) if drugi_sedzia else None}
     with polacz() as baza:
@@ -62,16 +62,16 @@ def jedna(id):
 
 
 def zmien(id, zmiany):
-    # Column names come from the fields of ZmianaReklamy, never from the request text.
+    # Nazwy kolumn pochodzą z pól ZmianaReklamy, nigdy z tekstu żądania.
     ustaw = ', '.join(f'{pole} = %({pole})s' for pole in zmiany)
     with polacz() as baza:
         return baza.execute(f'UPDATE reklamy SET {ustaw} WHERE id = %(id)s RETURNING *', {**zmiany, 'id': id}).fetchone()
 
 
 def podobne(id):
-    """Raises psycopg.errors.QueryCanceled when the search runs over 5 s."""
+    """Zgłasza psycopg.errors.QueryCanceled, gdy wyszukiwanie trwa dłużej niż 5 s."""
     with polacz() as baza:
-        # Trigram similarity of whole long texts (pages, video descriptions) takes tens of seconds.
+        # Podobieństwo trigramowe całych długich tekstów (stron, opisów filmów) trwa dziesiątki sekund.
         baza.execute("SET LOCAL statement_timeout = '5s'")
         return baza.execute(
             """
@@ -86,7 +86,7 @@ def podobne(id):
 
 
 def platnicy_domen():
-    # Ordered by id so the first stored spelling of a payer's name is the one shown.
+    # Sortowanie po id sprawia, że pokazywany jest pierwszy zapisany zapis nazwy płatnika.
     with polacz() as baza:
         return baza.execute(
             """
@@ -110,7 +110,7 @@ def do_oceny():
 
 
 def zapisz_oceny(oceny):
-    """oceny: one dict per ad with its id and a fresh answer of ai /ocen."""
+    """oceny: jeden słownik na reklamę z jej id i świeżą odpowiedzią ai /ocen."""
     with polacz() as baza:
         baza.cursor().executemany(
             """
@@ -129,7 +129,7 @@ def zapisz_tekst(id, tekst):
 
 
 def zapisz_obraz(id, typ, dane):
-    """Replaces an earlier picture of the ad and returns the ad."""
+    """Zastępuje wcześniejszy obraz reklamy i zwraca reklamę."""
     with polacz() as baza:
         baza.execute(
             """
@@ -147,7 +147,7 @@ def obraz(id):
 
 
 def zapisz_strone(domena, pomiar):
-    """Replaces an earlier measurement of the domain and returns the stored row."""
+    """Zastępuje wcześniejszy pomiar domeny i zwraca zapisany wiersz."""
     widoki = {nazwa: Jsonb(widok) if widok else None for nazwa, widok in pomiar.items()}
     with polacz() as baza:
         return baza.execute(
@@ -163,7 +163,7 @@ def zapisz_strone(domena, pomiar):
 
 
 def strony():
-    """Measured landing pages by domain."""
+    """Zmierzone strony docelowe według domeny."""
     with polacz() as baza:
         return {strona['domena']: strona for strona in baza.execute('SELECT * FROM strony').fetchall()}
 
@@ -194,7 +194,7 @@ def zapisz_sprawdzenie(id, stan):
         ).fetchone()
 
 
-# A visit without its files, with the hashes of both files in one object.
+# Wizyta bez plików, z haszami obu plików w jednym obiekcie.
 POLA_DOWODU = "id, kiedy, rodzaj, adres, lancuch, json_build_object('obraz', sha256_obrazu, 'html', sha256_html) AS sha256"
 
 
@@ -217,7 +217,7 @@ def dowody(reklama_id):
 
 
 def dowod(id):
-    """One visit with its files."""
+    """Jedna wizyta z jej plikami."""
     with polacz() as baza:
         return baza.execute('SELECT * FROM dowody WHERE id = %s', [id]).fetchone()
 

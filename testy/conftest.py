@@ -8,7 +8,7 @@ REPO = Path(__file__).resolve().parent.parent
 
 @pytest.fixture(scope='session', autouse=True)
 def usun_reklamy_testowe():
-    # The tests run against the live stack, so their ads would stay in the analysts' queue.
+    # Testy działają na żywym stosie, więc ich reklamy zostałyby w kolejce analityków.
     yield
     subprocess.run(
         ['docker', 'compose', 'exec', '-T', 'baza', 'psql', '-U', 'klakier', '-d', 'klakier',

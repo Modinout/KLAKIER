@@ -1,4 +1,4 @@
-# CERT Polska warning list: domains that Polish operators block.
+# Lista ostrzeżeń CERT Polska: domeny, które blokują polscy operatorzy.
 import httpx
 
 ADRES = 'https://hole.cert.pl/domains/v2/domains.json'
@@ -9,7 +9,7 @@ domeny = set()
 def wczytaj():
     odpowiedz = httpx.get(ADRES, timeout=120)
     odpowiedz.raise_for_status()
-    # Entries with a delete date were taken off the list and are no longer blocked.
+    # Wpisy z datą usunięcia zdjęto z listy i nie są już blokowane.
     domeny.update(wpis['DomainAddress'].lower() for wpis in odpowiedz.json() if not wpis['DeleteDate'])
 
 

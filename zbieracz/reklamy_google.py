@@ -1,4 +1,4 @@
-# Google ads shown in Poland that lead to a domain, read from the Ads Transparency Center.
+# Reklamy Google wyświetlane w Polsce, które prowadzą do domeny, czytane z Ads Transparency Center.
 import re
 from datetime import date
 
@@ -13,7 +13,7 @@ OSTATNIA = re.compile(r'Ostatnio wyświetlona: (\d{1,2} \S+ \d{4})')
 NAJWIECEJ = 8
 OBRAZ = 'img[src*="tpc.googlesyndication.com/archive/simgad/"]'
 RAMKA = 'iframe[src*="/adframe"], iframe[src*="tpc.googlesyndication.com/safeframe/"]'
-# Google prints a month either abbreviated or as the full genitive form.
+# Google drukuje miesiąc albo skrótem, albo pełną formą dopełniacza.
 MIESIACE = {
     'sty': 1, 'lut': 2, 'mar': 3, 'kwi': 4, 'maj': 5, 'cze': 6, 'lip': 7, 'sie': 8, 'wrz': 9, 'paź': 10, 'lis': 11, 'gru': 12,
     'stycznia': 1, 'lutego': 2, 'marca': 3, 'kwietnia': 4, 'maja': 5, 'czerwca': 6, 'lipca': 7, 'sierpnia': 8,
@@ -22,7 +22,7 @@ MIESIACE = {
 
 
 def reklamy(przegladarka, domena):
-    """Returns the ad counter text and the ads with advertiser, dates and picture."""
+    """Zwraca tekst licznika reklam i reklamy z reklamodawcą, datami i obrazem."""
     ustawienia = rotacja.ustawienia()
     with przegladarka.new_context(locale='pl-PL', viewport={'width': 1280, 'height': 1400}, **ustawienia) as kontekst:
         karta = kontekst.new_page()
@@ -48,7 +48,7 @@ def szczegoly(tekst):
 
 
 def data(tekst):
-    """A date as Google prints it in Polish, e.g. '9 paź 2026' or '1 marca 2023'."""
+    """Data tak, jak Google drukuje ją po polsku, np. '9 paź 2026' albo '1 marca 2023'."""
     dzien, miesiac, rok = tekst.split()
     if miesiac not in MIESIACE:
         raise RuntimeError(f'nieznany zapis daty: {tekst}')
@@ -65,9 +65,9 @@ def tekst_strony(karta):
 
 
 def obraz_reklamy(karta):
-    """PNG of the ad itself, or None when the page shows no ad picture.
+    """PNG samej reklamy albo None, gdy strona nie pokazuje obrazu reklamy.
 
-    Some image and video ads have no picture file and are drawn in a frame, so the frame is taken instead.
+    Niektóre reklamy obrazkowe i wideo nie mają pliku obrazu i są rysowane w ramce, więc brana jest ramka.
     """
     for wybor in (OBRAZ, RAMKA):
         element = karta.locator(wybor).filter(visible=True)

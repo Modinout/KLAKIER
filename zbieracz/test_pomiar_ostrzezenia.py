@@ -1,4 +1,4 @@
-# Runs the page measurement in a real browser on pages built for the test. Needs the patrol image:
+# Uruchamia pomiar strony w prawdziwej przeglądarce na stronach zbudowanych na potrzeby testu. Wymaga obrazu patrol:
 # docker compose --profile patrol run --rm --no-deps patrol python -m pytest test_pomiar_ostrzezenia.py
 import pytest
 
@@ -9,7 +9,7 @@ import strony_docelowe  # noqa: E402
 TRESC = '<p>' + 'Handluj akcjami i walutami na naszej platformie. ' * 20 + '</p>'
 OSTRZEZENIE = ('Kontrakty CFD są złożonymi instrumentami i wiążą się z dużym ryzykiem szybkiej utraty środków '
                'pieniężnych z powodu dźwigni finansowej. 76% rachunków inwestorów detalicznych odnotowuje straty.')
-# A photo drawn under the text by an element that is not its ancestor, as hero pictures often are.
+# Zdjęcie rysowane pod tekstem przez element, który nie jest jego przodkiem, jak często bywa z obrazami hero.
 ZDJECIE = ('<img style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1" src="data:image/png;base64,'
            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">')
 
@@ -84,7 +84,7 @@ def test_gradient_za_tekstem_to_nieznany_kontrast(przegladarka):
 
 
 def test_polprzezroczysty_pasek_nad_zdjeciem_to_nieznany_kontrast(przegladarka):
-    # The photo is a sibling drawn behind the bar, so it is not among the bar's ancestors.
+    # Zdjęcie jest rodzeństwem rysowanym za paskiem, więc nie jest wśród przodków paska.
     zdjecie = ('<div style="position: absolute; inset: 0; background-image: url(data:image/png;base64,'
                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)"></div>')
     pasek = f'<p style="position: relative; color: #fff; background: rgba(0, 0, 0, 0.6)">{OSTRZEZENIE}</p>'

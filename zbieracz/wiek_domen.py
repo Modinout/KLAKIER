@@ -1,15 +1,15 @@
-# Looks up by RDAP when the landing domains of the ads were registered and sends each date to the api, which turns a
-# young domain of an investment ad into a finding on every read.
-# Usage: python wiek_domen.py [domena ...]; with no domains it takes the landing domains of all ads.
+# Sprawdza przez RDAP, kiedy zarejestrowano domeny docelowe reklam, i wysyła każdą datę do api, które zamienia młodą
+# domenę reklamy inwestycyjnej w ustalenie przy każdym odczycie.
+# Użycie: python wiek_domen.py [domena ...]; bez domen bierze domeny docelowe wszystkich reklam.
 import os
 import sys
 import time
 
 import httpx
 
-# Second-level labels under a country code that name no brand, as in co.uk or com.pl.
+# Etykiety drugiego poziomu pod kodem kraju, które nie nazywają żadnej marki, jak w co.uk czy com.pl.
 OGOLNE = {'co', 'com', 'net', 'org', 'gov', 'edu', 'ac'}
-# rdap.org is a free shared service; one request a second keeps the run polite.
+# rdap.org to darmowa usługa współdzielona; jedno żądanie na sekundę utrzymuje uprzejmy przebieg.
 ODSTEP_S = 1
 
 
@@ -19,14 +19,14 @@ def domeny_reklam():
 
 
 def w_rejestrze(domena):
-    """The name a registry holds, as in pekao.com.pl for www.pekao.com.pl."""
+    """Nazwa, którą trzyma rejestr, jak pekao.com.pl dla www.pekao.com.pl."""
     czesci = domena.lower().split('.')
     ile = 3 if len(czesci) > 2 and len(czesci[-1]) == 2 and czesci[-2] in OGOLNE else 2
     return '.'.join(czesci[-ile:])
 
 
 def data_rejestracji(klient, domena):
-    """Day of registration by RDAP, or None when the registry does not give it."""
+    """Dzień rejestracji według RDAP albo None, gdy rejestr go nie podaje."""
     time.sleep(ODSTEP_S)
     odpowiedz = klient.get(f'https://rdap.org/domain/{domena}', follow_redirects=True, timeout=30).raise_for_status()
     for zdarzenie in odpowiedz.json().get('events', []):

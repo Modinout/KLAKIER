@@ -8,7 +8,7 @@ async def sluchaj(gniazdo: WebSocket):
     await gniazdo.accept()
     klienci.add(gniazdo)
     try:
-        # Clients send nothing; waiting for a message is how a closed connection shows up.
+        # Klienci nic nie wysyłają; czekanie na wiadomość to sposób, w jaki wychodzi zamknięcie połączenia.
         while True:
             await gniazdo.receive_text()
     except WebSocketDisconnect:
@@ -16,7 +16,7 @@ async def sluchaj(gniazdo: WebSocket):
 
 
 def wyslij(tekst):
-    """For plain def endpoints: they run in the threadpool, the sockets live on the event loop."""
+    """Dla zwykłych endpointów def: działają w puli wątków, a gniazda żyją w pętli zdarzeń."""
     anyio.from_thread.run(rozeslij, tekst)
 
 

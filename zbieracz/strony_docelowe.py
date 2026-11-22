@@ -1,6 +1,6 @@
-# Measures the risk warning on the home pages that ads of firms from the KNF register lead to, on a computer and on
-# a phone, and sends each measurement to the api, which turns it into findings on every read.
-# Usage: python strony_docelowe.py [domena ...]; with no domains it takes the landing domains of those ads.
+# Mierzy ostrzeżenie o ryzyku na stronach głównych, do których prowadzą reklamy firm z rejestru KNF, na komputerze
+# i na telefonie, i wysyła każdy pomiar do api, które zamienia go w ustalenia przy każdym odczycie.
+# Użycie: python strony_docelowe.py [domena ...]; bez domen bierze domeny docelowe tych reklam.
 import os
 import re
 import sys
@@ -13,7 +13,7 @@ import rotacja
 POMIAR = Path(__file__).with_name('pomiar_ostrzezenia.js').read_text(encoding='utf-8')
 WIDOKI = {
     'komputer': {'viewport': {'width': 1366, 'height': 900}},
-    # A narrow window with the browser's own User-Agent, so the site shows the layout it gives phones by width.
+    # Wąskie okno z własnym User-Agentem przeglądarki, żeby strona pokazała układ, który daje telefonom według szerokości.
     'telefon': {'viewport': {'width': 390, 'height': 844}, 'is_mobile': True, 'has_touch': True},
 }
 STANY_Z_REJESTRU = {'w_rejestrze', 'spoza_rejestru'}
@@ -27,7 +27,7 @@ def domeny_z_rejestru():
 
 
 def zmierz(przegladarka, domena, widok):
-    """Measurement of the home page in one view, or None when it does not open or shows a bot check."""
+    """Pomiar strony głównej w jednym widoku albo None, gdy się nie otwiera lub pokazuje sprawdzenie botów."""
     from playwright.sync_api import Error
 
     kontekst = przegladarka.new_context(locale='pl-PL', **WIDOKI[widok], **rotacja.ustawienia())
@@ -57,10 +57,10 @@ def opis(pomiar):
 
 
 def obsluz(przegladarka, domena):
-    """Measures one domain and sends the measurement; returns whether it was measured and the line to print."""
+    """Mierzy jedną domenę i wysyła pomiar; zwraca, czy zmierzono, i linię do wydruku."""
     komputer = zmierz(przegladarka, domena, 'komputer')
     if komputer is None:
-        # A site that refused the first visit is not asked again.
+        # Strona, która odmówiła przy pierwszej wizycie, nie jest pytana ponownie.
         return False, f'{domena}: strona nie otworzyła się albo odmówiła, pomijam'
     telefon = zmierz(przegladarka, domena, 'telefon')
     httpx.put(f"{os.environ['API_URL']}/strony/{domena}", json={'komputer': komputer, 'telefon': telefon},

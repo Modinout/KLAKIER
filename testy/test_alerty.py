@@ -1,4 +1,4 @@
-# Check of the alert channel on a running stack: docker compose up, then pytest testy.
+# Sprawdzenie kanału alertów na działającym stosie: docker compose up, potem pytest testy.
 import json
 import time
 
@@ -15,7 +15,7 @@ NIEWINNY_TEKST = 'Pizzeria Roma zaprasza na obiad. W każdy wtorek druga pizza z
 
 
 def alerty_przez(gniazdo, sekundy):
-    """Every alert that arrives within the given time; ads of other clients of the stack may show up too."""
+    """Każdy alert, który nadejdzie w podanym czasie; mogą trafić się też reklamy innych klientów stosu."""
     koniec = time.monotonic() + sekundy
     alerty = []
     while (zostalo := koniec - time.monotonic()) > 0:

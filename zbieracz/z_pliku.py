@@ -1,4 +1,4 @@
-# Sends ads from a JSONL file (one ad per line, fields as in KONTRAKT.md) to the api.
+# Wysyła reklamy z pliku JSONL (jedna reklama na linię, pola jak w KONTRAKT.md) do api.
 import json
 import os
 import sys

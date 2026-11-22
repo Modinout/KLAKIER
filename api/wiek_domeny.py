@@ -1,4 +1,5 @@
-# A landing domain registered just before an investment ad ran: scam sites are set up for one campaign and dropped.
+# Domena docelowa zarejestrowana tuż przed emisją reklamy inwestycyjnej: strony-oszustwa zakłada się na jedną
+# kampanię i porzuca.
 from datetime import date
 
 from temat import o_inwestycjach
@@ -7,10 +8,11 @@ MLODA_DNI = 30
 
 
 def sygnaly(reklama, zarejestrowano):
-    """Findings for an ad; zarejestrowano is the registration date of its landing domain by RDAP, or None."""
+    """Ustalenia dla reklamy; zarejestrowano to data rejestracji jej domeny docelowej według RDAP albo None."""
     if zarejestrowano is None or not o_inwestycjach(reklama['tekst'] + ' ' + (reklama['reklamodawca'] or '')):
         return []
-    # A domain registered after the ad ran was registered again later, so its date says nothing about the ad.
+    # Domena zarejestrowana po emisji reklamy została zarejestrowana ponownie później,
+    # więc jej data nic o reklamie nie mówi.
     dzien_reklamy = reklama['opublikowano'] or date.today()
     if not 0 <= (dzien_reklamy - zarejestrowano).days < MLODA_DNI:
         return []

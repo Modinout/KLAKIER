@@ -1,5 +1,5 @@
-# Whether a text is about investment services or instruments at all. The same test as o_inwestycjach in
-# ai/temat.py, which runs in another service; a change there belongs here too.
+# Czy tekst w ogóle dotyczy usług lub instrumentów inwestycyjnych. Ten sam test co o_inwestycjach w
+# ai/temat.py, który działa w innej usłudze; zmiana tam wymaga zmiany tutaj.
 import re
 
 INSTRUMENTY = re.compile(
@@ -16,7 +16,7 @@ INSTRUMENTY = re.compile(
 INWESTOWANIE = re.compile(
     r'\b(?:za)?inwest\w*|\binvest\w*|\bzarabiaj\w*|\bzysk\w*|\bpomnaż\w*|\bpasywn\w+ doch\w+|\bwypłać\b'
 )
-# Property and goods are sold with the same verbs but are no business of the financial supervisor.
+# Nieruchomości i towary sprzedaje się tymi samymi czasownikami, ale nie są sprawą nadzoru finansowego.
 INNE_RYNKI = re.compile(
     r'\bnieruchomo\w*|\bmieszkan\w*|\bapartament\w*|\bdział\w+ (?:budowlan\w+|roln\w+)|\bgrunt\w*|\bdewelop\w*'
     r'|\bimmobili\w*|\breal estate\b|\bproperty\b|\bodpad\w*|\bzłom\w*|\bsurowc\w+ wtórn\w+'

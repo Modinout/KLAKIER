@@ -1,4 +1,4 @@
-# What the browser saw on each visit of a checked link: the robotnik adds it, analysts download it as evidence.
+# To, co przeglądarka zobaczyła przy każdej wizycie sprawdzanego linku: dodaje to robotnik, analitycy pobierają jako dowód.
 import base64
 import binascii
 import hashlib
@@ -18,7 +18,7 @@ router = APIRouter()
 
 @router.post('/reklamy/{id}/dowody', response_model=Dowod, status_code=201)
 def dodaj_dowod(id: int, dowod: NowyDowod):
-    """The robotnik adds a visit here; the hashes are taken of the bytes as stored."""
+    """Robotnik dodaje tu wizytę; hasze liczone są z bajtów w takiej postaci, w jakiej zostały zapisane."""
     znaleziona(baza.jedna(id))
     try:
         obraz = base64.b64decode(dowod.obraz, validate=True)
@@ -45,7 +45,7 @@ def obraz_dowodu(id: int):
 
 @router.get('/dowody/{id}/html')
 def html_dowodu(id: int):
-    # A saved page can carry scripts, so the browser only ever gets it as a text file to save.
+    # Zapisana strona może zawierać skrypty, więc przeglądarka dostaje ją zawsze tylko jako plik tekstowy do zapisania.
     return Response(znaleziony(baza.dowod(id))['html'], media_type='text/plain; charset=utf-8',
                     headers={'Content-Disposition': f'attachment; filename="dowod-{id}.html"',
                              'X-Content-Type-Options': 'nosniff'})
@@ -53,7 +53,7 @@ def html_dowodu(id: int):
 
 @router.get('/reklamy/{id}/paczka')
 def paczka(id: int):
-    """ZIP of the files of every visit with a manifest of their SHA-256 as taken when each visit came in."""
+    """ZIP z plikami każdej wizyty i manifestem ich SHA-256 policzonych w chwili, gdy wizyta wpłynęła."""
     reklama = znaleziona(baza.jedna(id))
     bufor = io.BytesIO()
     with zipfile.ZipFile(bufor, 'w', zipfile.ZIP_DEFLATED) as archiwum:

@@ -17,7 +17,7 @@ CREATE TABLE reklamy (
     pewny         BOOLEAN NOT NULL,
     rejestr       JSONB,
     sygnaly       JSONB NOT NULL DEFAULT '[]',
-    -- Kept apart from sygnaly, which every re-score overwrites.
+    -- Osobno od sygnaly, które każda ponowna ocena nadpisuje.
     sygnaly_zbieracza JSONB NOT NULL DEFAULT '[]',
     powody        JSONB NOT NULL DEFAULT '[]',
     rodzaj        TEXT,
@@ -29,14 +29,15 @@ CREATE TABLE reklamy (
     UNIQUE (zrodlo, id_zrodla)
 );
 
--- Pictures live apart so that the ad lists do not carry their bytes.
+-- Obrazy leżą osobno, żeby listy reklam nie niosły ich bajtów.
 CREATE TABLE obrazy_reklam (
     reklama_id    INTEGER PRIMARY KEY REFERENCES reklamy(id) ON DELETE CASCADE,
     typ           TEXT NOT NULL,
     dane          BYTEA NOT NULL
 );
 
--- The risk warning on landing pages as the collector measured it; the api turns it into findings on each read.
+-- Ostrzeżenie o ryzyku na stronach docelowych tak, jak zmierzył je zbieracz; api zamienia je w ustalenia
+-- przy każdym odczycie.
 CREATE TABLE strony (
     domena        TEXT PRIMARY KEY,
     zmierzono     TIMESTAMPTZ NOT NULL,
@@ -53,23 +54,23 @@ CREATE TABLE historia (
 );
 CREATE INDEX historia_reklama_id ON historia (reklama_id);
 
--- Settings the analysts change in the panel, in a single row.
+-- Ustawienia zmieniane przez analityków w panelu, w jednym wierszu.
 CREATE TABLE ustawienia (
     id            INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
     prog          DOUBLE PRECISION NOT NULL
 );
--- The text model's own scam threshold, so the levels stay as the model's verdicts until someone changes it.
+-- Własny próg oszustwa modelu tekstowego, więc poziomy pozostają werdyktami modelu, dopóki ktoś go nie zmieni.
 INSERT INTO ustawienia (prog) VALUES (0.7);
 
--- Registration dates of landing domains by RDAP, as the collector found them; the api turns them into findings on
--- each read.
+-- Daty rejestracji domen docelowych według RDAP, tak jak znalazł je zbieracz; api zamienia je w ustalenia przy
+-- każdym odczycie.
 CREATE TABLE domeny (
     domena        TEXT PRIMARY KEY,
     zarejestrowano DATE NOT NULL,
     sprawdzono    TIMESTAMPTZ NOT NULL
 );
 
--- Links an analyst pasted in the panel; the robotnik checks them one by one.
+-- Linki wklejone przez analityka w panelu; robotnik sprawdza je po kolei.
 CREATE TABLE sprawdzenia (
     id            SERIAL PRIMARY KEY,
     url           TEXT NOT NULL,
@@ -79,7 +80,8 @@ CREATE TABLE sprawdzenia (
     blad          TEXT
 );
 
--- What the browser saw on each visit of a checked link. Rows are only added, so a record keeps every visit.
+-- To, co przeglądarka zobaczyła przy każdej wizycie sprawdzanego linku. Wiersze są tylko dodawane,
+-- więc rekord zachowuje każdą wizytę.
 CREATE TABLE dowody (
     id            SERIAL PRIMARY KEY,
     reklama_id    INTEGER NOT NULL REFERENCES reklamy(id) ON DELETE CASCADE,

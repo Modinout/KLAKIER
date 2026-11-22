@@ -1,4 +1,4 @@
-# The picture of an ad on a running stack: docker compose up, then pytest testy.
+# Obraz reklamy na działającym stosie: docker compose up, potem pytest testy.
 import base64
 
 import httpx
@@ -6,7 +6,7 @@ import httpx
 from test_odczyt import PROBKA
 from test_sciezka import API, nowa_reklama
 
-# A 1x1 PNG.
+# PNG 1x1.
 MALY_PNG = base64.b64decode(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 )

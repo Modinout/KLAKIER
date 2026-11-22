@@ -1,20 +1,20 @@
-# One risk level per record, from all that is known about it: collector findings, register and text rules, the model.
-# A hard fact alone makes a record high; a breach of the advertising rules by a listed firm makes it medium.
+# Jeden poziom ryzyka na rekord, z wszystkiego, co o nim wiadomo: ustaleń zbieracza, rejestru, reguł tekstowych i modelu.
+# Sam twardy fakt daje rekordowi poziom wysoki; naruszenie zasad reklamy przez firmę z rejestru daje średni.
 WYSOKIE = {
     'reklama_domeny_z_ostrzezenia_knf', 'druga_domena_ostrzezonej_strony', 'wielu_platnikow_domeny',
     'platnik_poza_listami', 'doradztwo_bez_zezwolenia', 'obca_domena', 'na_liscie_csirt_knf',
 }
-# Notes describe a finding and are not one themselves. A licensed brand paid for by another of its own
-# companies is a formal mismatch an analyst would dismiss; that company paying for another brand's domain is high.
+# Notatki opisują ustalenie, same nim nie są. Licencjonowana marka opłacana przez inną firmę z własnej grupy
+# to formalna niezgodność, którą analityk by odrzucił; ta firma płacąca za domenę innej marki to poziom wysoki.
 NOTATKI = {'brak_na_liscie_cert', 'na_liscie_cert', 'platnik_spoza_rejestru'}
-# Payers on a KNF list or in the MiCA register: the text model alone does not make their ad high.
+# Płatnicy z rejestru KNF lub MiCA: sam model tekstowy nie czyni ich reklamy wysoką.
 LICENCJE = {'w_rejestrze', 'tfi', 'bank', 'mica'}
 
 
 def poziom(sygnaly, ponad_progiem, rodzaj, rejestr):
-    """Returns (level, reason): the strongest finding decides and its description is the reason.
+    """Zwraca (poziom, powód): decyduje najsilniejsze ustalenie, a jego opis jest powodem.
 
-    ponad_progiem: the text model's risk is at the threshold of GET /prog or over it.
+    ponad_progiem: ryzyko modelu tekstowego jest równe progowi z GET /prog lub go przekracza.
     """
     for sygnal in sygnaly:
         if sygnal['kod'] in WYSOKIE:
@@ -27,5 +27,5 @@ def poziom(sygnaly, ponad_progiem, rodzaj, rejestr):
     for sygnal in sygnaly:
         if sygnal['kod'] not in NOTATKI:
             return 'srednie', sygnal['opis']
-    # An unsure model alone names no rule and quotes nothing, so it raises no level.
+    # Niepewny model sam nie wskazuje żadnej reguły ani niczego nie cytuje, więc nie podnosi poziomu.
     return 'niskie', None

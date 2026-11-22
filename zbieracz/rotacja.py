@@ -1,11 +1,11 @@
-# User-Agents and proxies set by the operator, handed out in turn: each new browser context takes the next ones.
+# User-Agenty i proxy ustawione przez operatora, wydawane po kolei: każdy nowy kontekst przeglądarki bierze następne.
 import os
 
 uzyte = {}
 
 
 def kolejny(nazwa):
-    """Next value of the '|'-separated list in the environment variable, or None when it is empty."""
+    """Następna wartość listy rozdzielonej '|' ze zmiennej środowiskowej albo None, gdy jest pusta."""
     wartosci = [wartosc.strip() for wartosc in os.environ.get(nazwa, '').split('|') if wartosc.strip()]
     if not wartosci:
         return None
@@ -15,6 +15,6 @@ def kolejny(nazwa):
 
 
 def ustawienia():
-    """User-Agent and proxy for a new browser context; None keeps the browser's own."""
+    """User-Agent i proxy dla nowego kontekstu przeglądarki; None zostawia własne ustawienia przeglądarki."""
     proxy = kolejny('ZBIERACZ_PROXY')
     return {'user_agent': kolejny('ZBIERACZ_USER_AGENTS'), 'proxy': {'server': proxy} if proxy else None}

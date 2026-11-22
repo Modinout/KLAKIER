@@ -1,15 +1,15 @@
-# Sends records and their pictures to the api.
+# Wysyła rekordy i ich obrazy do api.
 import base64
 import os
 
 import httpx
 
-# Records already in the api, by (zrodlo, id_zrodla); the full list is fetched only when a duplicate is not here.
+# Rekordy już w api, według (zrodlo, id_zrodla); pełna lista jest pobierana tylko wtedy, gdy duplikatu tu nie ma.
 zapisane = {}
 
 
 def dodaj(rekord):
-    """Returns whether the record is new and the record as stored in the api."""
+    """Zwraca, czy rekord jest nowy, i rekord w postaci zapisanej w api."""
     odpowiedz = httpx.post(f"{os.environ['API_URL']}/reklamy", json=rekord, timeout=120)
     if odpowiedz.status_code == 409:
         klucz = (rekord['zrodlo'], rekord['id_zrodla'])
@@ -21,10 +21,10 @@ def dodaj(rekord):
 
 
 def wyslij(rekord, obraz):
-    """Sends the record, then its picture; returns whether the record is new and whether the picture went.
+    """Wysyła rekord, potem jego obraz; zwraca, czy rekord jest nowy i czy obraz poszedł.
 
-    A picture goes also to a record the api already has without a picture or without text,
-    so a second run repairs older records: the api reads the text only for a record whose text is empty.
+    Obraz idzie także do rekordu, który api już ma bez obrazu lub bez tekstu,
+    więc drugi przebieg naprawia starsze rekordy: api czyta tekst tylko dla rekordu z pustym tekstem.
     """
     nowy, zapisany = dodaj(rekord)
     if obraz and not (zapisany['ma_obraz'] and zapisany['tekst']):
@@ -34,7 +34,7 @@ def wyslij(rekord, obraz):
 
 
 def wyslij_obraz(id, obraz):
-    # The api reads the text from the picture, which takes seconds per picture.
+    # Api czyta tekst z obrazu, co trwa sekundy na obraz.
     odpowiedz = httpx.put(f"{os.environ['API_URL']}/reklamy/{id}/obraz",
                           json={'obraz': base64.b64encode(obraz).decode()}, timeout=300)
     odpowiedz.raise_for_status()

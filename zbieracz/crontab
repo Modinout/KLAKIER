@@ -1,8 +1,8 @@
-# Every night at 02:00 queue every domain of the KNF warning list for the patrol.
+# Co noc o 02:00 kolejkuje wszystkie domeny z listy ostrzeżeń KNF dla patrolu.
 0 2 * * * root cd /app && KOLEJKA_URL=redis://kolejka:6379/0 /usr/local/bin/python zlec.py >> /proc/1/fd/1 2>&1
-# Every night at 03:00 search TikTok's ad library for the investment phrases.
+# Co noc o 03:00 przeszukuje bibliotekę reklam TikToka pod kątem fraz inwestycyjnych.
 0 3 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python tiktok.py >> /proc/1/fd/1 2>&1
-# Every night at 04:00 measure the risk warning on the landing pages of licensed firms' ads.
+# Co noc o 04:00 mierzy ostrzeżenie o ryzyku na stronach docelowych reklam licencjonowanych firm.
 0 4 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python strony_docelowe.py >> /proc/1/fd/1 2>&1
-# Every night at 05:00 search Meta's ad library API for the investment phrases; without META_TOKEN it does nothing.
+# Co noc o 05:00 przeszukuje API biblioteki reklam Mety pod kątem fraz inwestycyjnych; bez META_TOKEN nic nie robi.
 0 5 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python meta_api.py >> /proc/1/fd/1 2>&1

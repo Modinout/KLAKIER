@@ -1,12 +1,12 @@
-# Contacts in the text of an ad that tie it to other ads: phone numbers and messenger addresses.
+# Kontakty w tekście reklamy, które wiążą ją z innymi reklamami: numery telefonów i adresy komunikatorów.
 import re
 
 TELEGRAM = re.compile(
     r'\b(?:t|telegram)\.me/(?:s/)?(?:(?:joinchat/|\+)([\w-]{8,})|([A-Za-z][A-Za-z0-9_]{4,31}))', re.IGNORECASE)
 WHATSAPP = re.compile(r'\b(?:wa\.me/|whatsapp\.com/send/?\?phone=)\+?(\d{8,15})', re.IGNORECASE)
 MIEDZYNARODOWY = re.compile(r'\+\(?\d{1,4}\)?(?:[ .\-]?\(?\d{1,4}\)?){2,7}')
-# Polish numbers have nine digits and never start with 0. A digit run glued to a word, a URL or a decimal part is an
-# id or an amount, and so is one followed by a currency.
+# Polskie numery mają dziewięć cyfr i nie zaczynają się od 0. Ciąg cyfr przyklejony do słowa, adresu URL lub części
+# dziesiętnej to identyfikator albo kwota, tak samo jak ciąg, po którym stoi waluta.
 KRAJOWY = re.compile(
     r'(?<![\w+\-.,/=#&?%])'
     r'(?:[1-9]\d{2}[ \-]\d{3}[ \-]\d{3}|[1-9]\d{8}|\(?[1-9]\d\)?[ \-]\d{3}[ \-]\d{2}[ \-]\d{2})'
@@ -17,10 +17,10 @@ NUMER_FIRMY = re.compile(r'(?:nip|regon|krs|pesel|konta|rachunku|iban)\W{0,3}$',
 
 
 def kontakty(tekst):
-    """(powod, wartosc) pairs: ten_sam_telefon with the number as +<digits>, ten_sam_komunikator with the address."""
+    """Pary (powod, wartosc): ten_sam_telefon z numerem jako +<cyfry>, ten_sam_komunikator z adresem."""
     znalezione = set()
     for adres in TELEGRAM.finditer(tekst):
-        # Invite links are case-sensitive, channel names are not.
+        # Linki zaproszeń rozróżniają wielkość liter, nazwy kanałów nie.
         znalezione.add(('ten_sam_komunikator', 't.me/+' + adres[1] if adres[1] else 't.me/' + adres[2].lower()))
     for adres in WHATSAPP.finditer(tekst):
         znalezione.add(('ten_sam_komunikator', 'wa.me/' + adres[1]))
@@ -28,7 +28,7 @@ def kontakty(tekst):
         numer = miedzynarodowy(re.sub(r'\D', '', zapis[0]))
         if numer:
             znalezione.add(('ten_sam_telefon', numer))
-    # A foreign number without its prefix could read as a Polish one.
+    # Zagraniczny numer bez prefiksu mógłby wyglądać jak polski.
     bez_miedzynarodowych = MIEDZYNARODOWY.sub(' ', tekst)
     for zapis in KRAJOWY.finditer(bez_miedzynarodowych):
         cyfry = re.sub(r'\D', '', zapis[0])
@@ -39,11 +39,11 @@ def kontakty(tekst):
 
 def miedzynarodowy(cyfry):
     if cyfry.startswith('48'):
-        # A Polish number has exactly nine digits after 48; more digits belong to the words after it.
+        # Polski numer ma dokładnie dziewięć cyfr po 48; dalsze cyfry należą do słów po nim.
         return '+' + cyfry[:11] if len(cyfry) >= 11 and not wzor(cyfry[2:11]) else None
     return '+' + cyfry if 9 <= len(cyfry) <= 15 and not wzor(cyfry) else None
 
 
 def wzor(cyfry):
-    """A form placeholder such as 512 345 678 or 999 999 999, not a number anyone answers."""
+    """Wzorzec z formularza, jak 512 345 678 czy 999 999 999, a nie numer, pod którym ktoś odbiera."""
     return re.search(r'(\d)\1{5}|123456|234567|345678|456789', cyfry) is not None

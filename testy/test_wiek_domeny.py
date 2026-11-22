@@ -1,4 +1,4 @@
-# Check of the young landing domain finding on a running stack: docker compose up, then pytest testy.
+# Sprawdzenie ustalenia o młodej domenie docelowej na działającym stosie: docker compose up, potem pytest testy.
 import sys
 import uuid
 from datetime import date, timedelta

@@ -1,5 +1,5 @@
-# Worker: takes tasks from the queue one by one: links pasted in the panel, and domains it checks like patrol.py.
-# Usage: python robotnik.py [linki]; with "linki" it takes only the links, so a link never waits for a domain.
+# Robotnik: bierze zadania z kolejki po kolei: linki wklejone w panelu oraz domeny, które sprawdza jak patrol.py.
+# Użycie: python robotnik.py [linki]; z "linki" bierze tylko linki, więc link nigdy nie czeka na domenę.
 import sys
 
 from playwright.sync_api import sync_playwright

@@ -1,4 +1,4 @@
-# End-to-end check of a running stack: docker compose up, then pytest testy.
+# Sprawdzenie od końca do końca działającego stosu: docker compose up, potem pytest testy.
 import uuid
 from datetime import datetime
 
@@ -116,7 +116,7 @@ def test_nieznana_reklama_daje_404():
 
 
 def test_podobne_reklamy_znajduja_sie_nawzajem():
-    # A code unique to this run keeps rows of earlier runs less similar than this pair.
+    # Kod unikalny dla tego przebiegu sprawia, że wiersze z wcześniejszych przebiegów są mniej podobne niż ta para.
     kod = uuid.uuid4().hex[:8]
     pierwsza = nowa_reklama(f'Kurs bitcoina rośnie, kod {kod}, zapisz się dziś i zarabiaj z nami codziennie.')
     druga = nowa_reklama(f'Kurs bitcoina rośnie, kod {kod}, zapisz się jutro i zarabiaj z nami codziennie.')
@@ -140,7 +140,7 @@ def test_model_uczy_sie_od_analityka():
         nauka = httpx.post(f'{API}/ucz', timeout=600).json()
         assert nauka['przyklady'] >= 1 and nauka['przeliczono'] >= 1
     finally:
-        # Leaves the model of the running stack as it was before the test.
+        # Zostawia model działającego stosu takim, jaki był przed testem.
         httpx.patch(f'{API}/reklamy/{numer}', json={'werdykt_analityka': None}).raise_for_status()
         httpx.post(f'{API}/ucz', timeout=600).raise_for_status()
 

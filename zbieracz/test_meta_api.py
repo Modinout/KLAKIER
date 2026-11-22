@@ -37,7 +37,8 @@ class Zapytania(list):
 
 @pytest.fixture
 def zapytania(monkeypatch):
-    """Records every request and every record sent; the library answers from ODPOWIEDZI, a phrase it does not know has no ads."""
+    """Zapisuje każde żądanie i każdy wysłany rekord; biblioteka odpowiada z ODPOWIEDZI, a fraza, której nie zna,
+    nie ma reklam."""
     zapytania, wyslane = Zapytania(), []
 
     def pobierz(adres, params=None, **_):

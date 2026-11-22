@@ -19,8 +19,8 @@ def historia_reklamy(id: int):
 
 
 def zapisz(kto, wpisy):
-    """wpisy: (reklama_id, co) pairs; kto: the X-Analityk header, or the name used when it is missing."""
-    # The panel percent-encodes the name, since a header carries only Latin-1 and so no ł or ś.
+    """wpisy: pary (reklama_id, co); kto: nagłówek X-Analityk albo nazwa używana, gdy go brak."""
+    # Panel koduje nazwę procentowo, bo nagłówek niesie tylko Latin-1, a więc bez ł i ś.
     with baza.polacz() as polaczenie:
         polaczenie.cursor().executemany(
             'INSERT INTO historia (reklama_id, kto, co) VALUES (%s, %s, %s)',

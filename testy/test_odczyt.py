@@ -1,4 +1,4 @@
-# Reading an ad image through a running stack: docker compose up, then pytest testy.
+# Odczyt obrazu reklamy przez działający stos: docker compose up, potem pytest testy.
 import base64
 import struct
 import zlib

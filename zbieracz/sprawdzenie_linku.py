@@ -1,5 +1,6 @@
-# A link an analyst pasted in the panel: opens it on a computer and on a phone, keeps what the browser saw as
-# evidence, measures the risk warning like strony_docelowe.py and sends the page as a record the api scores like an ad.
+# Link wklejony przez analityka w panelu: otwiera go na komputerze i na telefonie, zachowuje to, co zobaczyła
+# przeglądarka, jako dowód, mierzy ostrzeżenie o ryzyku jak strony_docelowe.py i wysyła stronę jako rekord, który
+# api ocenia jak reklamę.
 import base64
 import json
 import os
@@ -14,13 +15,13 @@ import siec
 import strony_docelowe
 import wysylka
 
-# As druga_domena.py: the model judges texts the length of an ad, not whole pages.
+# Jak w druga_domena.py: model ocenia teksty długości reklamy, a nie całe strony.
 NAJWIECEJ_ZNAKOW = 1500
 WEWNETRZNY = 'Link prowadzi do adresu w sieci wewnętrznej, a sprawdzamy tylko strony w internecie.'
 
 
 def obsluz(zadanie, ostrzezenia, przegladarka, z_cert):
-    """Checks one link from the queue and reports to the api how it went; returns the line to print."""
+    """Sprawdza jeden link z kolejki i zgłasza do api, jak poszło; zwraca linię do wydruku."""
     zadanie = json.loads(zadanie)
     try:
         zapisz_stan(zadanie['id'], {'stan': 'w_toku'})
@@ -35,14 +36,14 @@ def obsluz(zadanie, ostrzezenia, przegladarka, z_cert):
 
 
 def sprawdz(url, ostrzezenia, przegladarka, z_cert):
-    """Returns the id of the record and None, or None and the Polish reason why the link gives no record."""
+    """Zwraca id rekordu i None albo None i polski powód, dla którego link nie daje rekordu."""
     komputer = odwiedz(przegladarka, url, 'komputer')
     powod = powod_odmowy(komputer)
     if powod:
         return None, powod
     telefon = odwiedz(przegladarka, url, 'telefon')
     rekord_linku = rekord(url, komputer, sygnaly(komputer, ostrzezenia, z_cert))
-    # Stored before the record, so the alert for the new record already counts the findings about the warning.
+    # Zapisywane przed rekordem, więc alert o nowym rekordzie już liczy ustalenia o ostrzeżeniu.
     zapisz_pomiar(rekord_linku['domena'], {'komputer': pomiar(komputer), 'telefon': pomiar(telefon)})
     _, zapisany = wysylka.dodaj(rekord_linku)
     for wizyta in (komputer, telefon):
@@ -54,16 +55,16 @@ def sprawdz(url, ostrzezenia, przegladarka, z_cert):
 
 
 def odwiedz(przegladarka, url, widok):
-    """What the browser saw on the link in one view, or {'blad': reason} when the page did not open."""
+    """Co przeglądarka zobaczyła pod linkiem w jednym widoku albo {'blad': powód}, gdy strona się nie otworzyła."""
     from playwright.sync_api import Error
 
-    # Service workers would fetch past the route below.
+    # Service worker pobierałby zasoby z pominięciem poniższego przechwytywania żądań.
     kontekst = przegladarka.new_context(locale='pl-PL', service_workers='block', **strony_docelowe.WIDOKI[widok])
     kontekst.route('**/*', straz)
     karta = kontekst.new_page()
     lancuch = []
 
-    # A server redirect is a new request of the main frame, so these requests are the whole chain.
+    # Przekierowanie serwera to nowe żądanie głównej ramki, więc te żądania są całym łańcuchem.
     def zapisz_przejscie(zadanie):
         if not zadanie.is_navigation_request():
             return
@@ -71,14 +72,14 @@ def odwiedz(przegladarka, url, widok):
             if zadanie.frame is karta.main_frame:
                 lancuch.append(zadanie.url)
         except Error:
-            pass  # The first request of a new inner frame comes before the frame, and inner frames do not count.
+            pass  # Pierwsze żądanie nowej wewnętrznej ramki przychodzi przed ramką, a ramki wewnętrzne się nie liczą.
 
     karta.on('request', zapisz_przejscie)
     kiedy = datetime.now(timezone.utc).isoformat(timespec='seconds')
     try:
         odpowiedz = karta.goto(url, wait_until='domcontentloaded', timeout=30000)
         karta.wait_for_timeout(5000)
-        # The route sees only the first address of a server redirect, so the whole chain is checked here.
+        # Route widzi tylko pierwszy adres przekierowania serwera, więc cały łańcuch sprawdzany jest tutaj.
         if siec.prowadzi_do_wewnetrznego(lancuch + [karta.url]):
             wizyta = {'blad': WEWNETRZNY}
         else:
@@ -97,7 +98,7 @@ def odwiedz(przegladarka, url, widok):
 
 
 def straz(trasa):
-    """Lets a request of the page through only when it goes to the public internet."""
+    """Przepuszcza żądanie strony tylko wtedy, gdy idzie do publicznego internetu."""
     if siec.prowadzi_do_wewnetrznego([trasa.request.url]):
         trasa.abort('blockedbyclient')
     else:
@@ -105,7 +106,7 @@ def straz(trasa):
 
 
 def powod_bledu(komunikat):
-    """Short Polish reason from a browser error; the net:: code tells apart e.g. a domain that does not exist."""
+    """Krótki polski powód z błędu przeglądarki; kod net:: odróżnia np. domenę, która nie istnieje."""
     if 'ERR_BLOCKED_BY_CLIENT' in komunikat:
         return WEWNETRZNY
     if 'Timeout' in komunikat:
@@ -115,7 +116,7 @@ def powod_bledu(komunikat):
 
 
 def powod_odmowy(wizyta):
-    """Polish reason why the visit cannot stand for the page, or None when the page opened."""
+    """Polski powód, dla którego wizyta nie może reprezentować strony, albo None, gdy strona się otworzyła."""
     if 'blad' in wizyta:
         return wizyta['blad']
     if wizyta['status'] >= 400:
@@ -126,12 +127,12 @@ def powod_odmowy(wizyta):
 
 
 def pomiar(wizyta):
-    """The warning measurement of one view as strony_docelowe.py sends it; None when the page did not open in it."""
+    """Pomiar ostrzeżenia w jednym widoku tak, jak wysyła go strony_docelowe.py; None, gdy strona się w nim nie otworzyła."""
     return None if powod_odmowy(wizyta) else {'adres': wizyta['adres'], **wizyta['pomiar']}
 
 
 def wpis_knf(host, ostrzezenia):
-    """Entry of the KNF warning list for the host or a domain above it, or None."""
+    """Wpis listy ostrzeżeń KNF dla hosta lub domeny nadrzędnej albo None."""
     czesci = host.split('.')
     for i in range(len(czesci)):
         if '.'.join(czesci[i:]) in ostrzezenia:
@@ -140,7 +141,7 @@ def wpis_knf(host, ostrzezenia):
 
 
 def sygnaly(wizyta, ostrzezenia, z_cert):
-    """Hosts of the redirect chain on the KNF warning list, and the CERT Polska list for the final host."""
+    """Hosty łańcucha przekierowań z listy ostrzeżeń KNF oraz lista CERT Polska dla hosta końcowego."""
     wynik = []
     for host in dict.fromkeys(urlsplit(adres).hostname for adres in wizyta['lancuch'] + [wizyta['adres']]):
         wpis = wpis_knf(host, ostrzezenia)
@@ -156,7 +157,7 @@ def sygnaly(wizyta, ostrzezenia, z_cert):
 def rekord(url, wizyta, sygnaly):
     return {
         'zrodlo': 'panel',
-        # The pasted link is the key, so a second check of it adds its visits to the same record.
+        # Wklejony link jest kluczem, więc drugie jego sprawdzenie dodaje wizyty do tego samego rekordu.
         'id_zrodla': url,
         'platforma': 'www',
         'url': url,

@@ -1,5 +1,5 @@
-# Puts domains into the patrol queue.
-# Usage: python zlec.py [domena ...]; with no domains it queues the whole KNF warning list.
+# Wkłada domeny do kolejki patrolu.
+# Użycie: python zlec.py [domena ...]; bez domen kolejkuje całą listę ostrzeżeń KNF.
 import sys
 
 import kolejka

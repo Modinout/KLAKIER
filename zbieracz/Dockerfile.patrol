@@ -2,7 +2,7 @@ FROM public.ecr.aws/docker/library/python:3.11-slim
 WORKDIR /app
 COPY requirements-patrol.txt .
 RUN pip install --no-cache-dir -r requirements-patrol.txt
-# The node binary bundled with playwright needs libatomic, which the slim image lacks.
+# Binarka node dołączona do playwrighta wymaga libatomic, którego obraz slim nie ma.
 RUN apt-get update && apt-get install -y --no-install-recommends libatomic1 cron && rm -rf /var/lib/apt/lists/*
 RUN playwright install --with-deps chromium
 COPY . .

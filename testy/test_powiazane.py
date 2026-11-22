@@ -1,4 +1,4 @@
-# Check of ads linked by a shared contact on a running stack: docker compose up, then pytest testy.
+# Sprawdzenie reklam powiązanych wspólnym kontaktem na działającym stosie: docker compose up, potem pytest testy.
 import random
 import sys
 import uuid
@@ -65,7 +65,7 @@ def test_tytul_jak_w_panelu():
 
 
 def test_reklamy_ze_wspolnym_kontaktem_sa_powiazane():
-    # Contacts unique to this run, so rows of earlier runs and real ads do not join in.
+    # Kontakty unikalne dla tego przebiegu, żeby wiersze z wcześniejszych przebiegów i prawdziwe reklamy się nie dołączyły.
     cyfry = str(random.randrange(10**7, 10**8))
     numer = f'6{cyfry[:2]} {cyfry[2:5]} {cyfry[5:]}'
     kanal = 'kanal_' + uuid.uuid4().hex[:10]

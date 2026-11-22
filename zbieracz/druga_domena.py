@@ -1,4 +1,4 @@
-# Finds a second domain that runs the same site as a warned domain.
+# Znajduje drugą domenę, która prowadzi tę samą stronę co domena z ostrzeżenia.
 import hashlib
 import re
 from collections import Counter
@@ -30,13 +30,13 @@ SZKIELET = 'body > *, body > * > *, body > * > * > *'
 
 
 def znajdz(przegladarka, domena, ostrzezone):
-    """Returns the second domain with its matching traces, title, text and screenshot, or None."""
+    """Zwraca drugą domenę z pasującymi śladami, tytułem, tekstem i zrzutem ekranu albo None."""
     ostrzezona = odwiedz(przegladarka, domena)
     if not ostrzezona:
         return None
     for kandydat in kandydaci(ostrzezona['linki'], domena, ostrzezone):
         strona = odwiedz(przegladarka, kandydat)
-        # An expired warned domain often redirects to an unrelated site, which then matches itself.
+        # Wygasła domena z ostrzeżenia często przekierowuje na niezwiązaną stronę, która wtedy pasuje sama do siebie.
         if strona and ta_sama_strona(ostrzezona, strona) and wyglada_na_oferte(strona['tekst']):
             return {'domena': kandydat, 'zgodne': ['tytuł'] + zgodne_slady(ostrzezona, strona),
                     'tytul': strona['tytul'], 'tekst': strona['tekst'][:1500], 'obraz': strona['zrzut']}
@@ -44,7 +44,7 @@ def znajdz(przegladarka, domena, ostrzezone):
 
 
 def odwiedz(przegladarka, domena):
-    """Traces, links, visible text and screenshot of a home page, or None when the site does not open."""
+    """Ślady, linki, widoczny tekst i zrzut ekranu strony głównej albo None, gdy strona się nie otwiera."""
     from playwright.sync_api import Error
 
     kontekst = przegladarka.new_context(locale='pl-PL', viewport={'width': 1366, 'height': 900}, **rotacja.ustawienia())
@@ -99,7 +99,8 @@ def rejestrowa(host):
 
 
 def kandydaci(linki, domena, ostrzezone):
-    """External domains linked often enough from the warned home page, most linked first."""
+    """Zewnętrzne domeny linkowane dostatecznie często ze strony głównej domeny z ostrzeżenia,
+    najczęściej linkowane pierwsze."""
     licznik = Counter()
     for link in linki:
         host = urlsplit(link).hostname
@@ -111,7 +112,7 @@ def kandydaci(linki, domena, ostrzezone):
 
 
 def zgodne_slady(a, b):
-    """Matching traces besides the title, one Polish phrase per kind of trace."""
+    """Pasujące ślady poza tytułem, jedno polskie zdanie na rodzaj śladu."""
     zgodne = []
     if a['favicon'] and a['favicon'] == b['favicon']:
         zgodne.append('ikona strony')

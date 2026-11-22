@@ -25,7 +25,8 @@ DO_META = {
 
 
 def strona(*dane):
-    """A saved library page: its data sits in JSON scripts, nested as the library nests search results."""
+    """Zapisana strona biblioteki: jej dane siedzą w skryptach JSON, zagnieżdżone tak jak biblioteka
+    zagnieżdża wyniki wyszukiwania."""
     skrypty = ''.join(f'<script type="application/json" data-sjs>{json.dumps(wartosc)}</script>' for wartosc in dane)
     return f'<html><head><script>var x = 1;</script>{skrypty}<script type="application/json">nie json</script></head></html>'
 

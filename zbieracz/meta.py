@@ -1,6 +1,7 @@
-# Meta ads (Facebook, Instagram, Messenger) from Ad Library pages an analyst saved in the browser.
-# Meta refuses automated visits to the library, so its ads come in only from saved pages or from the official API.
-# Usage: python meta.py strona.html [strona.html ...]
+# Reklamy Mety (Facebook, Instagram, Messenger) ze stron biblioteki reklam zapisanych przez analityka w przeglądarce.
+# Meta odmawia zautomatyzowanych wizyt w bibliotece, więc jej reklamy trafiają tylko z zapisanych stron
+# lub z oficjalnego API.
+# Użycie: python meta.py strona.html [strona.html ...]
 import json
 import re
 import sys
@@ -12,9 +13,9 @@ import wysylka
 
 BIBLIOTEKA = 'https://www.facebook.com/ads/library/'
 SKRYPT_DANYCH = re.compile(r'<script type="application/json"[^>]*>(.*?)</script>', re.DOTALL)
-# A click tracker hides the landing page; the ad's caption names it instead.
+# Tracker kliknięć ukrywa stronę docelową; nazywa ją za to podpis reklamy.
 SLEDZACE = ('doubleclick.net',)
-# A link into Meta's own apps leads to no landing page of the advertiser.
+# Link do własnych aplikacji Mety nie prowadzi do żadnej strony docelowej reklamodawcy.
 META = ('facebook.com', 'fb.me', 'm.me', 'instagram.com', 'wa.me')
 
 
@@ -23,7 +24,7 @@ def adres_reklamy(id):
 
 
 def znajdz_reklamy(dane):
-    """Every ad in the page's data, at any depth: a dict with an ad_archive_id and a snapshot."""
+    """Każda reklama w danych strony, na dowolnej głębokości: słownik z ad_archive_id i snapshot."""
     if isinstance(dane, dict):
         if 'ad_archive_id' in dane and isinstance(dane.get('snapshot'), dict):
             yield dane
@@ -35,7 +36,7 @@ def znajdz_reklamy(dane):
 
 
 def reklamy_ze_strony(html):
-    """Ads in the data a saved library page carries, by library id."""
+    """Reklamy w danych zapisanej strony biblioteki, według id biblioteki."""
     znalezione = {}
     for dane in SKRYPT_DANYCH.findall(html):
         try:
@@ -48,7 +49,7 @@ def reklamy_ze_strony(html):
 
 
 def data(sekundy):
-    """The day from seconds since 1970, as the library gives the first day an ad was shown."""
+    """Dzień z sekund od 1970, tak jak biblioteka podaje pierwszy dzień wyświetlania reklamy."""
     return datetime.fromtimestamp(sekundy, timezone.utc).date().isoformat() if sekundy else None
 
 
@@ -57,7 +58,7 @@ def w_domenie(host, domeny):
 
 
 def domena(migawka):
-    """Host of the advertiser's page the ad leads to, or None when the ad leads to none."""
+    """Host strony reklamodawcy, do której prowadzi reklama, albo None, gdy nie prowadzi do żadnej."""
     host = urlsplit(migawka.get('link_url') or '').hostname
     if host and w_domenie(host, SLEDZACE):
         host = (migawka.get('caption') or '').split('/')[0].lower() or None
@@ -67,7 +68,7 @@ def domena(migawka):
 
 
 def tekst(migawka):
-    """The ad's own words; an ad built from cards keeps a placeholder in its body and its words on the first card."""
+    """Własne słowa reklamy; reklama zbudowana z kart trzyma w treści wypełniacz, a swoje słowa na pierwszej karcie."""
     tresc = (migawka.get('body') or {}).get('text') or ''
     karty = migawka.get('cards') or []
     if karty and (not tresc or '{{' in tresc):
@@ -94,7 +95,7 @@ def rekord(reklama, zebrano):
 def wczytaj(sciezki):
     dodane = pominiete = 0
     for sciezka in map(Path, sciezki):
-        # The page shows what the library held when the analyst saved it.
+        # Strona pokazuje to, co biblioteka zawierała w chwili zapisu przez analityka.
         zebrano = datetime.fromtimestamp(sciezka.stat().st_mtime, timezone.utc).isoformat(timespec='seconds')
         reklamy = reklamy_ze_strony(sciezka.read_text(encoding='utf-8', errors='replace'))
         nowe = sum(wysylka.dodaj(rekord(reklama, zebrano))[0] for reklama in reklamy.values())

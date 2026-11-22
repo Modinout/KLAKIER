@@ -1,5 +1,5 @@
-# A link pasted in the panel, on a running stack: the robotnik opens it, the api keeps it.
-# Needs the internet, because the robotnik refuses the stack's own addresses.
+# Link wklejony w panelu, na działającym stosie: robotnik go otwiera, api go przechowuje.
+# Wymaga internetu, bo robotnik odmawia otwierania własnych adresów stosu.
 import hashlib
 import io
 import json
@@ -18,7 +18,7 @@ STRONA = 'https://example.com/'
 
 
 def psql(polecenie):
-    """Output of one SQL command in the live base, without headers."""
+    """Wynik jednego polecenia SQL w żywej bazie, bez nagłówków."""
     return subprocess.run(
         ['docker', 'compose', 'exec', '-T', 'baza', 'psql', '-U', 'klakier', '-d', 'klakier', '-tAc', polecenie],
         cwd=REPO, check=True, capture_output=True, text=True,
@@ -27,10 +27,10 @@ def psql(polecenie):
 
 @pytest.fixture
 def numery():
-    """Ids of the checks a test queued; their rows, records, evidence and page measurement go after the test."""
+    """Id sprawdzeń zakolejkowanych przez test; ich wiersze, rekordy, dowody i pomiar strony znikają po teście."""
     numery = []
     yield numery
-    # By the link: a check cut short can leave a record its row does not point to.
+    # Po linku: przerwane sprawdzenie może zostawić rekord, na który nie wskazuje jego wiersz.
     psql("DELETE FROM reklamy WHERE zrodlo = 'panel' AND id_zrodla LIKE 'https://example.com/%'")
     if numery:
         psql(f'DELETE FROM sprawdzenia WHERE id IN ({",".join(map(str, numery))})')
@@ -38,7 +38,7 @@ def numery():
 
 
 def zlec(url, numery):
-    """Queues the link and waits for the robotnik, which may first finish a patrol domain; returns the final state."""
+    """Kolejkuje link i czeka na robotnika, który może najpierw dokończyć domenę patrolu; zwraca stan końcowy."""
     zlecone = httpx.post(f'{API}/sprawdz', json={'url': url}, timeout=30)
     assert zlecone.status_code == 202
     numery.append(zlecone.json()['id'])
@@ -74,7 +74,7 @@ def test_link_daje_reklame_z_dowodami_z_obu_widokow(numery):
     komputer = httpx.get(f'{API}/dowody/{pierwsze[0]["id"]}/obraz').content
     assert httpx.get(f'{API}/reklamy/{reklama["id"]}/obraz').content == komputer
 
-    # A second check of the same link adds its visits to the same record and keeps the earlier ones.
+    # Drugie sprawdzenie tego samego linku dodaje jego wizyty do tego samego rekordu i zachowuje wcześniejsze.
     assert zlec(STRONA, numery)['reklama_id'] == reklama['id']
     wszystkie = httpx.get(f'{API}/reklamy/{reklama["id"]}/dowody').json()
     assert wszystkie[:2] == pierwsze

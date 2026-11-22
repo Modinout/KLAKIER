@@ -1,7 +1,7 @@
-# The risk warning on the landing page of an ad, as the collector measured it on a computer and on a phone.
-# The CFD warning must be prominent and in a font at least as large as the prevailing one (ESMA 2018/796, Annex III).
+# Ostrzeżenie o ryzyku na stronie docelowej reklamy, tak jak zbieracz zmierzył je na komputerze i na telefonie.
+# Ostrzeżenie o CFD musi być wyraźne, a czcionka co najmniej tak duża jak przeważająca (ESMA 2018/796, załącznik III).
 KONTRAST = 4.5
-# WCAG asks less of large text: from 24 px, or from 18.66 px in bold.
+# WCAG wymaga mniej od dużego tekstu: od 24 px albo od 18,66 px pogrubionego.
 KONTRAST_DUZEGO_TEKSTU = 3
 MIEJSCA = {'komputer': 'na komputerze', 'telefon': 'na telefonie'}
 PODSTAWA = ('Pomiar strony głównej domeny w przeglądarce {data} (komputer 1366 px, telefon 390 px). Ostrzeżenie o ryzyku '
@@ -18,7 +18,7 @@ def widac(widok):
 
 
 def uwagi(widok):
-    """What makes the warning hard to read in one view, as Polish phrases; empty when it reads well."""
+    """Co utrudnia czytanie ostrzeżenia w jednym widoku, jako polskie zwroty; puste, gdy czyta się dobrze."""
     if not widac(widok):
         return ['niewidoczne']
     ostrzezenie = widok['ostrzezenie']
@@ -39,7 +39,7 @@ def sygnal(kod, opis, strona):
 
 
 def sygnaly(domena, strona):
-    """Findings for an ad that leads to domena; strona is the row of the strony table for it, or None."""
+    """Ustalenia dla reklamy prowadzącej do domena; strona to wiersz tabeli strony dla niej albo None."""
     if not strona:
         return []
     widoki = {nazwa: strona[nazwa] for nazwa in MIEJSCA if strona[nazwa]}

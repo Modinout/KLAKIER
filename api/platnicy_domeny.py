@@ -1,10 +1,10 @@
-# Payers compared with the landing domains of their ads: one domain paid for by many payers that are neither listed
-# firms nor named after its brand, and a listed brand's name paying for a domain of another brand.
+# Płatnicy porównani z domenami docelowymi ich reklam: jedna domena opłacana przez wielu płatników, którzy nie są
+# firmami z rejestru ani nie noszą nazwy jej marki, oraz nazwa marki z rejestru płacąca za domenę innej marki.
 from collections import defaultdict
 
 PROG = 3
 NAJWIECEJ_NAZW = 6
-# Second-level labels under a country code that name no brand, as in co.uk or com.pl.
+# Etykiety drugiego poziomu pod kodem kraju, które nie nazywają żadnej marki, jak w co.uk czy com.pl.
 OGOLNE = {'co', 'com', 'net', 'org', 'gov', 'edu', 'ac'}
 
 
@@ -20,13 +20,14 @@ def bez_znakow(tekst):
 
 
 def z_marka_domeny(nazwa, domena):
-    """True when the name holds the domain's brand; each part of a hyphenated one must be there, as for webull-uk."""
+    """True, gdy nazwa zawiera markę domeny; każda część marki z myślnikiem musi w niej być, jak dla webull-uk."""
     klucz = bez_znakow(nazwa)
     return all(czesc in klucz for czesc in rdzen_marki(domena).split('-'))
 
 
 def niezwiazani_platnicy(domena, reklamy):
-    """Sorted names of the payers that count; spellings of one name that differ only in case or punctuation are one payer."""
+    """Posortowane nazwy płatników, którzy się liczą; zapisy jednej nazwy różniące się tylko wielkością liter
+    lub interpunkcją to jeden płatnik."""
     platnicy = {}
     for reklama in reklamy:
         if reklama['stan'] != 'w_rejestrze' and not z_marka_domeny(reklama['reklamodawca'], domena):
@@ -47,7 +48,8 @@ def sygnal(domena, platnicy):
 
 
 def sygnaly_domen(reklamy):
-    """reklamy: domena, reklamodawca and register stan of each ad with both. Returns {domena: signal} for the domains that fire."""
+    """reklamy: domena, reklamodawca i stan z rejestru każdej reklamy mającej oba.
+    Zwraca {domena: sygnał} dla domen, które się zapalają."""
     po_domenie = defaultdict(list)
     for reklama in reklamy:
         po_domenie[reklama['domena']].append(reklama)
@@ -60,7 +62,7 @@ def sygnaly_domen(reklamy):
 
 
 def obca_domena(reklama):
-    """Signal when the payer carries the name of a listed brand and the ad leads to a domain without that name."""
+    """Sygnał, gdy płatnik nosi nazwę marki z rejestru, a reklama prowadzi do domeny bez tej nazwy."""
     rejestr = reklama['rejestr']
     if not reklama['domena'] or not rejestr or rejestr['stan'] != 'spoza_rejestru':
         return None
@@ -76,7 +78,7 @@ def obca_domena(reklama):
 
 
 def sygnaly_reklamy(reklama, domeny_z_sygnalem):
-    """Findings of one ad; domeny_z_sygnalem is the result of sygnaly_domen() over all stored ads."""
+    """Ustalenia jednej reklamy; domeny_z_sygnalem to wynik sygnaly_domen() po wszystkich zapisanych reklamach."""
     sygnaly = [domeny_z_sygnalem[reklama['domena']]] if reklama['domena'] in domeny_z_sygnalem else []
     obca = obca_domena(reklama)
     return sygnaly + [obca] if obca else sygnaly

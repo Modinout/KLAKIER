@@ -70,7 +70,7 @@ class Reklama(NowaReklama):
     @model_validator(mode='before')
     @classmethod
     def dolacz_sygnaly_i_poziom(cls, wiersz):
-        # A row of the reklamy table keeps the collector's signals in their own column.
+        # Wiersz tabeli reklamy trzyma sygnały zbieracza we własnej kolumnie.
         sygnaly = wiersz['sygnaly_zbieracza'] + wiersz['sygnaly']
         poziom_reklamy, powod = poziom.poziom(sygnaly, wiersz['ponad_progiem'], wiersz['rodzaj'], wiersz['rejestr'])
         return {**wiersz, 'sygnaly': sygnaly, 'poziom': poziom_reklamy, 'powod': powod}
@@ -92,7 +92,7 @@ class Alert(BaseModel):
 
 
 class ZmianaReklamy(BaseModel):
-    """Only the fields sent are changed, so the default None of status is never stored."""
+    """Zmieniane są tylko przesłane pola, więc domyślne None w status nigdy nie jest zapisywane."""
 
     status: Status = None
     werdykt_analityka: Werdykt | None = None
@@ -165,7 +165,7 @@ class WidokStrony(BaseModel):
 
 
 class PomiarStrony(BaseModel):
-    """A view is None when the page did not open in it."""
+    """Widok jest None, gdy strona w nim się nie otworzyła."""
 
     komputer: WidokStrony | None
     telefon: WidokStrony | None
@@ -199,7 +199,7 @@ class Zlecenie(BaseModel):
 
 
 def adres_wewnetrzny(host):
-    """A host of the local network; names that need DNS are checked again by the robotnik before it opens them."""
+    """Host sieci lokalnej; nazwy wymagające DNS robotnik sprawdza ponownie, zanim je otworzy."""
     try:
         return not ipaddress.ip_address(host).is_global
     except ValueError:
@@ -217,7 +217,7 @@ class Sprawdzenie(BaseModel):
 
 
 class NowyDowod(BaseModel):
-    """One visit of a checked link: the screenshot as base64 PNG and the HTML of the page."""
+    """Jedna wizyta sprawdzanego linku: zrzut ekranu jako PNG w base64 i HTML strony."""
 
     kiedy: datetime
     rodzaj: Literal['komputer', 'telefon']

@@ -32,7 +32,7 @@ def test_adres_sieci_wewnetrznej_to_odmowa():
 
 
 class Trasa:
-    """Records what the guard did with one request."""
+    """Zapisuje, co strażnik zrobił z jednym żądaniem."""
 
     def __init__(self, url):
         self.request = type('Zadanie', (), {'url': url})()
@@ -85,7 +85,7 @@ def test_bez_listy_cert_i_bez_ostrzezenia_nie_ma_sygnalow():
 
 
 def obsluz_z_atrapami(monkeypatch, komputer, telefon, zapisana=None, blad_api=None):
-    """Runs obsluz with stubbed visits and api; returns the printed line and the calls to the api in order."""
+    """Uruchamia obsluz z podstawionymi wizytami i api; zwraca wypisaną linię i wywołania api po kolei."""
     wywolania = []
     wizyty = {'komputer': komputer, 'telefon': telefon}
 
@@ -148,7 +148,7 @@ def test_blad_api_konczy_sprawdzenie_bledem(monkeypatch):
 
 
 class Redis:
-    """Records the lists a worker waits on."""
+    """Zapisuje listy, na które czeka robotnik."""
 
     def blpop(self, listy):
         self.listy = listy

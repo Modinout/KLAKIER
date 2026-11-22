@@ -1,16 +1,16 @@
-# Short Polish sentences for the history of an ad: what an analyst or a re-score changed.
+# Krótkie polskie zdania do historii reklamy: co zmienił analityk albo ponowna ocena.
 STATUSY = {'nowa': 'nowa', 'w_toku': 'w toku', 'zamknieta': 'zamknięta'}
 WERDYKTY = {'ok': 'ok', 'do_sprawdzenia': 'do sprawdzenia', 'oszustwo': 'oszustwo'}
 POZIOMY = {'wysokie': 'wysokie', 'srednie': 'średnie', 'niskie': 'niskie'}
 
 
 def zmiany_analityka(przed, zmiany):
-    """(id, sentence) for each field of zmiany whose value differs from przed, the ad before the change."""
+    """(id, zdanie) dla każdego pola zmiany, którego wartość różni się od przed, czyli reklamy sprzed zmiany."""
     return [(przed['id'], zdanie(pole, przed[pole], nowa)) for pole, nowa in zmiany.items() if przed[pole] != nowa]
 
 
 def zdanie(pole, stara, nowa):
-    """pole is a field of ZmianaReklamy."""
+    """pole to pole ZmianaReklamy."""
     if pole == 'status':
         return f'Status: {STATUSY[stara]} → {STATUSY[nowa]}'
     if pole == 'werdykt_analityka':
@@ -21,9 +21,9 @@ def zdanie(pole, stara, nowa):
 
 
 def zmiany_modelu(przed, po):
-    """(id, sentence) for each ad whose model verdict or risk level differs after a re-score.
+    """(id, zdanie) dla każdej reklamy, której werdykt modelu lub poziom ryzyka różni się po ponownej ocenie.
 
-    przed and po map ids to {'werdykt', 'poziom'}; an ad added during the re-score has nothing to compare with.
+    przed i po mapują id na {'werdykt', 'poziom'}; reklama dodana w trakcie ponownej oceny nie ma z czym być porównana.
     """
     return [(id, zdanie_modelu(przed[id], ocena)) for id, ocena in po.items() if id in przed and przed[id] != ocena]
 
