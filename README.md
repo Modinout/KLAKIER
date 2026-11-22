@@ -2,13 +2,19 @@
 
 Kontrola Linków, Afiliacji, Kampanii I Ekspertów Rynku.
 
-Całość działa na zwykłym laptopie z Dockerem: bez karty graficznej, bez płatnych usług i bez zewnętrznego modelu językowego. Klucza wymaga tylko opcjonalne zbieranie reklam z Mety (token jej oficjalnego API). Działające usługi zajmują około 2 GB pamięci. Po zbudowaniu panel, model i dane pokazowe działają bez internetu; potrzebują go tylko zbieranie nowych reklam i sprawdzanie linków.
-
 KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaje naruszeń: kto płaci za reklamę usług inwestycyjnych, choć nie ma go w rejestrach KNF ani MiCA (M1), czy reklama firmy z rejestru podaje informacje o ryzyku zgodnie z kryteriami UKNF (M2) i kto oferuje doradztwo inwestycyjne bez zezwolenia KNF (M3). Reklamy zbiera z publicznych bibliotek reklam, a w panelu pokazuje je jako sprawy z cytatem, dowodami i podstawą prawną.
 
-KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
+Reklamy ocenia KAPSEL, nasz własny model. Zbudowaliśmy go i nauczyliśmy sami na prawdziwych reklamach i prawdziwych oszustwach; do oceny nie używamy gotowego modelu językowego. Działa na procesorze zwykłego laptopa, bez internetu, w około milisekundę na reklamę. Na oszustwach, których nie widział przy nauce, bez żadnego fałszywego alarmu wskazuje 74 z 95.
 
-M2: 17 z 18 kryteriów UKNF dla informacji o ryzyku ma w systemie własne sprawdzenie, 7 z nich w części; co każde obejmuje, a czego nie, pokazuje tabela w sekcji „Co sprawdza”.
+## Co wyróżnia KLAKIERA
+
+- Działa na zwykłym laptopie z Dockerem: bez karty graficznej, bez płatnych usług i bez zewnętrznego modelu językowego. Działające usługi zajmują około 2 GB pamięci. Po zbudowaniu panel, model i dane pokazowe działają bez internetu; potrzebują go tylko zbieranie nowych reklam i sprawdzanie linków. Jedyny klucz, i to opcjonalny, to token oficjalnego API Mety do zbierania jej reklam.
+- KAPSEL czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, ustawia najgroźniejsze reklamy na początku kolejki i uczy się z ocen analityka. Każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Jak model powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
+- Pracuje na prawdziwych danych: baza pokazowa to 1775 materiałów zebranych 21–22.11.2026 z bibliotek reklam Google, Mety i TikToka, z YouTube i ze stron doradców, razem z 32 oszustwami z ostrzeżeń CSIRT KNF.
+- Płatnika reklamy porównuje z rejestrami KNF i rejestrem MiCA, a domenę docelową z listą ostrzeżeń publicznych KNF, ostrzeżeniami CSIRT KNF i listą ostrzeżeń CERT Polska.
+- M2: 17 z 18 kryteriów UKNF dla informacji o ryzyku ma własne sprawdzenie, 7 z nich w części. Stronę docelową reklamy mierzy przeglądarka na komputerze, tablecie i telefonie: wielkość czcionki i kontrast ostrzeżenia. Co każde sprawdzenie obejmuje, a czego nie, pokazuje tabela w sekcji „Co sprawdza”.
+- Każda sprawa ma cytat, podstawę prawną, paczkę dowodów z sumami SHA-256 i gotowe zgłoszenie do skopiowania.
+- Jest zbudowany z otwartego oprogramowania; lista jest w sekcji „Otwarte oprogramowanie”.
 
 ## Uruchomienie
 
@@ -125,6 +131,21 @@ Czego brakuje:
 | `front` | panel: kolejka spraw z filtrami (data, źródło, status, ryzyko, moduł) i wykresem trendu, karta sprawy z obrazem reklamy, ustaleniami i decyzją, notatka i historia zmian sprawy, dowody z paczką do pobrania, powiązane sprawy, gotowe zgłoszenie sprawy w toku do skopiowania albo pobrania, sprawdzenie wklejonego linku, raport CSV z bieżącego widoku i filtrów, alerty na żywo, kalibracja progu i zastosowanie go w kolejce |
 
 Pola reklamy i adresy API opisuje `KONTRAKT.md`.
+
+## Otwarte oprogramowanie
+
+| Do czego | Biblioteka albo program |
+| --- | --- |
+| model KAPSEL | scikit-learn |
+| usługi `api`, `ai` i `odczyt` | FastAPI, Uvicorn, httpx |
+| tekst z obrazu reklamy | PaddleOCR z modelami PP-OCR |
+| mowa na tekst | faster-whisper z modelem Whisper |
+| pomiar stron i zbieranie reklam | Playwright |
+| baza i kolejka zadań | PostgreSQL, Valkey |
+| panel | React, Vite, Tailwind CSS, Radix UI, Recharts, nginx |
+| uruchomienie | Docker Compose |
+
+Wszystkie są na otwartych licencjach (MIT, BSD, Apache 2.0, licencja PostgreSQL) i działają lokalnie, w kontenerach. Wersje bibliotek Pythona są przypięte w plikach `requirements.txt`.
 
 ## Testy
 
