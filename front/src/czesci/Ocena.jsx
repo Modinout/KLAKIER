@@ -6,7 +6,6 @@ import { BLAD_ZAPISU } from '../nazwy.js'
 
 const OCENY = {
   oszustwo: 'To oszustwo',
-  do_sprawdzenia: 'Wymaga sprawdzenia',
   ok: 'Tekst w porządku',
 }
 

@@ -10,12 +10,14 @@ import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { zdaniePowodu } from '../ustalenia.js'
 import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
+import Dowody from './Dowody.jsx'
 import Historia from './Historia.jsx'
 import ListaUstalen from './ListaUstalen.jsx'
 import Notatka from './Notatka.jsx'
 import Obraz from './Obraz.jsx'
 import Ocena from './Ocena.jsx'
 import Podobne from './Podobne.jsx'
+import Powiazane from './Powiazane.jsx'
 import Rejestr from './Rejestr.jsx'
 import Sekcja from './Sekcja.jsx'
 import Tekst from './Tekst.jsx'
@@ -143,7 +145,9 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
           {!bezTekstu(reklama) && <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />}
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
+          <Powiazane reklama={reklama} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
+          <Dowody reklama={reklama} />
           <Historia key={'historia' + reklama.id} reklama={reklama} />
         </div>
         <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">

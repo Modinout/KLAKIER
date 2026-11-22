@@ -5,6 +5,7 @@ async function wyslij(url, opcje) {
   if (!odpowiedz.ok) {
     const blad = new Error('Nie udało się połączyć z serwerem.')
     blad.status = odpowiedz.status
+    blad.tresc = await odpowiedz.json().catch(() => null)
     throw blad
   }
   return odpowiedz.json()
@@ -76,6 +77,38 @@ export function pobierzHistorie(id) {
 
 export function pobierzPodobne(id) {
   return wyslij('/api/reklamy/' + id + '/podobne')
+}
+
+export function pobierzPowiazane(id) {
+  return wyslij('/api/reklamy/' + id + '/powiazane')
+}
+
+export function pobierzDowody(id) {
+  return wyslij('/api/reklamy/' + id + '/dowody')
+}
+
+export function adresPaczki(id) {
+  return '/api/reklamy/' + id + '/paczka'
+}
+
+export function adresDowodu(id, rodzaj) {
+  return '/api/dowody/' + id + '/' + rodzaj
+}
+
+export function zlecSprawdzenie(url) {
+  return wyslij('/api/sprawdz', json('POST', { url }))
+}
+
+export function pobierzSprawdzenie(id) {
+  return wyslij('/api/sprawdz/' + id)
+}
+
+export function pobierzProg() {
+  return wyslij('/api/prog')
+}
+
+export function zapiszProg(prog) {
+  return wyslij('/api/prog', json('PUT', { prog }))
 }
 
 export function uczModel() {

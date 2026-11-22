@@ -46,7 +46,7 @@ export default function App() {
   }, [])
 
   function odswiez() {
-    pobierzReklamy()
+    return pobierzReklamy()
       .then((lista) => {
         zapamietajNajnowsze(lista)
         poczatkowe.current ??= new Set(lista.filter((r) => r.poziom === 'wysokie').map(klucz))
@@ -100,7 +100,7 @@ export default function App() {
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
           <Analityk />
-          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} />
+          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} poSprawdzeniu={(id) => odswiez().then(() => otworz(id, []))} />
         </div>
       </header>
       <main className="flex min-h-0 flex-1 flex-col px-8 py-6">

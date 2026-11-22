@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { adresObrazu } from '../api.js'
 
 const NAJMNIEJ = 60
@@ -16,14 +17,26 @@ function pusty(img) {
   return piksele.every((wartosc, i) => Math.abs(wartosc - piksele[i % 4]) <= ROZNICA)
 }
 
+// A full-page screenshot of a site is many times taller than wide; its top is what matters.
+function stronaCala(img) {
+  return img.naturalHeight > 2 * img.naturalWidth
+}
+
 export default function Obraz({ reklama, ukryj }) {
+  const [wysoki, setWysoki] = useState(false)
+
+  function wczytany(img) {
+    if (pusty(img)) return ukryj()
+    setWysoki(stronaCala(img))
+  }
+
   return (
     <div className="my-4 flex justify-center rounded-lg bg-muted p-3">
       <img
         src={adresObrazu(reklama.id)}
         alt="Obraz reklamy"
-        className="max-h-80 max-w-full object-contain"
-        onLoad={(e) => pusty(e.currentTarget) && ukryj()}
+        className={wysoki ? 'h-[420px] w-full object-cover object-top' : 'max-h-80 max-w-full object-contain'}
+        onLoad={(e) => wczytany(e.currentTarget)}
       />
     </div>
   )
