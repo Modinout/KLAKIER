@@ -67,6 +67,7 @@ class Reklama(NowaReklama):
     werdykt_analityka: Werdykt | None
     notatka: str | None
     ma_obraz: bool
+    ponad_progiem: bool
     poziom: Poziom
     powod: str | None
 
@@ -90,6 +91,7 @@ class Alert(BaseModel):
     werdykt: Werdykt
     zrodlo: str
     dodano: datetime
+    ponad_progiem: bool
     poziom: Poziom
     powod: str | None
 

@@ -2,12 +2,14 @@
 import base64
 import io
 import wave
+from pathlib import Path
 
 import httpx
 
 from test_sciezka import API, nowa_reklama
 
 NAJWIEKSZE_NAGRANIE = 50 * 1024 * 1024 * 4 // 3 + 4
+PROBKA_MOWY = Path(__file__).resolve().parent.parent / 'odczyt' / 'probka_mowa.mp3'
 
 
 def cisza():
@@ -42,8 +44,17 @@ def test_nagranie_daje_mowe_i_wpis_w_historii():
     odpowiedz = dodaj_nagranie(numer, cisza())
     assert odpowiedz.status_code == 200
     assert isinstance(odpowiedz.json()['mowa'], str)
+    assert isinstance(odpowiedz.json()['ponad_progiem'], bool)
     historia = httpx.get(f'{API}/reklamy/{numer}/historia').json()
     assert [wpis['co'] for wpis in historia if wpis['co'].startswith('Dodano nagranie')]
+
+
+def test_ocena_zmieniona_przez_mowe_trafia_do_historii():
+    numer = httpx.post(f'{API}/reklamy', json=nowa_reklama(''), timeout=180).json()['id']
+    assert dodaj_nagranie(numer, PROBKA_MOWY.read_bytes()).json()['werdykt'] == 'ok'
+    historia = httpx.get(f'{API}/reklamy/{numer}/historia').json()
+    assert [(wpis['kto'], wpis['co']) for wpis in historia[:1]] == [('analityk', 'Ocena modelu: do sprawdzenia → ok')]
+    assert historia[1]['co'].startswith('Dodano nagranie')
 
 
 def test_tekst_zamiast_dzwieku_daje_422():

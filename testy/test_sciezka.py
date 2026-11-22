@@ -29,6 +29,7 @@ def test_reklama_przechodzi_cala_sciezke():
     assert isinstance(zapisana['powody'], list)
     assert 'rodzaj' in zapisana
     assert zapisana['werdykt_analityka'] is None
+    assert zapisana['ponad_progiem'] is True
 
     powtorka = httpx.post(f'{API}/reklamy', json=reklama, timeout=60)
     assert powtorka.status_code == 409
@@ -36,9 +37,11 @@ def test_reklama_przechodzi_cala_sciezke():
     lista = httpx.get(f'{API}/reklamy', params={'werdykt': 'oszustwo', 'min_ryzyko': 0.5}).json()
     assert zapisana['id'] in [r['id'] for r in lista]
     assert lista == sorted(lista, key=lambda r: r['ryzyko'], reverse=True)
+    assert [r['ponad_progiem'] for r in lista if r['id'] == zapisana['id']] == [True]
 
     zmieniona = httpx.patch(f'{API}/reklamy/{zapisana["id"]}', json={'status': 'w_toku'})
     assert zmieniona.json()['status'] == 'w_toku'
+    assert zmieniona.json()['ponad_progiem'] is True
 
     oceniona = httpx.patch(f'{API}/reklamy/{zapisana["id"]}', json={'werdykt_analityka': 'oszustwo'}).json()
     assert oceniona['werdykt_analityka'] == 'oszustwo' and oceniona['status'] == 'w_toku'
@@ -127,6 +130,7 @@ def test_podobne_reklamy_znajduja_sie_nawzajem():
     podobne = httpx.get(f'{API}/reklamy/{pierwsza["id"]}/podobne').json()
     assert podobne[0]['id'] == druga['id']
     assert podobne[0]['podobienstwo'] >= 0.5
+    assert podobne[0]['ponad_progiem'] is druga['ponad_progiem']
     assert pierwsza['id'] not in [r['id'] for r in podobne]
 
 

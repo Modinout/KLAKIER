@@ -132,6 +132,8 @@ services:
     environment:
       API_URL: http://api:8000
       META_TOKEN: ${META_TOKEN:-}
+      ZBIERACZ_USER_AGENTS: ${ZBIERACZ_USER_AGENTS:-}
+      ZBIERACZ_PROXY: ${ZBIERACZ_PROXY:-}
     restart: unless-stopped
     depends_on:
       kolejka:

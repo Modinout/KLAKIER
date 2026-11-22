@@ -118,7 +118,7 @@ def dodaj_obraz(id: int, obraz: Obraz):
         tekst = odczytaj_tekst(obraz.obraz)
         ocena = ocen({**reklama, 'tekst': tekst})
         baza.zapisz_tekst(id, tekst)
-        baza.zapisz_oceny([{'id': id, **ocena}])
+        zapisz_ponowna_ocene(reklama, ocena, 'model')
     return z_sygnalem_domeny([baza.zapisz_obraz(id, typ, dane)])[0]
 
 
@@ -130,8 +130,8 @@ def dodaj_nagranie(id: int, nagranie: Nagranie, kto: str = Header('analityk', al
     mowa = posluchaj(nagranie.nagranie)
     ocena = ocen({**reklama, 'mowa': mowa})
     baza.zapisz_mowe(id, mowa)
-    baza.zapisz_oceny([{'id': id, **ocena}])
     historia.zapisz(kto, [(id, f'Dodano nagranie: {len(mowa)} znaków mowy' if mowa else 'Dodano nagranie bez mowy')])
+    zapisz_ponowna_ocene(reklama, ocena, kto)
     return z_sygnalem_domeny([baza.jedna(id)])[0]
 
 
@@ -231,6 +231,16 @@ def przelicz_wszystkie():
     with httpx.Client() as klient:
         baza.zapisz_oceny([{'id': reklama['id'], **ocen(reklama, klient)} for reklama in reklamy])
     return len(reklamy)
+
+
+def zapisz_ponowna_ocene(przed, ocena, kto):
+    """przed: wiersz reklamy sprzed zmiany jej treści; z nim porównany jest werdykt i poziom po nowej ocenie."""
+    baza.zapisz_oceny([{'id': przed['id'], **ocena}])
+    stara, nowa = map(Reklama.model_validate, z_sygnalem_domeny([przed, baza.jedna(przed['id'])]))
+    historia.zapisz(kto, opis_zmian.zmiany_modelu({stara.id: stara.model_dump(include={'werdykt', 'poziom'})},
+                                                  {nowa.id: nowa.model_dump(include={'werdykt', 'poziom'})}))
+    if nowa.poziom == 'wysokie' and stara.poziom != 'wysokie':
+        alerty.wyslij(Alert.model_validate(nowa.model_dump()).model_dump_json())
 
 
 def oceny_modelu():

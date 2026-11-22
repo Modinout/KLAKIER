@@ -25,5 +25,5 @@ def zapisany():
 
 def ponad_progiem(reklama, prog):
     """Czy sam model tekstowy czyni reklamę wysoką: jego ryzyko jest równe progowi lub go przekracza."""
-    # Model daje ryzyko także reklamie bez tekstu, ale bez werdyktu.
-    return bool(reklama['tekst'].strip()) and reklama['ryzyko'] >= prog
+    # Model daje ryzyko także reklamie bez tekstu i bez mowy, ale bez werdyktu.
+    return bool(reklama['tekst'].strip() or (reklama['mowa'] or '').strip()) and reklama['ryzyko'] >= prog

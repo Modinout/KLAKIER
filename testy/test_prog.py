@@ -2,6 +2,7 @@
 import httpx
 import pytest
 
+from test_nagranie import PROBKA_MOWY, dodaj_nagranie
 from test_sciezka import API, nowa_reklama
 
 # Model tekstowy uznaje to za oszustwo i nic poza tym nie jest ustaleniem, więc o poziomie decyduje tylko próg.
@@ -28,10 +29,23 @@ def test_prog_ustala_poziom_reklamy_ocenionej_tylko_przez_model(zapisany_prog):
     assert httpx.put(f'{API}/prog', json={'prog': ponizej}).json() == {'prog': ponizej}
     assert httpx.get(f'{API}/prog').json() == {'prog': ponizej}
     assert poziom(reklama['id']) == 'wysokie'
+    assert httpx.get(f'{API}/reklamy/{reklama["id"]}').json()['ponad_progiem'] is True
 
     httpx.put(f'{API}/prog', json={'prog': powyzej}).raise_for_status()
     assert httpx.get(f'{API}/prog').json() == {'prog': powyzej}
     assert poziom(reklama['id']) == 'niskie'
+    assert httpx.get(f'{API}/reklamy/{reklama["id"]}').json()['ponad_progiem'] is False
+
+
+def test_sama_mowa_ponad_progiem_daje_poziom_wysoki(zapisany_prog):
+    numer = httpx.post(f'{API}/reklamy', json=nowa_reklama(''), timeout=180).json()['id']
+    reklama = dodaj_nagranie(numer, PROBKA_MOWY.read_bytes()).json()
+    assert reklama['tekst'] == '' and reklama['mowa']
+    # Angielskiej mowy model prawie nie zna, więc jej ryzyko jest niskie i próg schodzi tuż pod nie.
+    httpx.put(f'{API}/prog', json={'prog': reklama['ryzyko'] - 0.001}).raise_for_status()
+    zapisana = httpx.get(f'{API}/reklamy/{numer}').json()
+    assert zapisana['ponad_progiem'] is True
+    assert zapisana['poziom'] == 'wysokie'
 
 
 @pytest.mark.parametrize('prog', [0, 1, -0.2, 1.5])

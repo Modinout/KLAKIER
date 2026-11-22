@@ -24,6 +24,7 @@ def test_obraz_reklamy_z_tekstem_zostaje_zapisany():
     assert zapisana.status_code == 200
     assert zapisana.json()['tekst'] == reklama['tekst']
     assert zapisana.json()['ma_obraz'] is True
+    assert zapisana.json()['ponad_progiem'] is False
 
     pobrany = httpx.get(f'{API}/reklamy/{reklama["id"]}/obraz')
     assert pobrany.content == MALY_PNG
@@ -55,3 +56,7 @@ def test_obraz_reklamy_bez_tekstu_daje_tekst():
     obraz = base64.b64encode(PROBKA.read_bytes()).decode()
     zapisana = httpx.put(f'{API}/reklamy/{numer}/obraz', json={'obraz': obraz}, timeout=300).json()
     assert 'gwarantowany' in zapisana['tekst'].lower()
+    assert zapisana['ponad_progiem'] is True
+    historia = httpx.get(f'{API}/reklamy/{numer}/historia').json()
+    assert [(wpis['kto'], wpis['co']) for wpis in historia] == [
+        ('model', 'Ocena modelu: do sprawdzenia → oszustwo, poziom ryzyka: niskie → wysokie')]

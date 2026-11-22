@@ -48,6 +48,13 @@ def test_platnik_z_rejestru_sie_nie_liczy():
     assert sygnaly_domen(wiersze) == {}
 
 
+def test_platnicy_z_licencja_sie_nie_licza():
+    wiersze = (reklamy('porownywarka.example', 'Kantor Krypto UAB', stan='mica')
+               + reklamy('porownywarka.example', 'Bank Gamma S.A.', stan='bank')
+               + reklamy('porownywarka.example', 'Delta TFI S.A.', stan='tfi'))
+    assert sygnaly_domen(wiersze) == {}
+
+
 def test_ta_sama_nazwa_inaczej_zapisana_to_jeden_platnik():
     assert sygnaly_domen(reklamy('zysk.example', 'Alfa Ltd', 'ALFA LTD.', 'Beta Ltd')) == {}
 

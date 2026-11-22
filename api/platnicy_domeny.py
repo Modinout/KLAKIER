@@ -1,6 +1,8 @@
-# Płatnicy porównani z domenami docelowymi ich reklam: jedna domena opłacana przez wielu płatników, którzy nie są
-# firmami z rejestru ani nie noszą nazwy jej marki, oraz nazwa marki z rejestru płacąca za domenę innej marki.
+# Płatnicy porównani z domenami docelowymi ich reklam: jedna domena opłacana przez wielu płatników bez licencji z rejestru
+# KNF lub MiCA i bez nazwy jej marki, oraz nazwa marki z rejestru płacąca za domenę innej marki.
 from collections import defaultdict
+
+from poziom import LICENCJE
 
 PROG = 3
 NAJWIECEJ_NAZW = 6
@@ -30,7 +32,7 @@ def niezwiazani_platnicy(domena, reklamy):
     lub interpunkcją to jeden płatnik."""
     platnicy = {}
     for reklama in reklamy:
-        if reklama['stan'] != 'w_rejestrze' and not z_marka_domeny(reklama['reklamodawca'], domena):
+        if reklama['stan'] not in LICENCJE and not z_marka_domeny(reklama['reklamodawca'], domena):
             platnicy.setdefault(bez_znakow(reklama['reklamodawca']), reklama['reklamodawca'].strip())
     return sorted(platnicy.values(), key=str.casefold)
 
