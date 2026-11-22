@@ -137,7 +137,7 @@ Panel woła te same adresy z przedrostkiem `/api`.
 | `kto` | tekst | nazwa z nagłówka `X-Analityk`; bez nagłówka `analityk`, a przy `POST /ucz` `model` |
 | `co` | tekst | jedno krótkie zdanie o zmianie |
 
-Panel wysyła nazwę analityka w nagłówku `X-Analityk` przy `PATCH /reklamy/{id}` i `POST /ucz`, zakodowaną jak część adresu (`encodeURIComponent`), bo nagłówek nie przeniesie liter takich jak ł. `PATCH` dopisuje wpis na każde wysłane pole, którego wartość się zmieniła: `Status: nowa → w toku`, `Ocena analityka: oszustwo` albo `Ocena analityka usunięta`, `Domena: www.pekao.com.pl` albo `Domena usunięta`, `Notatka zmieniona` albo `Notatka usunięta`. `POST /ucz` dopisuje jeden wpis każdej reklamie, której zmienił się `werdykt` albo `poziom`, np. `Ocena modelu: ok → oszustwo, poziom ryzyka: niskie → wysokie`.
+Panel nie wysyła nagłówka `X-Analityk`, więc jego zmiany mają `kto` = `analityk`. Inny klient api może podać w nim nazwę, zakodowaną jak część adresu (`encodeURIComponent`), bo nagłówek nie przeniesie liter takich jak ł. `PATCH` dopisuje wpis na każde wysłane pole, którego wartość się zmieniła: `Status: nowa → w toku`, `Ocena analityka: oszustwo` albo `Ocena analityka usunięta`, `Domena: www.pekao.com.pl` albo `Domena usunięta`, `Notatka zmieniona` albo `Notatka usunięta`. `POST /ucz` dopisuje jeden wpis każdej reklamie, której zmienił się `werdykt` albo `poziom`, np. `Ocena modelu: ok → oszustwo, poziom ryzyka: niskie → wysokie`.
 
 ## Sprawdzenie linku z panelu
 
