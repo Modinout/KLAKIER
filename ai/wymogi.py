@@ -41,11 +41,28 @@ ZASTRZEZENIE_HISTORII = re.compile(
     r'|not (?:a )?(?:reliable )?(?:indicator|guarantee)|not indicative|no guarantee'
 )
 
+# Pełny okres pięciu lat, okres odniesienia albo źródło danych.
+OKRES_HISTORII = re.compile(r'\b(?:5|pięć|pięciu) lat\w*|\b60 miesięcy|\bokres\w* (?:referencyjn|odniesieni)\w*|\bźródł\w*|\bsource\b|\b5 years\b')
+OPLATY = re.compile(r'\bprowizj\w*|\bopłat\w*|\bkoszt\w*|\bfees?\b|\bcharges\b|\bcosts?\b')
+OBCA_WALUTA = re.compile(r'\busd\b|\beur\b|\bchf\b|\bgbp\b|\$|€|\bdolar\w*|\beuro\b')
+KURS_WALUTY = re.compile(r'\bkurs\w* walut\w*|\bzmian\w+ kurs\w*|\bryzyk\w* walutow\w*|\bexchange rate|\bcurrency (?:risk|fluctuation)')
+PROGNOZA = re.compile(
+    r'\bprognoz\w*|\bprzewidywan\w+ (?:zysk\w*|wzrost\w*|stop\w*|wynik\w*)'
+    r'|\bcen\w+ docelow\w*|\bforecast\w*|\bexpected returns?|\btarget price'
+    r'|\b(?:wzrośnie|wzrosną|spadnie|osiągnie|podwoi)\b'
+)
+ZASTRZEZENIE_PROGNOZY = re.compile(ZASTRZEZENIE_HISTORII.pattern + r'|prognoz\w* (?:nie|mogą się nie)|forecasts? (?:are|is) not')
+# Ostrzeżenie po angielsku w polskiej reklamie: polski przekaz rozpoznaje się po częstych słowach.
+POLSKIE_SLOWA = re.compile(r'\b(?:się|jest|nie|dla|oraz|już|dziś|twoje?|twój|nasz\w*|inwestuj\w*|kont[ao]|koncie|zł)\b')
+RYZYKO_PL = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*')
+RYZYKO_EN = re.compile(r'\brisk\w*|\blose money|\bloss(?:es)?\b')
+
 PODATKI = re.compile(r'\bbez podatku|\bulg\w+ podatkow\w+|\bzwrot\w* podatku|\btax[- ]free')
 ZASTRZEZENIE_PODATKOW = re.compile(r'indywidualn\w+ sytuacj\w*|zależ\w+ od|(?:może|mogą) ulec zmianie|individual circumstances|may change')
 
 NADZOR = re.compile(r'\bknf\b|komisj\w+ nadzoru finansowego|\bcysec\b|\bfca\b|\bnadzor\w*|\bnadzó\w*|\bregulowan\w*|\blicencjonowan\w*|\bregulated\b')
-BEZPIECZENSTWO = re.compile(r'\bbezpiecz\w*|\bgwaran\w*|\bpewn\w+ (?:zysk\w*|inwestycj\w*)|\bsafe\w*|\bsecure\b|\bguarantee\w*')
+BEZPIECZENSTWO = re.compile(r'\bbezpiecz\w*|\bgwaran\w*|\bpewn\w+ (?:zysk\w*|inwestycj\w*)|\bsafe\w*|\bsecure\b|\bguarantee\w*'
+                            r'|\bzatwierdz\w*|\bzaakceptowan\w*|\baprob\w*|\bpoleca\w*|\brekomend\w*|\bapproved\b|\bendorsed\b')
 
 _ZDANIE = re.compile(r'[^.!?\n]+')
 # Zastrzeżenie nazywa rzecz tylko po to, by jej zaprzeczyć: "nie stanowi rekomendacji", "to nie tylko ulgi podatkowe".
@@ -84,6 +101,13 @@ def cytat(tekst, trafienie):
     return przed + _POWTORZENIE.sub(r'\1', slowa) + po
 
 
+def zdanie_z(tekst, trafienie):
+    for zdanie in _ZDANIE.finditer(tekst):
+        if zdanie.start() <= trafienie.start() < zdanie.end():
+            return zdanie.group()
+    return ''
+
+
 def sygnal(kod, opis, podstawa):
     return {'modul': 'M2', 'kod': kod, 'opis': opis, 'podstawa': podstawa}
 
@@ -107,7 +131,7 @@ def sygnaly(tekst, rejestr, zrodlo=None):
         wynik.append(sygnal(
             'zysk_bez_ryzyka',
             f'Reklama mówi o zysku („{cytat(tekst, zysk)}”), a nie ma w niej informacji o ryzyku.',
-            f'art. 44 ust. 2 lit. b {ROZPORZADZENIE}',
+            f'art. 44 ust. 2 lit. b {ROZPORZADZENIE}; kryterium UKNF nr 3',
         ))
 
     cfd = twierdzenie(CFD, male, lambda t: t.group() not in ('forex', 'fx') or (HANDEL.search(male) and not KANTOR.search(male)))
@@ -125,7 +149,39 @@ def sygnaly(tekst, rejestr, zrodlo=None):
         wynik.append(sygnal(
             'wyniki_bez_zastrzezenia',
             f'Reklama podaje wyniki z przeszłości („{cytat(tekst, historia)}”) bez zastrzeżenia, że nie wskazują one przyszłych wyników.',
-            f'art. 44 ust. 4 lit. d {ROZPORZADZENIE}',
+            f'art. 44 ust. 4 lit. d {ROZPORZADZENIE}; kryterium UKNF nr 14',
+        ))
+
+    # Okres i opłaty dotyczą podanych liczb; samo zastrzeżenie o wynikach z przeszłości ich nie wymaga.
+    liczby = historia and re.search(r'\d\s*%', zdanie_z(male, historia))
+    if liczby and not OKRES_HISTORII.search(male):
+        wynik.append(sygnal(
+            'wyniki_bez_okresu',
+            f'Reklama podaje wyniki z przeszłości („{cytat(tekst, historia)}”) bez okresu pięciu lat, okresu odniesienia ani źródła danych.',
+            f'art. 44 ust. 4 lit. b i c {ROZPORZADZENIE}; kryterium UKNF nr 12a',
+        ))
+    if liczby and (not OPLATY.search(male) or (OBCA_WALUTA.search(male) and not KURS_WALUTY.search(male))):
+        brak = 'wpływu prowizji i opłat' if not OPLATY.search(male) else 'ostrzeżenia o wpływie kursu walut'
+        wynik.append(sygnal(
+            'wyniki_bez_oplat_i_waluty',
+            f'Reklama podaje wyniki z przeszłości („{cytat(tekst, historia)}”) bez {brak}.',
+            f'art. 44 ust. 4 lit. e i f {ROZPORZADZENIE}; kryterium UKNF nr 12b',
+        ))
+
+    # Prognoza to liczba o przyszłości; samo słowo „prognozy” w zaproszeniu do obserwowania nią nie jest.
+    prognoza = twierdzenie(PROGNOZA, male, lambda t: re.search(r'\d', zdanie_z(male, t)))
+    if prognoza and not ZASTRZEZENIE_PROGNOZY.search(male):
+        wynik.append(sygnal(
+            'prognoza_bez_zastrzezenia',
+            f'Reklama podaje prognozę („{cytat(tekst, prognoza)}”) bez zastrzeżenia, że nie jest ona wiarygodnym wskaźnikiem przyszłych wyników.',
+            f'art. 44 ust. 6 {ROZPORZADZENIE}; kryterium UKNF nr 15',
+        ))
+
+    if len(POLSKIE_SLOWA.findall(male)) >= 3 and RYZYKO_EN.search(male) and not RYZYKO_PL.search(male):
+        wynik.append(sygnal(
+            'ryzyko_w_innym_jezyku',
+            f'Reklama jest po polsku, a informacja o ryzyku po angielsku („{cytat(tekst, RYZYKO_EN.search(male))}”).',
+            f'art. 44 ust. 2 lit. f {ROZPORZADZENIE}; kryterium UKNF nr 10',
         ))
 
     podatki = twierdzenie(PODATKI, male)
@@ -133,7 +189,7 @@ def sygnaly(tekst, rejestr, zrodlo=None):
         wynik.append(sygnal(
             'podatki_bez_zastrzezenia',
             f'Reklama odwołuje się do podatków („{cytat(tekst, podatki)}”) bez informacji, że zależą one od sytuacji klienta i mogą się zmienić.',
-            f'art. 44 ust. 7 {ROZPORZADZENIE}',
+            f'art. 44 ust. 7 {ROZPORZADZENIE}; kryterium UKNF nr 16',
         ))
 
     for zdanie in _ZDANIE.finditer(male):
@@ -143,7 +199,7 @@ def sygnaly(tekst, rejestr, zrodlo=None):
             wynik.append(sygnal(
                 'nadzor_jako_argument',
                 f'Reklama łączy nadzór z bezpieczeństwem inwestycji („{cytat(tekst, miejsce)}”).',
-                f'art. 44 ust. 8 {ROZPORZADZENIE}',
+                f'art. 44 ust. 8 {ROZPORZADZENIE}; kryteria UKNF nr 17 i 18',
             ))
             break
     return wynik

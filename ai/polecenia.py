@@ -6,6 +6,8 @@
 import re
 from urllib.parse import parse_qsl, urlsplit
 
+import rejestr
+
 PODSTAWA = (
     'art. 7 pkt 11 ustawy o przeciwdziałaniu nieuczciwym praktykom rynkowym (kryptoreklama), '
     'rekomendacje Prezesa UOKiK w sprawie oznaczania treści reklamowych przez influencerów'
@@ -52,6 +54,20 @@ HOSTY_FINANSOWE = (
     'xtb', 'freedom24', 'lightyear', 'revolut', 'ibkr', 'etoro', 'degiro', 'saxo', 'binance', 'bybit', 'mexc',
     'bingx', 'kraken', 'walutomat', 'wise.com', 'mbank', 'plus500', 'myfund', 'parqet',
 )
+# Nazwy marek tam, gdzie domena pisze je inaczej niż firma.
+NAZWY_MAREK = {
+    'xtb': 'XTB', 'etoro': 'eToro', 'trading212': 'Trading 212', 'mexc': 'MEXC', 'ibkr': 'Interactive Brokers',
+    'interactivebrokers': 'Interactive Brokers', 'bingx': 'BingX', 'okx': 'OKX', 'degiro': 'DEGIRO', 'mbank': 'mBank',
+    'freedom24': 'Freedom24', 'plus500': 'Plus500', 'vantagemarkets': 'Vantage', 'fusionmarkets': 'Fusion Markets',
+    'apextraderfunding': 'Apex Trader Funding', 'fundedtradermarkets': 'Funded Trader Markets', 'gatesfx': 'GatesFX',
+    'myfund': 'myfund.pl', 'ninjatraderus': 'NinjaTrader',
+}
+# Porównywarki i rankingi brokerów: link prowadzi do nich, a nie do firmy, której usługę polecają.
+POSREDNICY = ('brokerchampion.com', 'twojinteres.pl', 'thefxranker.com', 'tradersunion.com')
+STANY = {
+    'w_rejestrze': 'w rejestrze KNF', 'spoza_rejestru': 'w rejestrze KNF pod inną spółką', 'mica': 'w rejestrze MiCA',
+    'bank': 'bank, poza rejestrami firm inwestycyjnych', 'tfi': 'TFI', 'poza_listami': 'brak w rejestrach KNF i MiCA',
+}
 # Zniżka na bilet na konferencję o inwestowaniu nie jest poleceniem usługi finansowej.
 WYDARZENIE = re.compile(r'bilet\w*|ticket\w*|konferencj\w*|kongres\w*')
 _OTOCZENIE = 150
@@ -115,12 +131,27 @@ def kod_polecajacy(trafienie):
     return bool(trafienie.group('cudzyslow')) or (kod.upper() == kod and any(znak.isalpha() for znak in kod))
 
 
-def sygnal(polecenie):
-    opis = (
-        f'{polecenie}, a nie ma w nim oznaczenia reklamy ani współpracy. '
-        'Oznaczenie mogło paść w samym filmie, więc do sprawdzenia.'
-    )
-    return [{'modul': 'M1', 'kod': 'polecenie_bez_oznaczenia', 'opis': opis, 'podstawa': PODSTAWA}]
+def firma(host):
+    """Polecana firma z domeny linku i jej stan w rejestrach: link-pso.xtb.com -> XTB, w_rejestrze."""
+    host = host.removeprefix('www.')
+    if w_domenie(host, POSREDNICY) or not host.count('.'):
+        return None
+    # Sieć afiliacyjna nazywa reklamodawcę w poddomenie: ninjatraderus.pxf.io.
+    marka = host.split('.')[0] if w_domenie(host, SIECI_AFILIACYJNE) else host.split('.')[-2]
+    nazwa = NAZWY_MAREK.get(marka, marka.capitalize())
+    wynik = rejestr.sprawdz(nazwa)
+    return {'nazwa': nazwa, 'domena': host, 'stan_rejestru': wynik['stan'] if wynik else None}
+
+
+def sygnal(polecenie, polecana=None):
+    opis = f'{polecenie}, a nie ma w nim oznaczenia reklamy ani współpracy. '
+    if polecana:
+        opis += f'Polecana firma: {polecana["nazwa"]} ({STANY.get(polecana["stan_rejestru"], "nie ustalono w rejestrach")}). '
+    opis += 'Oznaczenie mogło paść w samym filmie, więc do sprawdzenia.'
+    wynik = {'modul': 'M1', 'kod': 'polecenie_bez_oznaczenia', 'opis': opis, 'podstawa': PODSTAWA}
+    if polecana:
+        wynik['firma'] = polecana
+    return [wynik]
 
 
 def sygnaly(tekst, rejestr, zrodlo):
@@ -136,7 +167,7 @@ def sygnaly(tekst, rejestr, zrodlo):
         host = urlsplit(adres if '://' in adres else 'https://' + adres).hostname or ''
         if polecajacy(adres) and finansowy(tekst, trafienie, host):
             cytat = re.sub(r'^(?:https?://)?(?:www\.)?', '', adres, flags=re.I)
-            return sygnal(f'Opis filmu ma link polecający do {host.removeprefix("www.")} („{cytat}”)')
+            return sygnal(f'Opis filmu ma link polecający do {host.removeprefix("www.")} („{cytat}”)', firma(host))
     # Linki zastępuje się spacjami tej samej długości, więc pozycje trafień nadal wskazują w oryginalny tekst.
     for trafienie in KOD.finditer(LINK.sub(lambda link: ' ' * len(link.group()), tekst)):
         if kod_polecajacy(trafienie) and finansowy(tekst, trafienie):

@@ -67,6 +67,16 @@ dobrze = 'trading212.com („trading212.com/invite/ABC123”)' in opis
 zle += not dobrze
 print('OK  ' if dobrze else 'FAIL', 'the finding names the host and quotes the link |', opis)
 
+firmy = [
+    (polecenia.sygnaly('Konto maklerskie: https://link-pso.xtb.com/pso/abc', OBCY, 'youtube'), {'nazwa': 'XTB', 'stan_rejestru': 'w_rejestrze'}),
+    (polecenia.sygnaly('Najlepszy broker: https://brokerchampion.com/go/etoro', OBCY, 'youtube'), None),
+]
+for sygnaly, oczekiwana in firmy:
+    mam = sygnaly[0].get('firma')
+    dobrze = (mam is None) if oczekiwana is None else (mam is not None and all(mam[k] == v for k, v in oczekiwana.items()))
+    zle += not dobrze
+    print('OK  ' if dobrze else 'FAIL', 'promoted firm from the link domain | expected', oczekiwana, '| got', mam)
+
 klient = TestClient(app)
 film = klient.post('/ocen', json={'tekst': LINK_212, 'reklamodawca': 'Kanał o inwestowaniu', 'zrodlo': 'youtube'}).json()
 reklama = klient.post('/ocen', json={'tekst': LINK_212, 'reklamodawca': 'Kanał o inwestowaniu', 'zrodlo': 'google_ads'}).json()
@@ -76,5 +86,5 @@ dobrze = 'polecenie_bez_oznaczenia' in w_filmie and 'polecenie_bez_oznaczenia' n
 zle += not dobrze
 print('OK  ' if dobrze else 'FAIL', '/ocen flags the video and not the ad |', w_filmie, w_reklamie)
 
-print(f'{len(PROBY) + 3 - zle} of {len(PROBY) + 3} checks passed')
+print(f'{len(PROBY) + 5 - zle} of {len(PROBY) + 5} checks passed')
 sys.exit(1 if zle else 0)
