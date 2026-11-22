@@ -31,6 +31,8 @@ services:
 
   odczyt:
     build: ./odczyt
+    # paddlepaddle nie ma paczek dla Linuksa na ARM, więc na Macu z procesorem Apple obraz działa w emulacji x86.
+    platform: linux/amd64
     healthcheck: *zdrowie
     restart: unless-stopped
 

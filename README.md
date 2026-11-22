@@ -51,7 +51,7 @@ To małe próby: pokazują kierunek, nie dokładny odsetek.
 
 ## Uruchomienie
 
-Potrzebny jest Docker z Compose. Karta graficzna nie jest potrzebna. Obrazy zajmują około 8 GB na dysku, a działające usługi około 2 GB pamięci. Pierwsze budowanie pobiera biblioteki oraz modele do odczytu tekstu z obrazów i do zamiany mowy na tekst; na laptopie z 8-rdzeniowym procesorem najdłuższy obraz (odczyt) budował się około 6,5 minuty, nie licząc pobierania obrazów bazowych.
+Potrzebny jest Docker z Compose. Karta graficzna nie jest potrzebna. Obrazy zajmują około 8 GB na dysku, a działające usługi około 2 GB pamięci. Pierwsze budowanie pobiera biblioteki oraz modele do odczytu tekstu z obrazów i do zamiany mowy na tekst; na laptopie z 8-rdzeniowym procesorem najdłuższy obraz (odczyt) budował się około 6,5 minuty, nie licząc pobierania obrazów bazowych. Na Macu z procesorem Apple obraz odczytu buduje się i działa w emulacji x86, więc wolniej.
 
 ```
 cp .env.example .env
