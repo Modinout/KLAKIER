@@ -7,12 +7,14 @@
 # 'do_sprawdzenia' between them or when there is no text. Whether an honest broker ad lacks something the law
 # asks for is checked by the rules of modules M1-M3, not by this model.
 # 'pewny' False = a person rates the ad.
-# A reason is a word whose removal lowers the scam log-odds by at least PROG_POWODU.
+# A reason is a word whose removal, in every spelling, lowers the scam log-odds by at least PROG_POWODU.
 # Reasons cost one prediction per word, so they are looked for only from PROG_RYZYKA_POWODOW up.
+import re
+
 import numpy as np
 
 import ucz
-from tekst import oczysc
+from tekst import normalizuj, oczysc
 
 PROG_OSZUSTWA = 0.7
 PROG_DO_SPRAWDZENIA = 0.3
@@ -22,6 +24,12 @@ PROG_RODZAJU = 0.5
 PROG_POWODU = 0.2
 NAJWIECEJ_POWODOW = 5
 NAJWIECEJ_SLOW = 300
+# Words that tell the reader nothing about the offer: function words, possessives and the labels of sign-up forms.
+NIE_POWODY = {normalizuj(s) for s in (
+    'się jak dla oraz lub czy nie jest bez który która które której którego którym których the and for '
+    'twój twoja twoje twoją twojego twojej twojemu twoim twoich swój swoja swoje swoją swojego swojej swojemu swoim swoich '
+    'imię nazwisko numer telefon e-mail email name phone number enter').split()}
+_BRZEGI = re.compile(r'^\W+|\W+$')
 
 _modele = ucz.ucz()
 
@@ -62,15 +70,28 @@ def _logit(p):
 
 def _powody(model, tekst, p_oszustwa):
     slowa = tekst.split()
-    kandydaci = list(dict.fromkeys(slowa))[:NAJWIECEJ_SLOW]
+    rdzenie = [_BRZEGI.sub('', s) for s in slowa]
+    klucze = [normalizuj(r) for r in rdzenie]
+    # 'ZARABIAJ', 'zarabiaj!' and 'zarabiać' are one candidate: removing only one spelling would leave the word in the text.
+    pokaz = {}
+    for rdzen, klucz in zip(rdzenie, klucze):
+        if _moze_byc_powodem(klucz):
+            pokaz.setdefault(klucz, rdzen)
+    kandydaci = list(pokaz)[:NAJWIECEJ_SLOW]
     if not kandydaci:
         return []
     # The char_wb features ignore the kind of whitespace, so rejoining with spaces changes nothing but the removed word.
-    bez_slowa = [' '.join(s for s in slowa if s != kandydat) for kandydat in kandydaci]
+    bez_slowa = [' '.join(s for s, k in zip(slowa, klucze) if k != kandydat) for kandydat in kandydaci]
     p_bez = model.predict_proba(bez_slowa)[:, list(model.classes_).index('oszustwo')]
     wagi = _logit(p_oszustwa) - _logit(p_bez)
-    powody = sorted(((float(w), s) for w, s in zip(wagi, kandydaci) if w >= PROG_POWODU), reverse=True)
+    powody = sorted(((float(w), pokaz[k]) for w, k in zip(wagi, kandydaci) if w >= PROG_POWODU), reverse=True)
     return [{'slowo': s, 'waga': w} for w, s in powody[:NAJWIECEJ_POWODOW]]
+
+
+def _moze_byc_powodem(klucz):
+    # A link or domain is shown with the ad anyway, and a number or a word of one or two letters says nothing alone.
+    return (len(klucz) > 2 and any(z.isalpha() for z in klucz) and not any(z in klucz for z in './@')
+            and klucz not in NIE_POWODY)
 
 
 def _rodzaj(model, tekst):

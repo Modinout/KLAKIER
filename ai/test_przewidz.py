@@ -48,6 +48,12 @@ tekst = PROBY[0][1]
 powody = przewidz(tekst)['powody']
 sprawdz(bool(powody) and all(p['slowo'] in tekst for p in powody), 'powody', [(p['slowo'], round(p['waga'], 2)) for p in powody])
 sprawdz(przewidz(PROBY[3][1])['powody'] == [], 'low-risk ad -> no powody')
+# A reason is a plain word: no punctuation around it, no number, link or form label, each word once.
+brudny = 'ZARABIAJ 6 500 zł tygodniowo! Zarabiaj z ORLEN. Gwarantowany dochód. Podaj imię, nazwisko i e-mail: orlen-zysk.pl/start'
+slowa = [p['slowo'] for p in przewidz(brudny)['powody']]
+male = [s.lower() for s in slowa]
+sprawdz(bool(slowa) and all(s.isalpha() and len(s) > 2 for s in slowa) and len(set(male)) == len(male)
+        and not {'imię', 'nazwisko'} & set(male), 'plain powody', slowa)
 
 # Styled Unicode letters, look-alike Cyrillic letters and invisible characters must not hide a scam.
 pogrubione = ''.join(chr(0x1D41A + ord(z) - 97) if 'a' <= z <= 'z' else z for z in tekst)
