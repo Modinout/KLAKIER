@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { dodajReklame, odczytajObraz, zapiszObraz, zlecSprawdzenie } from '../api.js'
-import { BLAD_ZAPISU, domena, OPISY, PLATFORMY } from '../nazwy.js'
-import { BLAD_SPRAWDZANIA } from '../sprawdzanieLinku.js'
+import { BLAD_ZAPISU, OPISY, PLATFORMY } from '../nazwy.js'
+import { BLAD_SPRAWDZANIA, czekajNaSprawdzenie } from '../sprawdzanieLinku.js'
 
 const PUSTE = { reklamodawca: '', url: '', tekst: '', platforma: 'google', obraz: null }
 
@@ -26,12 +26,13 @@ function bladSprawdzenia(blad) {
   return BLAD_SPRAWDZANIA
 }
 
-export default function DodajReklame({ poDodaniu, poZleceniu }) {
+export default function DodajReklame({ poDodaniu, poSprawdzeniu }) {
   const [otwarte, setOtwarte] = useState(false)
   const [pola, setPola] = useState(PUSTE)
   const [czyta, setCzyta] = useState(false)
   const [wysyla, setWysyla] = useState(false)
-  const [zleca, setZleca] = useState(false)
+  // Sekundy od zlecenia sprawdzenia linku; null, gdy nic się nie sprawdza.
+  const [sekundy, setSekundy] = useState(null)
   const [bladLinku, setBladLinku] = useState('')
 
   function ustaw(pole, wartosc) {
@@ -45,17 +46,25 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
     setBladLinku('')
   }
 
+  useEffect(() => {
+    if (sekundy === null) return
+    const zegar = setTimeout(() => setSekundy((s) => (s === null ? null : s + 1)), 1000)
+    return () => clearTimeout(zegar)
+  }, [sekundy])
+
   async function sprawdzLink() {
     setBladLinku('')
-    setZleca(true)
+    setSekundy(0)
     try {
       const { id } = await zlecSprawdzenie(pola.url)
+      const wynik = await czekajNaSprawdzenie(id)
+      if (wynik.blad) return setBladLinku(wynik.blad)
       otworz(false)
-      poZleceniu(id, domena(pola.url))
+      poSprawdzeniu(wynik.reklamaId)
     } catch (e) {
       setBladLinku(bladSprawdzenia(e))
     } finally {
-      setZleca(false)
+      setSekundy(null)
     }
   }
 
@@ -124,8 +133,8 @@ export default function DodajReklame({ poDodaniu, poZleceniu }) {
           <Label htmlFor="link">Link do strony</Label>
           <div className="flex gap-2">
             <Input id="link" type="url" placeholder="https://" value={pola.url} onChange={(e) => ustaw('url', e.target.value)} />
-            <Button type="button" variant="outline" disabled={!pola.url.trim() || zleca} onClick={sprawdzLink}>
-              Sprawdź link
+            <Button type="button" variant="outline" disabled={!pola.url.trim() || sekundy !== null} onClick={sprawdzLink}>
+              {sekundy === null ? 'Sprawdź link' : 'Sprawdzam stronę… ' + sekundy + ' s'}
             </Button>
           </div>
           {bladLinku && <p className="text-destructive">{bladLinku}</p>}

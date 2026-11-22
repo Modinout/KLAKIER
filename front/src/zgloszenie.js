@@ -1,4 +1,3 @@
-import { adresObrazu } from './api.js'
 import { bezTekstu, data, domenaDocelowa, dzien, dzienCzytelny, nazwaZrodla } from './nazwy.js'
 import { kto, nazwaRejestru, STANY_REJESTRU, stanRejestru, wpisRejestru } from './rejestr.js'
 import { POZIOMY } from './ryzyko.js'
@@ -13,11 +12,11 @@ const PROWADZI_DO = 'Prowadzi do: '
 const REKLAMA_NR = 'Reklama nr '
 const ZEBRANO = 'zebrano '
 const ADRES = 'Adres: '
-const OBRAZ = 'Obraz: '
 const USTALENIA = 'Ustalenia:'
 const PODSTAWA = '   Podstawa: '
 const UWAGI = 'Uwagi:'
 const TRESC = 'Treść: '
+const Z_OBRAZKA = 'Tekst odczytany z obrazka: '
 const NOTATKA = 'Notatka: '
 const BEZ_TEKSTU ='Reklama graficzna, tekst nie został odczytany'
 
@@ -105,10 +104,9 @@ function blokReklamy(reklama, wspolneU, wspolnePunkty, wspolneUwagi) {
     [REKLAMA_NR + reklama.id, nazwaZrodla(reklama.zrodlo), ZEBRANO + data(reklama.zebrano)].join(' · '),
     ...resztaOpisow(reklama, wspolneU),
     reklama.url && ADRES + reklama.url,
-    reklama.ma_obraz && OBRAZ + new URL(adresObrazu(reklama.id), location.origin).href,
     ...listaUstalen(punkty(reklama, wspolneU).filter((p) => !wspolnePunkty.includes(p))),
     ...listaUwag(uwagi(reklama).filter((p) => !wspolneUwagi.includes(p))),
-    TRESC + (bezTekstu(reklama) ? BEZ_TEKSTU : jedenAkapit(reklama.tekst)),
+    bezTekstu(reklama) ? TRESC + BEZ_TEKSTU : (reklama.ma_obraz ? Z_OBRAZKA : TRESC) + jedenAkapit(reklama.tekst),
     reklama.notatka && NOTATKA + jedenAkapit(reklama.notatka),
   ]
 }

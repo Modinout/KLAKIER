@@ -88,6 +88,11 @@ function zWielkiej(tekst) {
   return tekst.charAt(0).toUpperCase() + tekst.slice(1)
 }
 
+// Skróty takie jak „CFD” zostają wielkimi literami.
+export function malaLitera(tekst) {
+  return /^\p{Lu}\p{Lu}/u.test(tekst) ? tekst : tekst.charAt(0).toLocaleLowerCase('pl') + tekst.slice(1)
+}
+
 export function tag(sygnal) {
   return TAGI[sygnal.kod] ?? sygnal.opis
 }

@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowRight, ArrowUp, ChevronLeft, ChevronRight, Circle, CircleCheck, CircleDashed } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { KROTKO, rodzaj } from '../dzialanie.js'
 import { ileReklam, NAZWY_STATUSOW, nazwaZrodla } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { najmocniejszyTag } from '../sprawy.js'
@@ -37,7 +38,7 @@ function Powod({ sprawa }) {
   if (!powod) return null
   const inne = tagi(sprawa.glowna).slice(1)
   return (
-    <div className="flex max-w-[320px] items-center">
+    <div className="flex max-w-[220px] items-center xl:max-w-[320px]">
       <span className="truncate" title={powod}>{powod}</span>
       {inne.length > 0 && (
         <span className="ml-1.5 shrink-0 text-muted-foreground" title={inne.join(' · ')}>
@@ -87,7 +88,8 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
               <TableRow className="hover:bg-transparent">
                 <Naglowek className="w-full">Sprawa</Naglowek>
                 <Naglowek>Powód</Naglowek>
-                <Naglowek className="hidden lg:table-cell">Źródło</Naglowek>
+                <Naglowek className="hidden lg:table-cell">Co zrobić</Naglowek>
+                <Naglowek className="hidden xl:table-cell">Źródło</Naglowek>
                 <Naglowek>Ryzyko</Naglowek>
                 <Naglowek>Status</Naglowek>
                 <Naglowek className="hidden lg:table-cell">Data</Naglowek>
@@ -96,7 +98,7 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
             <TableBody>
               {naStronie.length === 0 && (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={7}className="h-24 text-center text-muted-foreground">
                     {pusto}
                   </TableCell>
                 </TableRow>
@@ -126,7 +128,10 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
                   <TableCell className="px-3">
                     <Powod sprawa={s} />
                   </TableCell>
-                  <TableCell className="hidden px-3 lg:table-cell">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
+                  <TableCell className="hidden px-3 lg:table-cell">
+                    <div className="max-w-[180px] truncate">{KROTKO[rodzaj(s.glowna)]}</div>
+                  </TableCell>
+                  <TableCell className="hidden px-3 xl:table-cell">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
                   <TableCell className="px-3">
                     <ZIkona ikona={IKONY_RYZYKA[s.poziom]}>{POZIOMY[s.poziom]}</ZIkona>
                   </TableCell>

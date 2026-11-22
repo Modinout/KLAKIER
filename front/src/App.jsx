@@ -3,7 +3,6 @@ import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { pobierzReklamy } from './api.js'
-import { sledzSprawdzenie } from './sprawdzanieLinku.js'
 import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
 import DodajReklame from './czesci/DodajReklame.jsx'
@@ -25,8 +24,6 @@ export default function App() {
   const [reklamy, setReklamy] = useState(null)
   const [prog, setProg] = useState(0.4)
   const [otwarte, setOtwarte] = useState(null)
-  // Sprawdzenie linku kończy się po jakimś czasie; do tego czasu analityk mógł już otworzyć sprawę.
-  const otwarteTeraz = useRef(null)
   const [obejrzane, setObejrzane] = useState(new Set())
   const najnowszeDodano = useRef(null)
   // Sprawy wysokiego ryzyka obecne już przy otwarciu panelu; dopiero późniejsze liczą się jako nowe alerty.
@@ -74,10 +71,6 @@ export default function App() {
 
   useAlerty(dolacz)
 
-  useEffect(() => {
-    otwarteTeraz.current = otwarte
-  }, [otwarte])
-
   const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie' && s.glowna.status !== 'zamknieta'), [reklamy])
   const przybyla = (s) => !poczatkowe.current?.has(s.klucz)
   const nowyAlert = (s) => przybyla(s) && !s.reklamy.some((r) => obejrzane.has(r.id))
@@ -92,20 +85,13 @@ export default function App() {
     setObejrzane((zbior) => new Set(zbior).add(id))
   }
 
-  function poZleceniu(id, host) {
-    sledzSprawdzenie(id, host, (reklamaId) =>
-      odswiez().then(() => {
-        if (!otwarteTeraz.current) {
-          toast.dismiss(id)
-          return otworz(reklamaId, [])
-        }
-        toast.success('Sprawdzono link: ' + host, {
-          id,
-          duration: 10000,
-          action: { label: 'Otwórz', onClick: () => otworz(reklamaId, []) },
-        })
-      })
-    )
+  function poDodaniu(nowa) {
+    dolacz([nowa])
+    otworz(nowa.id, [])
+  }
+
+  function poSprawdzeniu(reklamaId) {
+    odswiez().then(() => otworz(reklamaId, []))
   }
 
   const otwarta = otwarte && reklamy?.find((r) => r.id === otwarte.id)
@@ -125,7 +111,7 @@ export default function App() {
           <TabsTrigger value="kalibracja" className="px-3">Kalibracja</TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
-          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} poZleceniu={poZleceniu} />
+          <DodajReklame poDodaniu={poDodaniu} poSprawdzeniu={poSprawdzeniu} />
         </div>
       </header>
       <main className="flex min-h-0 flex-1 flex-col px-8 py-6">

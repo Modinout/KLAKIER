@@ -4,12 +4,13 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
-import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
+import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, malaLitera, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { pobierzPlik } from '../pobierz.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { czystaSprawa, modelZalecaSprawdzenie, tagi, ustalenia, zdecydowalModel, zdaniePowodu } from '../ustalenia.js'
 import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
+import CoZrobic from './CoZrobic.jsx'
 import Dowody from './Dowody.jsx'
 import Historia from './Historia.jsx'
 import ListaUstalen from './ListaUstalen.jsx'
@@ -34,11 +35,6 @@ function dopisek(reklama) {
     return ': brak twardych ustaleń, ale model KAPSEL zaleca sprawdzenie tekstu.'
   }
   return reklama.powod && ': ' + zdaniePowodu(reklama)
-}
-
-// Skróty takie jak „CFD” zostają wielkimi literami.
-function malaLitera(tekst) {
-  return /^\p{Lu}\p{Lu}/u.test(tekst) ? tekst : tekst.charAt(0).toLocaleLowerCase('pl') + tekst.slice(1)
 }
 
 function Wniosek({ reklama }) {
@@ -98,13 +94,13 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
     if (tresc.current) tresc.current.scrollTop = 0
   }, [reklama.id])
 
-  function ustawStatus(status) {
+  function ustawStatus(status, komunikat = KOMUNIKATY[status]) {
     const poprzednie = wSprawie.map((r) => [r.id, r.status])
     const id = reklama.id
     zmienStatusy(wSprawie.map((r) => [r.id, status]))
       .then((nowe) => {
         nowe.forEach(podmien)
-        toast(KOMUNIKATY[status], { duration: 5000, action: { label: 'Cofnij', onClick: () => cofnij(poprzednie, id) } })
+        toast(komunikat, { duration: 5000, action: { label: 'Cofnij', onClick: () => cofnij(poprzednie, id) } })
         if (status !== 'zamknieta') return
         if (nastepna) otworz(nastepna.glowna.id)
         else zamknij()
@@ -163,6 +159,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
               </>
             )}
           </SheetDescription>
+          <CoZrobic reklamy={wSprawie} status={reklama.status} ustawStatus={ustawStatus} />
           <div className="mb-4">
             <Wniosek reklama={reklama} />
             <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />
