@@ -3,7 +3,7 @@ export const BLAD_ZAPISU = 'Nie udało się zapisać. Spróbuj ponownie.'
 export const NAZWY_WERDYKTOW = {
   ok: 'OK',
   do_sprawdzenia: 'Do sprawdzenia',
-  oszustwo: 'Oszustwo',
+  oszustwo: 'Wysokie ryzyko oszustwa',
 }
 
 export function bezTekstu(reklama) {
@@ -57,8 +57,8 @@ export const TAGI = {
   na_liscie_csirt_knf: 'Oszustwo zgłoszone przez CSIRT KNF',
   wielu_platnikow_domeny: 'Za jedną stronę płaci kilka firm',
   obca_domena: 'Znana firma reklamuje cudzą stronę',
-  doradztwo_bez_zezwolenia: 'Doradza bez zezwolenia KNF',
-  platnik_poza_listami: 'Firmy nie ma w rejestrach KNF',
+  doradztwo_bez_zezwolenia: 'Możliwe doradztwo bez zezwolenia KNF',
+  platnik_poza_listami: 'Brak na 4 listach firm inwestycyjnych KNF',
   mloda_domena: 'Strona założona tuż przed reklamą',
   zysk_bez_ryzyka: 'Obiecuje zysk bez ryzyka',
   brak_ostrzezenia_cfd: 'CFD bez ostrzeżenia o stratach',
