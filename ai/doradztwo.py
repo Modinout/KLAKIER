@@ -8,10 +8,18 @@ from wymogi import cytat, twierdzenie
 
 PODSTAWA = 'art. 69 ust. 2 pkt 4 i 5 oraz art. 76 ustawy o obrocie instrumentami finansowymi'
 
+PODSTAWA_REKOMENDACJI = (
+    'art. 20 rozporządzenia MAR (UE 596/2014) o rekomendacjach inwestycyjnych; '
+    'art. 76 ustawy o obrocie instrumentami finansowymi'
+)
+
 OFERTA = re.compile(
     r'\bdoradztw\w* inwestycyjn\w*|\bzarządzani\w+ (?:majątkiem|aktywami)'
     r'|\bfamily office|\bwealth management|\basset management'
-    r'|\bsygnał\w* (?:inwestycyjn\w+|tradingow\w+|giełdow\w+|forex)|\brekomendacj\w+ (?:kupna|sprzedaży)'
+)
+# Sygnały rozsyłane całej grupie to rekomendacje ogólne: zezwolenia wymaga dopiero rada dla konkretnej osoby.
+REKOMENDACJE = re.compile(
+    r'\bsygnał\w* (?:inwestycyjn\w+|tradingow\w+|giełdow\w+|forex)|\brekomendacj\w+ (?:kupna|sprzedaży)'
 )
 
 
@@ -40,9 +48,15 @@ def sygnaly(tekst, rejestr):
         return []
     trafienie = twierdzenie(OFERTA, tekst.casefold(), lambda t: oferta(tekst, t))
     if not trafienie:
-        return []
+        trafienie = twierdzenie(REKOMENDACJE, tekst.casefold(), lambda t: oferta(tekst, t))
+        if not trafienie:
+            return []
+        opis = (f'Tekst zachęca do korzystania z sygnałów lub rekomendacji inwestycyjnych („{cytat(tekst, trafienie)}”). '
+                'Kierowane do ogółu nie wymagają zezwolenia, ale muszą być rzetelne i ujawniać konflikt interesów; '
+                'kierowane do konkretnej osoby są doradztwem inwestycyjnym.')
+        return [{'modul': 'M3', 'kod': 'rekomendacje_ogolne', 'opis': opis, 'podstawa': PODSTAWA_REKOMENDACJI}]
     if rejestr:
-        uprawnienia = 'Firmy, która to oferuje, nie ma w rejestrach firm inwestycyjnych KNF.'
+        uprawnienia = 'Firmy, która to oferuje lub poleca, nie ma w rejestrach firm inwestycyjnych KNF.'
     else:
         uprawnienia = 'Nie wiadomo, kto stoi za tym tekstem, więc zezwolenia nie da się potwierdzić.'
     opis = f'Tekst mówi o doradztwie inwestycyjnym lub zarządzaniu portfelem („{cytat(tekst, trafienie)}”). {uprawnienia}'

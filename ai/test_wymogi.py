@@ -61,7 +61,7 @@ PROBY = [
     ('Zyskaj 12% rocznie na naszym portfelu.', None, []),
     ('', FIRMA, []),
     ('Oferujemy family office dla zamożnych rodzin i zarządzanie majątkiem od 1 mln zł.', OBCY, ['doradztwo_bez_zezwolenia']),
-    ('Dołącz do grupy i otrzymuj codzienne sygnały tradingowe na Telegramie.', OBCY, ['doradztwo_bez_zezwolenia']),
+    ('Dołącz do grupy i otrzymuj codzienne sygnały tradingowe na Telegramie.', OBCY, ['rekomendacje_ogolne']),
     ('We offer wealth management for founders.', None, ['doradztwo_bez_zezwolenia']),
     ('Family Office - Obsługa prawna Warszawa - mklegal Umów konsultacje Home O Kancelarii Oferta Kontakt', OBCY, []),
     ('Kancelaria oferuje obsługę prawną family office i fundacji rodzinnych.', OBCY, []),
