@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Download, Undo2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
 import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
+import { pobierzPlik } from '../pobierz.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { zdaniePowodu } from '../ustalenia.js'
+import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
 import ListaUstalen from './ListaUstalen.jsx'
 import Obraz from './Obraz.jsx'
 import Ocena from './Ocena.jsx'
@@ -15,7 +17,6 @@ import Podobne from './Podobne.jsx'
 import Rejestr from './Rejestr.jsx'
 import Sekcja from './Sekcja.jsx'
 import Tekst from './Tekst.jsx'
-import Zgloszenie from './Zgloszenie.jsx'
 
 const KOMUNIKATY = {
   nowa: 'Przywrócono do nowych',
@@ -85,6 +86,20 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
       .catch(() => toast.error(BLAD_ZAPISU))
   }
 
+  // The open ad goes first in the report.
+  const doZgloszenia = [reklama, ...wSprawie.filter((r) => r.id !== reklama.id)]
+
+  function kopiujZgloszenie() {
+    navigator.clipboard
+      .writeText(zgloszenie(doZgloszenia))
+      .then(() => toast('Skopiowano zgłoszenie'))
+      .catch(() => toast.error('Nie udało się skopiować'))
+  }
+
+  function pobierzZgloszenie() {
+    pobierzPlik(zgloszenie(doZgloszenia), 'text/plain;charset=utf-8', nazwaPliku(doZgloszenia))
+  }
+
   function cofnij(poprzednie, id) {
     zmienStatusy(poprzednie)
       .then((nowe) => {
@@ -127,19 +142,35 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-t px-6 py-4">
+        <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
           {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}
           {reklama.status === 'w_toku' && (
-            <Zgloszenie reklamy={[reklama, ...wSprawie.filter((r) => r.id !== reklama.id)]}>
-              <Button>Przygotuj zgłoszenie</Button>
-            </Zgloszenie>
+            <div className="flex">
+              <Button className="rounded-r-none" onClick={kopiujZgloszenie}>
+                Kopiuj zgłoszenie
+              </Button>
+              <Button
+                size="icon"
+                className="rounded-l-none border-l-primary-foreground/25"
+                aria-label="Pobierz zgłoszenie"
+                title="Pobierz zgłoszenie"
+                onClick={pobierzZgloszenie}
+              >
+                <Download />
+              </Button>
+            </div>
           )}
           {reklama.status !== 'zamknieta' && (
             <Button variant="outline" onClick={() => ustawStatus('zamknieta')}>
               Zamknij sprawę
             </Button>
           )}
-          {reklama.status !== 'nowa' && (
+          {reklama.status === 'w_toku' && (
+            <Button variant="ghost" size="icon" aria-label="Przywróć do nowych" title="Przywróć do nowych" onClick={() => ustawStatus('nowa')}>
+              <Undo2 />
+            </Button>
+          )}
+          {reklama.status === 'zamknieta' && (
             <Button variant="outline" onClick={() => ustawStatus('nowa')}>
               Przywróć do nowych
             </Button>

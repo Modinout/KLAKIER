@@ -12,14 +12,13 @@ const RYZYKO = ' ryzyko'
 const PROWADZI_DO = 'Prowadzi do: '
 const W_REJESTRZE = 'W rejestrze KNF: '
 const REKLAMA_NR = 'Reklama nr '
-const ZRODLO = 'Źródło: '
-const ZEBRANO = 'Zebrano: '
+const ZEBRANO = 'zebrano '
 const ADRES = 'Adres: '
 const OBRAZ = 'Obraz: '
 const USTALENIA = 'Ustalenia:'
 const PODSTAWA = '   Podstawa: '
 const UWAGI = 'Uwagi:'
-const TRESC = 'Treść:'
+const TRESC = 'Treść: '
 const BEZ_TEKSTU = 'Reklama graficzna, tekst nie został odczytany'
 
 function rozne(lista) {
@@ -44,26 +43,37 @@ function podmioty(reklamy) {
   return rozne(wpisy).map((wpis) => W_REJESTRZE + wpis)
 }
 
-function listaUstalen(reklama) {
-  const punkty = ustalenia(reklama).map((s) => s.opis + (s.podstawa ? '\n' + PODSTAWA + s.podstawa : ''))
+function punkty(reklama) {
+  const lista = ustalenia(reklama).map((s) => s.opis + (s.podstawa ? '\n' + PODSTAWA + s.podstawa : ''))
   const model = ocenaModelu(reklama)
-  if (model) punkty.push(model)
-  if (punkty.length === 0) return []
-  return [USTALENIA, ...punkty.map((p, i) => i + 1 + '. ' + p)]
+  return model ? [...lista, model] : lista
 }
 
-function blokReklamy(reklama) {
-  const uwagi = notatki(reklama)
+function uwagi(reklama) {
+  return notatki(reklama).map((s) => s.opis)
+}
+
+function wspolne(reklamy, lista) {
+  return lista(reklamy[0]).filter((p) => reklamy.every((r) => lista(r).includes(p)))
+}
+
+function listaUstalen(lista) {
+  return lista.length ? [USTALENIA, ...lista.map((p, i) => i + 1 + '. ' + p)] : []
+}
+
+function listaUwag(lista) {
+  return lista.length ? [UWAGI, ...lista.map((p) => '- ' + p)] : []
+}
+
+// Findings shared by every ad of the case are listed once above the ads.
+function blokReklamy(reklama, wspolnePunkty, wspolneUwagi) {
   return [
-    REKLAMA_NR + reklama.id,
-    ZRODLO + nazwaZrodla(reklama.zrodlo),
-    ZEBRANO + data(reklama.zebrano),
+    [REKLAMA_NR + reklama.id, nazwaZrodla(reklama.zrodlo), ZEBRANO + data(reklama.zebrano)].join(' · '),
     reklama.url && ADRES + reklama.url,
     reklama.ma_obraz && OBRAZ + new URL(adresObrazu(reklama.id), location.origin).href,
-    ...listaUstalen(reklama),
-    ...(uwagi.length ? [UWAGI, ...uwagi.map((s) => '- ' + s.opis)] : []),
-    TRESC,
-    bezTekstu(reklama) ? BEZ_TEKSTU : reklama.tekst,
+    ...listaUstalen(punkty(reklama).filter((p) => !wspolnePunkty.includes(p))),
+    ...listaUwag(uwagi(reklama).filter((p) => !wspolneUwagi.includes(p))),
+    TRESC + (bezTekstu(reklama) ? BEZ_TEKSTU : reklama.tekst.replace(/\s+/g, ' ').trim()),
   ]
 }
 
@@ -74,11 +84,14 @@ function blok(linie) {
 // The first ad is the one open on the sheet.
 export function zgloszenie(reklamy) {
   const glowna = reklamy[0]
+  const wspolnePunkty = wspolne(reklamy, punkty)
+  const wspolneUwagi = wspolne(reklamy, uwagi)
   const bloki = [
     [NAGLOWEK + tytul(glowna), SPORZADZONO + dzienCzytelny(dzien(new Date())), REKLAM_W_SPRAWIE + reklamy.length],
     [wniosek(glowna)],
     [...platnicy(reklamy), ...rozne(reklamy.map(domenaDocelowa)).map((d) => PROWADZI_DO + d), ...podmioty(reklamy)],
-    ...reklamy.map(blokReklamy),
+    [...listaUstalen(wspolnePunkty), ...listaUwag(wspolneUwagi)],
+    ...reklamy.map((r) => blokReklamy(r, wspolnePunkty, wspolneUwagi)),
   ]
   return bloki.map(blok).filter(Boolean).join('\n\n')
 }
