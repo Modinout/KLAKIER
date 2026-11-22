@@ -38,6 +38,21 @@ Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera
 - Opis API w przeglądarce: http://localhost:8000/docs
 - Czysty start bazy: `docker compose down -v` kasuje bazę razem z tym, czego model nauczył się od analityka; kolejny `docker compose up -d` wczytuje dane pokazowe od nowa.
 
+## Połączenie z innymi systemami
+
+Panel korzysta z tego samego API, które może wywołać inny system. Trasy i pola opisują `KONTRAKT.md` i http://localhost:8000/docs.
+
+- Wysłanie reklamy do oceny: `POST /reklamy`. Odpowiedź `201` to zapisany rekord z oceną w polach `poziom`, `ryzyko`, `sygnaly` i `powod`; `409`, gdy ta reklama już jest w bazie.
+
+```
+POST http://localhost:8000/reklamy
+{"zrodlo": "zgloszenia", "id_zrodla": "2026-000123", "platforma": "facebook", "url": "https://www.facebook.com/ads/library/?id=123", "reklamodawca": "Przykład Invest", "tekst": "Gwarantowany zysk 20% miesięcznie, bez ryzyka. Zainwestuj dziś.", "zebrano": "2026-11-22T09:00:00Z"}
+```
+
+- Pobranie reklam z ocenami: `GET /reklamy` z filtrami `werdykt`, `status`, `min_ryzyko` i `od`; `http://localhost:8000/reklamy?od=2026-11-22T00:00:00Z` zwraca reklamy dodane od tej chwili.
+- Alerty na żywo: WebSocket `ws://localhost:8000/alerty` wysyła wiadomość JSON przy każdej reklamie z poziomem `wysokie`.
+- Dowody: `GET /reklamy/{id}/paczka` zwraca ZIP z plikami dowodów sprawdzonej strony i `manifest.json` z ich skrótami SHA-256.
+
 ## Co sprawdza
 
 ### M2: kryteria UKNF dla informacji o ryzyku
