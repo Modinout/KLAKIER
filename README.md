@@ -41,7 +41,7 @@ Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy
 | --- | --- |
 | `zbieracz` | wysyła reklamy z pliku JSONL do `api`; patrol sprawdza domeny z listy ostrzeżeń KNF (reklamy Google na Polskę, druga domena tej samej strony, lista CERT) |
 | `api` | przyjmuje reklamy, prosi `ai` o ocenę, zapisuje je w bazie i podaje panelowi; przy każdym odczycie dokłada ustalenia o domenie docelowej: płatnicy domeny i ostrzeżenie o ryzyku na stronie |
-| `ai` | ocenia tekst reklamy małym klasyfikatorem na CPU (opis i ograniczenia: `ai/KARTA_MODELU.md`); uczy się z werdyktów analityka; stan nauki trzyma w wolumenie `stan_ai`; dodaje ustalenia trzech modułów: M1 płatnik a rejestry KNF (`rejestr.py`), M2 informacja o ryzyku (`wymogi.py`), M3 doradztwo bez zezwolenia (`doradztwo.py`) |
+| `ai` | ocenia tekst reklamy małym klasyfikatorem KAPSEL na CPU (opis i ograniczenia: `ai/KARTA_MODELU.md`); uczy się z werdyktów analityka; stan nauki trzyma w wolumenie `stan_ai`; dodaje ustalenia trzech modułów: M1 płatnik a rejestry KNF (`rejestr.py`), M2 informacja o ryzyku (`wymogi.py`), M3 doradztwo bez zezwolenia (`doradztwo.py`) |
 | `odczyt` | odczytuje tekst z obrazu reklamy (PP-OCR na CPU); modele są w obrazie Dockera |
 | `baza` | Postgres, tabele `reklamy`, `obrazy_reklam` i `strony` (`baza/schemat.sql`) |
 | `front` | panel: kolejka spraw z filtrami (data, źródło, status, ryzyko, moduł) i wykresem trendu, karta sprawy z obrazem reklamy, ustaleniami i decyzją, gotowe zgłoszenie sprawy w toku do skopiowania albo pobrania, alerty na żywo, kalibracja progu |
