@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install pip-audit==2.10.1
-      # One call per file: the services pin conflicting versions.
+      # Osobne wywołanie dla każdego pliku: usługi przypinają sprzeczne wersje bibliotek.
       - run: pip-audit -r ai/requirements.txt
       - run: pip-audit -r api/requirements.txt
       - run: pip-audit -r odczyt/requirements.txt

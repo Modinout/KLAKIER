@@ -41,7 +41,7 @@ services:
       AI_URL: http://ai:8000
       ODCZYT_URL: http://odczyt:8000
       KOLEJKA_URL: redis://kolejka:6379/0
-    # Both loopback addresses: localhost may resolve to ::1 first, and an unanswered ::1 delays every call.
+    # Oba adresy lokalne: localhost może najpierw wskazać ::1, a brak odpowiedzi na ::1 opóźnia każde zapytanie.
     ports:
       - "127.0.0.1:8000:8000"
       - "[::1]:8000:8000"
