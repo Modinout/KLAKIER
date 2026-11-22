@@ -9,6 +9,9 @@ import strony_docelowe  # noqa: E402
 TRESC = '<p>' + 'Handluj akcjami i walutami na naszej platformie. ' * 20 + '</p>'
 OSTRZEZENIE = ('Kontrakty CFD są złożonymi instrumentami i wiążą się z dużym ryzykiem szybkiej utraty środków '
                'pieniężnych z powodu dźwigni finansowej. 76% rachunków inwestorów detalicznych odnotowuje straty.')
+# A photo drawn under the text by an element that is not its ancestor, as hero pictures often are.
+ZDJECIE = ('<img style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1" src="data:image/png;base64,'
+           'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">')
 
 
 def strona(przed_trescia='', po_tresci='', styl=''):
@@ -78,6 +81,27 @@ def test_kolor_oklch(przegladarka):
 def test_gradient_za_tekstem_to_nieznany_kontrast(przegladarka):
     html = strona(f'<div style="background: linear-gradient(#000, #333); color: #fff"><p>{OSTRZEZENIE}</p></div>')
     assert zmierz(przegladarka, html)['ostrzezenie']['kontrast'] is None
+
+
+def test_polprzezroczysty_pasek_nad_zdjeciem_to_nieznany_kontrast(przegladarka):
+    # The photo is a sibling drawn behind the bar, so it is not among the bar's ancestors.
+    zdjecie = ('<div style="position: absolute; inset: 0; background-image: url(data:image/png;base64,'
+               'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=)"></div>')
+    pasek = f'<p style="position: relative; color: #fff; background: rgba(0, 0, 0, 0.6)">{OSTRZEZENIE}</p>'
+    html = strona(f'<div style="position: relative">{zdjecie}{pasek}</div>')
+    assert zmierz(przegladarka, html)['ostrzezenie']['kontrast'] is None
+
+
+def test_zdjecie_z_ujemnym_z_index_pod_tekstem_to_nieznany_kontrast(przegladarka):
+    html = strona(f'<div style="position: relative">{ZDJECIE}<p style="color: #fff">{OSTRZEZENIE}</p></div>',
+                  styl='body { background: #fafafa }')
+    assert zmierz(przegladarka, html)['ostrzezenie']['kontrast'] is None
+
+
+def test_kolor_miedzy_tekstem_a_zdjeciem_daje_kontrast(przegladarka):
+    pasek = f'<div style="background: #000"><p style="color: #fff">{OSTRZEZENIE}</p></div>'
+    html = strona(f'<div style="position: relative">{ZDJECIE}{pasek}</div>', styl='body { background: #fafafa }')
+    assert zmierz(przegladarka, html)['ostrzezenie']['kontrast'] == 21
 
 
 def test_ukryte_na_telefonie(przegladarka):

@@ -6,6 +6,7 @@
   const OSTRZEZENIE = /inwestorów detalicznych|szybkiej utraty|retail investor accounts|losing money rapidly|Privatanleger|investisseurs particuliers|particuliere beleggers|retailových investorů|inversores minoristas|investitori al dettaglio/i;
   const CFD = /\bCFDs?\b|kontrakt\w* na różnic|contracts? for difference/i;
   const POMIJANE = { SCRIPT: true, STYLE: true, NOSCRIPT: true, TEMPLATE: true };
+  const OBRAZ = /^(img|video|canvas|picture|svg)$/i;
   const plotno = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
 
   // Any CSS colour, oklch() included, as sRGB channels 0-255 and alpha 0-1.
@@ -23,8 +24,28 @@
     return { r: kanal('r'), g: kanal('g'), b: kanal('b'), a: 1 };
   }
 
-  // Colour behind the element, or null when a picture or a gradient is behind it.
+  // Whether a picture is drawn under the middle of the element above the first solid colour. The picture need not
+  // belong to an ancestor, e.g. a photo with a negative z-index. The middle of a wrapped text can fall between its
+  // lines, so the layers are counted from the first one that holds the element. The colours of html and body usually
+  // paint the canvas under every picture, so they are not taken to hide one.
+  function obrazPod(element) {
+    const prostokat = element.getBoundingClientRect();
+    if (!prostokat.width) return false;
+    const pod = document.elementsFromPoint(prostokat.left + prostokat.width / 2, prostokat.top + prostokat.height / 2);
+    let i = 0;
+    while (i < pod.length && !pod[i].contains(element)) i++;
+    for (; i < pod.length; i++) {
+      const styl = getComputedStyle(pod[i]);
+      if (OBRAZ.test(pod[i].tagName) || styl.backgroundImage !== 'none') return true;
+      if (rgba(styl.backgroundColor).a === 1 && pod[i] !== document.body && pod[i] !== document.documentElement) return false;
+    }
+    return false;
+  }
+
+  // Colour behind the element, or null when it is unknown: a picture or a gradient is behind it, or see-through
+  // layers have no solid colour under them, so a photo drawn by another element may show through.
   function tlo(element) {
+    if (obrazPod(element)) return null;
     const warstwy = [];
     for (let el = element; el; el = el.parentElement) {
       const styl = getComputedStyle(el);
@@ -33,6 +54,8 @@
       if (kolor.a > 0) warstwy[warstwy.length] = kolor;
       if (kolor.a === 1) break;
     }
+    if (warstwy.length && warstwy[warstwy.length - 1].a < 1) return null;
+    // With no layer at all the text sits on the white page.
     let wynik = { r: 255, g: 255, b: 255, a: 1 };
     for (let i = warstwy.length - 1; i >= 0; i--) wynik = nalozony(warstwy[i], wynik);
     return wynik;
