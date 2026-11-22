@@ -25,7 +25,7 @@ PROBY = [
     (KOD_EN, OBCY, KOD),
     (LINK_212, None, KOD),
     ('Tu zakładam konto inwestycyjne 👉 https://link-pso.xtb.com/pso/u0V2g', OBCY, KOD),
-    ('Revolut: https://revolut.com/referral/maciej3s3f', OBCY, KOD),
+    ('Revolut: https://revolut.com/referral/jan3s3f', OBCY, KOD),
     (LINK_212 + '\n#reklama', OBCY, []),
     (LINK_212 + '\n[Reklama] Promocja podlega regulaminowi.', OBCY, []),
     (KOD_PL + '\nFilm powstał we współpracy reklamowej z XTB.', OBCY, []),
