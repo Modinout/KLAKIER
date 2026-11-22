@@ -112,6 +112,13 @@ def obsluz_z_atrapami(monkeypatch, komputer, telefon, zapisana=None, blad_api=No
     return linia, wywolania
 
 
+def test_ponowne_sprawdzenie_nie_wierzy_pamieci_zapisanych(monkeypatch):
+    klucz = ('panel', LINK)
+    monkeypatch.setitem(sprawdzenie_linku.wysylka.zapisane, klucz, {'id': 1, 'ma_obraz': True})
+    obsluz_z_atrapami(monkeypatch, wizyta(), wizyta(rodzaj='telefon'))
+    assert klucz not in sprawdzenie_linku.wysylka.zapisane
+
+
 def test_link_staje_sie_reklama_z_dowodami(monkeypatch):
     linia, wywolania = obsluz_z_atrapami(monkeypatch, wizyta(), wizyta(rodzaj='telefon', zrzut=b'png telefonu'))
     pomiar = {'adres': 'https://www.dobra.pl/oferta', 'przewazajacy_px': 16, 'cfd': False, 'ostrzezenie': None}

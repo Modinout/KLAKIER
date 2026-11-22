@@ -45,6 +45,8 @@ def sprawdz(url, ostrzezenia, przegladarka, z_cert):
     rekord_linku = rekord(url, komputer, sygnaly(komputer, ostrzezenia, z_cert))
     # Zapisywane przed rekordem, więc alert o nowym rekordzie już liczy ustalenia o ostrzeżeniu.
     zapisz_pomiar(rekord_linku['domena'], {'komputer': pomiar(komputer), 'telefon': pomiar(telefon)})
+    # Robotnik i sprawdzacz pamiętają zapisane rekordy osobno, a rekord linku mógł od tamtej pory zniknąć z bazy.
+    wysylka.zapisane.pop((rekord_linku['zrodlo'], rekord_linku['id_zrodla']), None)
     _, zapisany = wysylka.dodaj(rekord_linku)
     for wizyta in (komputer, telefon):
         if 'zrzut' in wizyta:
