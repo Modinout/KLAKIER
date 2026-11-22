@@ -77,6 +77,7 @@ export default function Ocena({ reklama, podmien }) {
     zapisz(nowy)
       .then(() =>
         toast(nowy ? 'Ocena tekstu: ' + OCENY[nowy] : 'Usunięto ocenę tekstu', {
+          description: nowy ? 'Model nauczy się z niej po douczeniu w zakładce Kalibracja.' : undefined,
           duration: 5000,
           action: { label: 'Cofnij', onClick: () => zapisz(poprzedni).catch(() => toast.error(BLAD_ZAPISU)) },
         })
@@ -89,8 +90,8 @@ export default function Ocena({ reklama, podmien }) {
       <p>{linia(reklama, prog)}</p>
       {najmocniejsze.length > 0 && <p>Słowa, które najbardziej podniosły ocenę: {najmocniejsze.join(', ')}</p>}
       {zTekstem && !otwarta && (
-        <button className="block underline-offset-4 hover:text-foreground hover:underline" onClick={() => setOtwarta(true)}>
-          Popraw
+        <button className="block underline underline-offset-4 hover:text-foreground" onClick={() => setOtwarta(true)}>
+          Popraw ocenę modelu
         </button>
       )}
       {zTekstem && otwarta && (

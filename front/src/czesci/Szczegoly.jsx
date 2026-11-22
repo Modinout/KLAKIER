@@ -26,7 +26,7 @@ import Tekst from './Tekst.jsx'
 const KOMUNIKATY = {
   nowa: 'Przywrócono do nowych',
   w_toku: 'Wzięto do wyjaśnienia',
-  zamknieta: 'Sprawa zamknięta',
+  zamknieta: 'Przeniesiono do zamkniętych',
 }
 
 function dopisek(reklama) {
@@ -195,7 +195,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
         )}
         {reklama.status !== 'zamknieta' && (
           <Button variant="outline" onClick={() => ustawStatus('zamknieta')}>
-            Zamknij sprawę
+            Przenieś do zamkniętych
           </Button>
         )}
         {reklama.status === 'w_toku' && (
@@ -208,15 +208,22 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
             Przywróć do nowych
           </Button>
         )}
-        <Button variant="ghost" className="ml-auto" disabled={!nastepna} onClick={() => otworz(nastepna.glowna.id)}>
-          Następna sprawa
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-auto"
+          aria-label="Następna sprawa"
+          title="Następna sprawa"
+          disabled={!nastepna}
+          onClick={() => otworz(nastepna.glowna.id)}
+        >
           <ChevronRight />
         </Button>
       </div>
     </>
   )
 
-  if (obok) return <aside className="flex w-[520px] shrink-0 flex-col overflow-hidden rounded-lg border bg-popover">{zawartosc}</aside>
+  if (obok) return <aside aria-label="Szczegóły sprawy" className="flex w-[520px] shrink-0 flex-col overflow-hidden rounded-lg border bg-popover">{zawartosc}</aside>
 
   return (
     <Sheet open onOpenChange={zamknij}>

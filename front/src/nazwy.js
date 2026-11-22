@@ -53,6 +53,7 @@ export const TAGI = {
   wielu_platnikow_domeny: 'Za jedną stronę płaci kilka firm',
   obca_domena: 'Znana firma reklamuje cudzą stronę',
   doradztwo_bez_zezwolenia: 'Możliwe doradztwo bez zezwolenia KNF',
+  rekomendacje_ogolne: 'Sygnały lub rekomendacje inwestycyjne',
   platnik_poza_listami: 'Brak w 4 rejestrach firm inwestycyjnych KNF',
   mloda_domena: 'Strona założona tuż przed reklamą',
   zysk_bez_ryzyka: 'Obiecuje zysk bez ryzyka',
@@ -175,10 +176,16 @@ export function ileSpraw(n) {
   return odmien(n, 'sprawa', 'sprawy', 'spraw')
 }
 
-export function zdanieZapisu(n) {
-  if (n === 0) return 'Przy tym progu żadna reklama z bazy nie zmieni poziomu.'
-  const ile = ileReklam(n)
-  return 'Przy tym progu wysokie ryzyko ' + (ile.endsWith('reklamy') ? 'dostaną ' : 'dostanie ') + ile + ' z bazy.'
+export function ileOszustw(n) {
+  return odmien(n, 'oszustwo', 'oszustwa', 'oszustw')
+}
+
+export function ileUczciwych(n) {
+  return odmien(n, 'uczciwa', 'uczciwe', 'uczciwych')
+}
+
+export function procent(ulamek) {
+  return Math.round(ulamek * 100) + '%'
 }
 
 export const NAZWY_POWIAZAN = {
@@ -186,20 +193,7 @@ export const NAZWY_POWIAZAN = {
   ten_sam_komunikator: 'Ten sam kontakt w komunikatorze',
 }
 
-export function ilePrzeoczonych(n) {
-  return odmien(n, 'przeoczone oszustwo', 'przeoczone oszustwa', 'przeoczonych oszustw')
-}
-
-export function ileAlarmow(n) {
-  return odmien(n, 'fałszywy alarm', 'fałszywe alarmy', 'fałszywych alarmów')
-}
-
 export const OPISY = {
   alerty: 'Sprawy wysokiego ryzyka.',
-  kalibracja: 'Tu sprawdzasz, jak model KAPSEL oceniający tekst reklam zachowuje się przy różnych progach.',
-  suwak:
-    'Suwak pokazuje symulację na zbiorze testowym. Przycisk zapisuje próg: reklamy, którym model KAPSEL dał co najmniej takie ryzyko, dostają wysoki poziom. Twarde ustalenia, takie jak domena z listy ostrzeżeń KNF, nie zależą od progu.',
-  ucz: 'Gdy ustawisz lub poprawisz ocenę tekstu w szczegółach sprawy, możesz tu douczyć model i ponownie ocenić wszystkie reklamy w bazie.',
-  uczPusto: 'Brak ocen do nauki. Otwórz sprawę i ustaw lub popraw ocenę tekstu, aby odblokować przycisk.',
   dodaj: 'Wklej tekst reklamy albo wrzuć jej zrzut. Reklama trafi do kolejki od razu z oceną.',
 }

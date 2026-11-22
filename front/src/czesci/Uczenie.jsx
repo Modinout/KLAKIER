@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { uczModel } from '../api.js'
-import { OPISY, ileReklam, liczba } from '../nazwy.js'
+import { ileReklam, liczba } from '../nazwy.js'
 import Potwierdzenie from './Potwierdzenie.jsx'
 
 export default function Uczenie({ decyzje, odswiez }) {
@@ -20,19 +20,19 @@ export default function Uczenie({ decyzje, odswiez }) {
   }
 
   return (
-    <>
-      <p className="text-muted-foreground">{OPISY.ucz}</p>
-      <div className="mt-4 flex items-center justify-between gap-6">
-        <div>
-          <p>Oceny tekstu od analityków: {liczba(decyzje)}</p>
-          {decyzje === 0 && <p className="text-muted-foreground">{OPISY.uczPusto}</p>}
-        </div>
-        <Potwierdzenie pytanie="Nauczyć model od nowa na decyzjach analityków?" przycisk="Ucz model" potwierdz={ucz}>
-          <Button variant="outline" disabled={uczy || decyzje === 0}>
-            {uczy ? 'Model się uczy…' : 'Doucz model z ocen'}
-          </Button>
-        </Potwierdzenie>
+    <div className="mt-6 flex items-center justify-between gap-6 rounded-lg border p-6">
+      <div>
+        <h2 className="font-medium">Douczanie modelu KAPSEL</h2>
+        <p className="mt-1">Oceny tekstu od analityków: {liczba(decyzje)}</p>
+        <p className="text-muted-foreground">
+          Analityk ocenia tekst w sprawie, linkiem „Popraw ocenę modelu”. Douczony model ocenia od nowa wszystkie reklamy.
+        </p>
       </div>
-    </>
+      <Potwierdzenie pytanie="Nauczyć model od nowa na decyzjach analityków?" przycisk="Ucz model" potwierdz={ucz}>
+        <Button variant="outline" disabled={uczy || decyzje === 0}>
+          {uczy ? 'Model się uczy…' : 'Doucz model z ocen'}
+        </Button>
+      </Potwierdzenie>
+    </div>
   )
 }
