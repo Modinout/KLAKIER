@@ -4,8 +4,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 ENV PADDLE_PDX_MODEL_SOURCE=huggingface PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
-COPY czytaj.py .
-# Importing the module downloads the models into the image.
-RUN python -c "import czytaj"
+COPY czytaj.py sluchaj.py ./
+# Importing the modules downloads the models into the image.
+RUN python -c "import czytaj, sluchaj"
 COPY . .
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

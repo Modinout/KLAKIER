@@ -35,5 +35,20 @@ try:
 except ValueError:
     sprawdz(True, 'a 36 MP image raises ValueError before decoding,', len(olbrzym.getvalue()), 'bytes')
 
+import time
+from sluchaj import sluchaj
+
+with open('probka_mowa.mp3', 'rb') as plik:
+    start = time.perf_counter()
+    mowa = sluchaj(plik.read())
+print(mowa, f'({time.perf_counter() - start:.1f} s)')
+for slowo in ('invest', 'tesla', 'month', 'register'):
+    sprawdz(slowo in mowa.lower(), 'probka_mowa.mp3 contains', slowo)
+try:
+    sluchaj(b'to nie nagranie')
+    sprawdz(False, 'bytes that are not a recording raise ValueError')
+except ValueError:
+    sprawdz(True, 'bytes that are not a recording raise ValueError')
+
 print('SMOKE', liczba - zle, 'of', liczba, 'passed')
 sys.exit(1 if zle else 0)

@@ -34,6 +34,7 @@ class Material(BaseModel):
     reklamodawca: str | None = None
     url: str | None = None
     zrodlo: str | None = None
+    mowa: str | None = None
 
 
 @app.get('/zdrowie')
@@ -43,9 +44,12 @@ def zdrowie():
 
 @app.post('/ocen')
 def ocen(material: Material):
-    wynik = BEZ_OCENY if material.zrodlo == 'youtube' else przewidz(material.tekst)
+    # Mowa z nagrania reklamy mówi to samo co tekst posta, więc model i reguły czytają oba razem.
+    # Linki polecające są tylko w tekście opisu.
+    tekst = '\n'.join(filter(None, [material.tekst, material.mowa]))
+    wynik = BEZ_OCENY if material.zrodlo == 'youtube' else przewidz(tekst)
     rejestr = sprawdz(material.reklamodawca)
-    na_temat = platnik_do_sprawdzenia(material.tekst, material.reklamodawca, rejestr)
+    na_temat = platnik_do_sprawdzenia(tekst, material.reklamodawca, rejestr)
     return {
         'werdykt': wynik['werdykt'],
         'ryzyko': wynik['prawdopodobienstwa']['oszustwo'],
@@ -55,8 +59,8 @@ def ocen(material: Material):
         'rejestr': rejestr,
         'sygnaly': (
             (sygnaly(material.reklamodawca, rejestr, material.zrodlo) if na_temat else [])
-            + wymogi.sygnaly(material.tekst, rejestr, material.zrodlo)
-            + doradztwo.sygnaly(material.tekst, rejestr)
+            + wymogi.sygnaly(tekst, rejestr, material.zrodlo)
+            + doradztwo.sygnaly(tekst, rejestr)
             + polecenia.sygnaly(material.tekst, rejestr, material.zrodlo)
         ),
     }

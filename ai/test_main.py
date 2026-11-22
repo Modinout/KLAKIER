@@ -87,5 +87,12 @@ finally:
 
 odp = klient.get('/rodzaje')
 sprawdz(len(odp.json()) == 4, 'GET /rodzaje after cleanup', len(odp.json()), 'names')
+
+# Niewinny tekst posta, a oszustwo w mowie nagrania: ocena ma wziąć pod uwagę mowę.
+post = {'tekst': 'Zobacz nasz nowy film.', 'reklamodawca': 'Nieznana Sp. z o.o.', 'zrodlo': 'meta_ads'}
+bez_mowy = klient.post('/ocen', json=post).json()
+z_mowa = klient.post('/ocen', json={**post, 'mowa': 'Zainwestuj 900 zł z Orlenem i zarabiaj 20 000 zł miesięcznie, gwarantowany dochód.'}).json()
+sprawdz(bez_mowy['werdykt'] != 'oszustwo' and z_mowa['werdykt'] == 'oszustwo', 'speech in the recording changes the verdict ->',
+        bez_mowy['werdykt'], z_mowa['werdykt'])
 print('MAIN', liczba - zle, 'of', liczba, 'passed')
 sys.exit(1 if zle else 0)
