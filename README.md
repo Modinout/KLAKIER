@@ -6,6 +6,32 @@ KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaj
 
 KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
 
+M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 10 sprawdzamy w pełni, 5 częściowo, 4 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
+
+## Uruchomienie
+
+Potrzebny jest Docker z Compose. Karta graficzna nie jest potrzebna. Obrazy zajmują około 8 GB na dysku, a działające usługi około 2 GB pamięci. Pierwsze budowanie pobiera biblioteki oraz modele do odczytu tekstu z obrazów i do zamiany mowy na tekst; na laptopie z 8-rdzeniowym procesorem najdłuższy obraz (odczyt) budował się około 6,5 minuty, nie licząc pobierania obrazów bazowych. Na Macu z procesorem Apple obraz odczytu buduje się i działa w emulacji x86, więc wolniej.
+
+```
+cp .env.example .env
+```
+
+W pliku `.env` ustaw własne hasło bazy, a potem uruchom usługi:
+
+```
+docker compose up -d --build
+```
+
+Przy pierwszym starcie baza zapisuje to hasło i wczytuje dane pokazowe zebrane 21–22.11.2026 z `baza/dane_pokazowe.sql.gz`: reklamy z Google, Meta, TikToka i YouTube, strony doradców oraz 32 oszustwa z ostrzeżeń CSIRT KNF. Obrazy reklam pochodzą z publicznych bibliotek reklam i z ostrzeżeń CSIRT KNF; prawa do nich mają ich autorzy, a tutaj służą wyłącznie jako materiał do analizy. Hasło zmienione później w `.env` zadziała dopiero po wyczyszczeniu bazy przez `docker compose down -v`.
+
+Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera.
+
+- Panel: http://localhost:8080
+- Opis API w przeglądarce: http://localhost:8000/docs
+- Czysty start bazy: `docker compose down -v` kasuje bazę razem z tym, czego model nauczył się od analityka, i dodanymi rodzajami oszustw; kolejny `docker compose up -d` wczytuje dane pokazowe od nowa.
+
+Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone. Adres to pełny adres zapytań chat completions serwera zgodnego z API OpenAI, także lokalnego vLLM, llama.cpp albo Ollamy. Sama ocena reklam nie potrzebuje dużego modelu.
+
 ## Co sprawdza
 
 ### M2: kryteria UKNF dla informacji o ryzyku
@@ -48,30 +74,6 @@ Baza pokazowa, 1782 materiały:
 - KAPSEL: 95 prawdziwych oszustw i 374 uczciwe reklamy inwestycyjne, 5 podziałów po 5 losowań, z reklamami jednej kampanii, szablonu, strony albo płatnika zawsze po tej samej stronie podziału. Od progu 0,7 łapie średnio 74 z 95 oszustw bez fałszywego alarmu, od progu 0,3 kieruje do człowieka 90 z 95 przy 8 fałszywych alarmach na 374. Świeży test po wyborze modelu: 24 opublikowane oszustwa, wszystkie od 0,3 w górę (19 od 0,7), i 153 zwykłe reklamy bez fałszywego alarmu. Inne modele na tych samych cechach (naiwny Bayes, SVM) wypadają w granicach szumu, a reguły na słowach kluczowych łapią 23 z 95. Reklamę wideo model ocenia po tekście posta i jednej klatce. Gdy do reklamy doda się nagranie (`PUT /reklamy/{id}/nagranie`), mowę zamienia na tekst otwarty model Whisper na procesorze (około 0,4 s na sekundę nagrania), a KAPSEL ocenia ją razem z tekstem posta. Mowa może podnieść ryzyko, ale nie obniża ryzyka samego tekstu posta. Zbieracze nie pobierają filmów, a trafności dla polskiej mowy na prawdziwych reklamach jeszcze nie zmierzyliśmy. Model uczył się na polskich reklamach, więc oszustwa po angielsku, w tekście albo w mowie, dostają niską ocenę.
 
 To małe próby: pokazują kierunek, nie dokładny odsetek.
-
-## Uruchomienie
-
-Potrzebny jest Docker z Compose. Karta graficzna nie jest potrzebna. Obrazy zajmują około 8 GB na dysku, a działające usługi około 2 GB pamięci. Pierwsze budowanie pobiera biblioteki oraz modele do odczytu tekstu z obrazów i do zamiany mowy na tekst; na laptopie z 8-rdzeniowym procesorem najdłuższy obraz (odczyt) budował się około 6,5 minuty, nie licząc pobierania obrazów bazowych. Na Macu z procesorem Apple obraz odczytu buduje się i działa w emulacji x86, więc wolniej.
-
-```
-cp .env.example .env
-```
-
-W pliku `.env` ustaw własne hasło bazy, a potem uruchom usługi:
-
-```
-docker compose up -d --build
-```
-
-Przy pierwszym starcie baza zapisuje to hasło i wczytuje dane pokazowe zebrane 21–22.11.2026 z `baza/dane_pokazowe.sql.gz`: reklamy z Google, Meta, TikToka i YouTube, strony doradców oraz 32 oszustwa z ostrzeżeń CSIRT KNF. Obrazy reklam pochodzą z publicznych bibliotek reklam i z ostrzeżeń CSIRT KNF; prawa do nich mają ich autorzy, a tutaj służą wyłącznie jako materiał do analizy. Hasło zmienione później w `.env` zadziała dopiero po wyczyszczeniu bazy przez `docker compose down -v`.
-
-Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera.
-
-- Panel: http://localhost:8080
-- Opis API w przeglądarce: http://localhost:8000/docs
-- Czysty start bazy: `docker compose down -v` kasuje bazę razem z tym, czego model nauczył się od analityka, i dodanymi rodzajami oszustw; kolejny `docker compose up -d` wczytuje dane pokazowe od nowa.
-
-Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone. Adres to pełny adres zapytań chat completions serwera zgodnego z API OpenAI, także lokalnego vLLM, llama.cpp albo Ollamy. Sama ocena reklam nie potrzebuje dużego modelu.
 
 ## Patrol listy ostrzeżeń
 
