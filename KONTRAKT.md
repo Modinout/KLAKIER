@@ -140,7 +140,7 @@ Panel wysyła nazwę analityka w nagłówku `X-Analityk` przy `PATCH /reklamy/{i
 
 ## Sprawdzenie linku z panelu
 
-Analityk wkleja link w panelu. `POST /sprawdz` z treścią `{"url": "https://..."}` zapisuje sprawdzenie i wstawia je do kolejki Redis `patrol:linki`, którą `zbieracz/robotnik.py` bierze przed domenami patrolu. Odpowiedź: `202` i `{"id": 12}`, `422`, gdy adres nie zaczyna się od `http://` ani `https://`, albo `503`, gdy kolejka nie działa.
+Analityk wkleja link w panelu. `POST /sprawdz` z treścią `{"url": "https://..."}` zapisuje sprawdzenie i wstawia je do kolejki Redis `patrol:linki`. Bierze z niej usługa `sprawdzacz` (`zbieracz/robotnik.py linki`), która obsługuje tylko linki, więc link nie czeka na domenę patrolu; robotnik patrolu też bierze linki przed swoimi domenami. Odpowiedź: `202` i `{"id": 12}`, `422`, gdy adres nie zaczyna się od `http://` ani `https://`, albo `503`, gdy kolejka nie działa.
 
 Robotnik otwiera link na komputerze (okno 1366 × 900) i na telefonie (okno 390 × 844, User-Agent przeglądarki bez zmian), idzie za przekierowaniami, a potem:
 

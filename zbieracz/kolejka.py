@@ -18,7 +18,7 @@ def dodaj(domena):
     polaczenie().rpush(LISTA, domena)
 
 
-def pobierz():
+def pobierz(tylko_linki=False):
     """Waits until a task is in the queue and takes it; returns the name of its list and the task."""
     # BLPOP looks at the lists in the order given, so an analyst waiting for a link goes before the next domain.
-    return polaczenie().blpop([LINKI, LISTA])
+    return polaczenie().blpop([LINKI] if tylko_linki else [LINKI, LISTA])

@@ -79,7 +79,6 @@ services:
 
   kolejka:
     image: public.ecr.aws/docker/library/redis:7-alpine
-    profiles: [patrol]
     restart: unless-stopped
 
   robotnik:
@@ -88,6 +87,23 @@ services:
       dockerfile: Dockerfile.patrol
     profiles: [patrol]
     command: ["python", "robotnik.py"]
+    environment:
+      API_URL: http://api:8000
+      KOLEJKA_URL: redis://kolejka:6379/0
+      ZBIERACZ_USER_AGENTS: ${ZBIERACZ_USER_AGENTS:-}
+      ZBIERACZ_PROXY: ${ZBIERACZ_PROXY:-}
+    restart: unless-stopped
+    depends_on:
+      kolejka:
+        condition: service_started
+      api:
+        condition: service_healthy
+
+  sprawdzacz:
+    build:
+      context: ./zbieracz
+      dockerfile: Dockerfile.patrol
+    command: ["python", "robotnik.py", "linki"]
     environment:
       API_URL: http://api:8000
       KOLEJKA_URL: redis://kolejka:6379/0

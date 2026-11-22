@@ -117,13 +117,23 @@ def test_blad_api_konczy_sprawdzenie_bledem(monkeypatch):
     assert wywolania[-1] == ('stan', 3, {'stan': 'blad', 'blad': 'Nie udało się sprawdzić linku: connection refused'})
 
 
-def test_robotnik_bierze_link_przed_domena(monkeypatch):
-    class Redis:
-        def blpop(self, listy):
-            self.listy = listy
-            return 'patrol:linki', '{"id": 1}'
+class Redis:
+    """Records the lists a worker waits on."""
 
+    def blpop(self, listy):
+        self.listy = listy
+        return 'patrol:linki', '{"id": 1}'
+
+
+def test_robotnik_bierze_link_przed_domena(monkeypatch):
     redis = Redis()
     monkeypatch.setattr(kolejka, 'polaczenie', lambda: redis)
     assert kolejka.pobierz() == ('patrol:linki', '{"id": 1}')
     assert redis.listy == [kolejka.LINKI, kolejka.LISTA]
+
+
+def test_sprawdzacz_bierze_tylko_linki(monkeypatch):
+    redis = Redis()
+    monkeypatch.setattr(kolejka, 'polaczenie', lambda: redis)
+    kolejka.pobierz(tylko_linki=True)
+    assert redis.listy == [kolejka.LINKI]
