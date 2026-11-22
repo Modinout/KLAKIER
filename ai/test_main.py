@@ -69,10 +69,11 @@ try:
     odp = klient.post('/rodzaje', json=NOWY)
     sprawdz(odp.status_code == 409, 'POST /rodzaje with a known name ->', odp.status_code)
 
-    odp = klient.post('/ucz', json={'przyklady': [{'tekst': REKLAMA, 'werdykt': 'oszustwo'}, {'tekst': ' ', 'werdykt': 'ok'}]})
+    odp = klient.post('/ucz', json={'przyklady': [{'tekst': REKLAMA, 'werdykt': 'oszustwo'}, {'tekst': ' ', 'werdykt': 'ok'},
+                                                  {'tekst': 'Kup akcje z prowizją 0 zł.', 'werdykt': 'do_sprawdzenia'}]})
     wynik = odp.json()
     sprawdz(odp.status_code == 200 and wynik['przyklady'] == 1 and type(wynik['razem']) is int and wynik['razem'] > 865,
-            'POST /ucz ->', odp.status_code, wynik)
+            'POST /ucz learns only from ok and oszustwo ->', odp.status_code, wynik)
 
     duzy_model.zapytaj = oceniaj
     odp = klient.post('/drugi_sedzia', json={'tekst': REKLAMA})

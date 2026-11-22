@@ -99,10 +99,11 @@ def ocen_drugim_sedzia(material: Tekst):
 @app.post('/ucz')
 def ucz_na_przykladach(zadanie: Przyklady):
     # Each call carries the analysts' whole set, so it replaces the one stored before.
+    # An ad left for checking has no verdict yet, and the model would learn it as no scam.
     analityka = []
     for przyklad in zadanie.przyklady:
         tekst = oczysc(przyklad.tekst)
-        if tekst.strip():
+        if tekst.strip() and przyklad.werdykt != 'do_sprawdzenia':
             analityka.append({'tekst': tekst, 'werdykt': przyklad.werdykt, 'rodzaj': None, 'pochodzenie': 'analityk'})
     dopisane.zapisz([w for w in dopisane.czytaj() if w['pochodzenie'] != 'analityk'] + analityka)
     przeucz()
