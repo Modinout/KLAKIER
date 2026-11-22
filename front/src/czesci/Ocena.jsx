@@ -23,8 +23,8 @@ const WERDYKTY_ANALITYKA = {
 
 function procent(ryzyko) {
   const p = Math.round(ryzyko * 100)
-  if (p === 0) return 'poniżej 1%'
-  if (p === 100) return 'powyżej 99%'
+  if (p === 0) return 'poniżej 1%'
+  if (p === 100) return 'powyżej 99%'
   return p + '%'
 }
 
@@ -41,9 +41,9 @@ function linia(reklama, prog) {
   return (
     kto +
     WERDYKTY_MODELU[reklama.werdykt] +
-    ', ryzyko ' +
+    ', ryzyko ' +
     procent(reklama.ryzyko) +
-    (prog == null ? '' : ', próg ' + Math.round(prog * 100) + '%') +
+    (prog == null ? '' : ', próg ' + Math.round(prog * 100) + '%') +
     (analityk ? ', analityk: ' + analityk : '')
   )
 }
@@ -86,15 +86,13 @@ export default function Ocena({ reklama, podmien }) {
 
   return (
     <div className="mt-1 text-[13px] text-muted-foreground">
-      <div className="flex items-baseline gap-3">
-        <p>{linia(reklama, prog)}</p>
-        {zTekstem && !otwarta && (
-          <button className="ml-auto shrink-0 underline-offset-4 hover:text-foreground hover:underline" onClick={() => setOtwarta(true)}>
-            Popraw
-          </button>
-        )}
-      </div>
+      <p>{linia(reklama, prog)}</p>
       {najmocniejsze.length > 0 && <p>Słowa, które najbardziej podniosły ocenę: {najmocniejsze.join(', ')}</p>}
+      {zTekstem && !otwarta && (
+        <button className="block underline-offset-4 hover:text-foreground hover:underline" onClick={() => setOtwarta(true)}>
+          Popraw
+        </button>
+      )}
       {zTekstem && otwarta && (
         <div className="mt-2 flex items-center gap-1.5">
           {Object.entries(OCENY).map(([werdykt, nazwa]) => (

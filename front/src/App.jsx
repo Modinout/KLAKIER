@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { pobierzReklamy } from './api.js'
 import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
+import useSzeroki from './useSzeroki.js'
 import DodajReklame from './czesci/DodajReklame.jsx'
 import Szczegoly from './czesci/Szczegoly.jsx'
 import Alerty from './widoki/Alerty.jsx'
@@ -21,6 +22,8 @@ function bezTestowych(lista) {
 }
 
 export default function App() {
+  const [zakladka, setZakladka] = useState('analityka')
+  const szeroki = useSzeroki()
   const [reklamy, setReklamy] = useState(null)
   const [prog, setProg] = useState(0.4)
   const [otwarte, setOtwarte] = useState(null)
@@ -95,9 +98,31 @@ export default function App() {
   }
 
   const otwarta = otwarte && reklamy?.find((r) => r.id === otwarte.id)
+  const obok = szeroki && zakladka === 'analityka'
+
+  // Sprawa wybrana w panelu obok listy nie może wyskoczyć jako arkusz na innej zakładce.
+  function zmienZakladke(nowa) {
+    setZakladka(nowa)
+    setOtwarte(null)
+  }
+
+  function szczegoly() {
+    return (
+      <Szczegoly
+        obok={obok}
+        reklama={otwarta}
+        wiersze={reklamy}
+        sprawy={otwarte.sprawy}
+        otworz={(id) => otworz(id, otwarte.sprawy)}
+        zamknij={() => setOtwarte(null)}
+        podmien={podmien}
+        odswiez={odswiez}
+      />
+    )
+  }
 
   return (
-    <Tabs defaultValue="analityka" className="h-svh gap-0">
+    <Tabs value={zakladka} onValueChange={zmienZakladke} className="h-svh gap-0">
       <header className="flex h-15 shrink-0 items-center gap-6 border-b px-8">
         <span className="font-bold tracking-[.08em]">KLAKIER</span>
         <TabsList className="h-9">
@@ -118,7 +143,7 @@ export default function App() {
         {reklamy ? (
           <>
             <TabsContent value="analityka" className="flex min-h-0 flex-col">
-              <Analityka wiersze={reklamy} otwarteId={otwarte?.id} otworz={otworz} />
+              <Analityka wiersze={reklamy} otwarteId={otwarte?.id} otworz={otworz} podmien={podmien} szczegoly={obok && otwarta ? szczegoly() : null} />
             </TabsContent>
             <TabsContent value="alerty" className="flex min-h-0 flex-col overflow-auto">
               <Alerty sprawy={alerty} przybyla={przybyla} nowe={nowyAlert} otwarteId={otwarte?.id} otworz={otworz} />
@@ -131,17 +156,7 @@ export default function App() {
           <p className="text-muted-foreground">Wczytywanie…</p>
         )}
       </main>
-      {otwarta && (
-        <Szczegoly
-          reklama={otwarta}
-          wiersze={reklamy}
-          sprawy={otwarte.sprawy}
-          otworz={(id) => otworz(id, otwarte.sprawy)}
-          zamknij={() => setOtwarte(null)}
-          podmien={podmien}
-          odswiez={odswiez}
-        />
-      )}
+      {otwarta && !obok && szczegoly()}
       {/* Otwarte szczegóły sprawy blokują resztę strony; przycisk „Cofnij” w powiadomieniu musi dalej działać. */}
       <Toaster position="bottom-left" className="toaster group pointer-events-auto" />
     </Tabs>

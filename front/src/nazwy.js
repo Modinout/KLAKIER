@@ -1,11 +1,5 @@
 export const BLAD_ZAPISU = 'Nie udało się zapisać. Spróbuj ponownie.'
 
-export const NAZWY_WERDYKTOW = {
-  ok: 'OK',
-  do_sprawdzenia: 'Do sprawdzenia',
-  oszustwo: 'Wysokie ryzyko oszustwa',
-}
-
 export function bezTekstu(reklama) {
   return reklama.tekst.trim() === ''
 }
@@ -72,7 +66,9 @@ export const TAGI = {
   wyniki_bez_okresu: 'Wyniki z przeszłości bez okresu 5 lat i źródła',
   wyniki_bez_oplat_i_waluty: 'Wyniki z przeszłości bez wpływu opłat lub walut',
   prognoza_bez_zastrzezenia: 'Prognoza bez zastrzeżenia',
+  porownanie_bez_podstawy: 'Porównanie bez źródła',
   ryzyko_w_innym_jezyku: 'Ostrzeżenie o ryzyku w innym języku',
+  ostrzezenie_niezrozumiale: 'Nieczytelne ostrzeżenie o ryzyku',
   test_zbieracza: 'Sygnał testowy',
 }
 

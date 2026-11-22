@@ -10,10 +10,10 @@ import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
 import { czystaSprawa, modelZalecaSprawdzenie, tagi, ustalenia, zdecydowalModel, zdaniePowodu } from '../ustalenia.js'
 import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
-import CoZrobic from './CoZrobic.jsx'
 import Dowody from './Dowody.jsx'
 import Historia from './Historia.jsx'
 import ListaUstalen from './ListaUstalen.jsx'
+import Nagranie from './Nagranie.jsx'
 import Notatka from './Notatka.jsx'
 import Obraz from './Obraz.jsx'
 import Ocena from './Ocena.jsx'
@@ -78,7 +78,8 @@ function InneWSprawie({ reklama, reklamy, otworz }) {
   )
 }
 
-export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, podmien, odswiez }) {
+// `obok`: szczegóły stoją w panelu obok listy zamiast w wysuwanym arkuszu.
+export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, podmien, odswiez, obok }) {
   const tresc = useRef(null)
   // Arkusz otwiera się ze stanu, bez wyzwalacza Radix, więc po zamknięciu fokus wraca tu ręcznie.
   const otwierajacy = useRef(document.activeElement)
@@ -94,13 +95,13 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
     if (tresc.current) tresc.current.scrollTop = 0
   }, [reklama.id])
 
-  function ustawStatus(status, komunikat = KOMUNIKATY[status]) {
+  function ustawStatus(status) {
     const poprzednie = wSprawie.map((r) => [r.id, r.status])
     const id = reklama.id
     zmienStatusy(wSprawie.map((r) => [r.id, status]))
       .then((nowe) => {
         nowe.forEach(podmien)
-        toast(komunikat, { duration: 5000, action: { label: 'Cofnij', onClick: () => cofnij(poprzednie, id) } })
+        toast(KOMUNIKATY[status], { duration: 5000, action: { label: 'Cofnij', onClick: () => cofnij(poprzednie, id) } })
         if (status !== 'zamknieta') return
         if (nastepna) otworz(nastepna.glowna.id)
         else zamknij()
@@ -131,6 +132,92 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
       .catch(() => toast.error(BLAD_ZAPISU))
   }
 
+  const Tytul = obok ? 'h2' : SheetTitle
+  const Opis = obok ? 'p' : SheetDescription
+
+  const zawartosc = (
+    <>
+      <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pb-4 text-pretty">
+        <div className="sticky top-0 -mx-6 bg-popover px-6 pt-5 pb-1">
+          <Tytul className="pr-8 text-lg font-semibold">
+            {tytul(reklama)}
+            {wSprawie.length > 1 && <span className="font-normal text-muted-foreground"> · {ileReklam(wSprawie.length)}</span>}
+          </Tytul>
+        </div>
+        <Opis className="mb-3 text-sm text-muted-foreground">
+          Reklama nr {reklama.id} · {nazwaZrodla(reklama.zrodlo)} · {data(reklama.zebrano)} · {NAZWY_STATUSOW[reklama.status]}
+          {reklama.url && zBiblioteki(reklama.url) && (
+            <>
+              {' · '}
+              <a href={reklama.url} target="_blank" rel="noreferrer" className="whitespace-nowrap underline underline-offset-4">
+                Źródło w bibliotece reklam
+              </a>
+            </>
+          )}
+        </Opis>
+        <div className="mb-3">
+          <Wniosek reklama={reklama} />
+          <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />
+        </div>
+        <Rejestr reklama={reklama} />
+        <ListaUstalen reklama={reklama} />
+        <Notatka key={'notatka' + reklama.id} reklama={reklama} podmien={podmien} />
+        {(obraz || !bezTekstu(reklama)) && (
+          <Sekcja tytul="Reklama">
+            {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
+            <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
+          </Sekcja>
+        )}
+        <Nagranie key={'nagranie' + reklama.id} reklama={reklama} podmien={podmien} />
+        <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
+        <Powiazane key={'powiazane' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} />
+        <Podobne key={'podobne' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
+        <Dowody reklama={reklama} />
+        <Historia key={'historia' + reklama.id} reklama={reklama} />
+      </div>
+      <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
+        {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}
+        {reklama.status === 'w_toku' && (
+          <div className="flex">
+            <Button className="rounded-r-none" onClick={kopiujZgloszenie}>
+              Kopiuj zgłoszenie
+            </Button>
+            <Button
+              size="icon"
+              className="rounded-l-none border-l-primary-foreground/25"
+              aria-label="Pobierz zgłoszenie"
+              title="Pobierz zgłoszenie"
+              onClick={pobierzZgloszenie}
+            >
+              <Download />
+            </Button>
+          </div>
+        )}
+        {reklama.status !== 'zamknieta' && (
+          <Button variant="outline" onClick={() => ustawStatus('zamknieta')}>
+            Zamknij sprawę
+          </Button>
+        )}
+        {reklama.status === 'w_toku' && (
+          <Button variant="ghost" size="icon" aria-label="Przywróć do nowych" title="Przywróć do nowych" onClick={() => ustawStatus('nowa')}>
+            <Undo2 />
+          </Button>
+        )}
+        {reklama.status === 'zamknieta' && (
+          <Button variant="outline" onClick={() => ustawStatus('nowa')}>
+            Przywróć do nowych
+          </Button>
+        )}
+        <Button variant="ghost" className="ml-auto" disabled={!nastepna} onClick={() => otworz(nastepna.glowna.id)}>
+          Następna sprawa
+          <ChevronRight />
+        </Button>
+      </div>
+    </>
+  )
+
+  if (obok) return <aside className="flex w-[520px] shrink-0 flex-col overflow-hidden rounded-lg border bg-popover">{zawartosc}</aside>
+
   return (
     <Sheet open onOpenChange={zamknij}>
       <SheetContent
@@ -141,82 +228,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           otwierajacy.current?.focus()
         }}
       >
-        <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pb-4">
-          <div className="sticky top-0 -mx-6 bg-popover px-6 pt-6 pb-1">
-            <SheetTitle className="pr-8 text-lg font-semibold">
-              {tytul(reklama)}
-              {wSprawie.length > 1 && <span className="font-normal text-muted-foreground"> · {ileReklam(wSprawie.length)}</span>}
-            </SheetTitle>
-          </div>
-          <SheetDescription className="mb-3">
-            Reklama nr {reklama.id} · {nazwaZrodla(reklama.zrodlo)} · {data(reklama.zebrano)} · {NAZWY_STATUSOW[reklama.status]}
-            {reklama.url && zBiblioteki(reklama.url) && (
-              <>
-                {' · '}
-                <a href={reklama.url} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-                  Źródło w bibliotece reklam
-                </a>
-              </>
-            )}
-          </SheetDescription>
-          <CoZrobic reklamy={wSprawie} status={reklama.status} ustawStatus={ustawStatus} />
-          <div className="mb-4">
-            <Wniosek reklama={reklama} />
-            <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />
-          </div>
-          <Rejestr reklama={reklama} />
-          <ListaUstalen reklama={reklama} />
-          <Notatka key={'notatka' + reklama.id} reklama={reklama} podmien={podmien} />
-          {(obraz || !bezTekstu(reklama)) && (
-            <Sekcja tytul="Reklama">
-              {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
-              <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
-            </Sekcja>
-          )}
-          <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
-          <Powiazane key={'powiazane' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} />
-          <Podobne key={'podobne' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
-          <Dowody reklama={reklama} />
-          <Historia key={'historia' + reklama.id} reklama={reklama} />
-        </div>
-        <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
-          {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}
-          {reklama.status === 'w_toku' && (
-            <div className="flex">
-              <Button className="rounded-r-none" onClick={kopiujZgloszenie}>
-                Kopiuj zgłoszenie
-              </Button>
-              <Button
-                size="icon"
-                className="rounded-l-none border-l-primary-foreground/25"
-                aria-label="Pobierz zgłoszenie"
-                title="Pobierz zgłoszenie"
-                onClick={pobierzZgloszenie}
-              >
-                <Download />
-              </Button>
-            </div>
-          )}
-          {reklama.status !== 'zamknieta' && (
-            <Button variant="outline" onClick={() => ustawStatus('zamknieta')}>
-              Zamknij sprawę
-            </Button>
-          )}
-          {reklama.status === 'w_toku' && (
-            <Button variant="ghost" size="icon" aria-label="Przywróć do nowych" title="Przywróć do nowych" onClick={() => ustawStatus('nowa')}>
-              <Undo2 />
-            </Button>
-          )}
-          {reklama.status === 'zamknieta' && (
-            <Button variant="outline" onClick={() => ustawStatus('nowa')}>
-              Przywróć do nowych
-            </Button>
-          )}
-          <Button variant="ghost" className="ml-auto" disabled={!nastepna} onClick={() => otworz(nastepna.glowna.id)}>
-            Następna sprawa
-            <ChevronRight />
-          </Button>
-        </div>
+        {zawartosc}
       </SheetContent>
     </Sheet>
   )

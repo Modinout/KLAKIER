@@ -41,6 +41,10 @@ export function zapiszObraz(id, obraz) {
   return wyslij('/api/reklamy/' + id + '/obraz', json('PUT', { obraz }))
 }
 
+export function dodajNagranie(id, nagranie) {
+  return wyslij('/api/reklamy/' + id + '/nagranie', json('PUT', { nagranie }))
+}
+
 export function odczytajObraz(obraz) {
   return wyslij('/api/odczytaj', json('POST', { obraz }))
 }

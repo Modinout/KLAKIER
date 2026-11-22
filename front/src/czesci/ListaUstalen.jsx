@@ -1,4 +1,4 @@
-import { bezTekstu, NAZWY_WERDYKTOW } from '../nazwy.js'
+import { bezTekstu } from '../nazwy.js'
 import { notatki, ocenaModelu, ustalenia } from '../ustalenia.js'
 
 function Punkt({ tytul, szary, children }) {
@@ -26,7 +26,6 @@ function powtarzaPowod(tytul, powod) {
 export default function ListaUstalen({ reklama }) {
   const lista = ustalenia(reklama)
   const model = ocenaModelu(reklama)
-  const drugi = reklama.drugi_sedzia
   const powod = reklama.poziom === 'niskie' ? reklama.powod : null
   const modelPowtarza = model && powtarzaPowod(model, powod)
 
@@ -41,15 +40,7 @@ export default function ListaUstalen({ reklama }) {
           </Punkt>
         )
       })}
-      {model && (!modelPowtarza || drugi) && (
-        <Punkt tytul={modelPowtarza ? null : model}>
-          {drugi && (
-            <Podpis>
-              Drugi model: {NAZWY_WERDYKTOW[drugi.werdykt]}. {drugi.uzasadnienie}
-            </Podpis>
-          )}
-        </Punkt>
-      )}
+      {model && !modelPowtarza && <Punkt tytul={model} />}
       {!model && lista.length === 0 && !bezTekstu(reklama) && reklama.poziom !== 'niskie' && <Punkt szary tytul="Brak ustaleń" />}
       {bezTekstu(reklama) && <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />}
       {notatki(reklama).map((s) => <Punkt key={s.kod} szary tytul={s.opis} />)}

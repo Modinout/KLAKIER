@@ -12,14 +12,14 @@ const KOLORY = {
 }
 
 function Chip({ stan }) {
-  return stan && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + KOLORY[stan]}>{STANY_REJESTRU[stan]}</span>
+  return stan && <span className={'whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium ' + KOLORY[stan]}>{STANY_REJESTRU[stan]}</span>
 }
 
 function Wiersz({ nazwa, children }) {
   return (
-    <div className="grid grid-cols-[130px_1fr_auto] items-center gap-3 px-3.5 py-2.5">
-      <span className="text-muted-foreground">{nazwa}</span>
-      {children}
+    <div className="col-span-full grid grid-cols-subgrid items-baseline px-3.5 py-2.5">
+      <span className="whitespace-nowrap text-muted-foreground">{nazwa}</span>
+      <div className="flex min-w-0 flex-col items-start gap-1">{children}</div>
     </div>
   )
 }
@@ -33,11 +33,12 @@ export default function Rejestr({ reklama }) {
   const polecona = polecanaFirma(reklama)
   if (!reklama.reklamodawca && !cel && !zTekstu && !polecona) return null
 
+  // Wiersze dzielą kolumny, więc kolumna nazw ma szerokość najdłuższej nazwy.
   return (
-    <div className="mb-4 divide-y rounded-lg border">
+    <div className="mb-4 grid grid-cols-[minmax(100px,auto)_minmax(0,1fr)] gap-x-3 divide-y rounded-lg border">
       {reklama.reklamodawca && (
         <Wiersz nazwa={kto(reklama)}>
-          <span className="font-medium">{reklama.reklamodawca}</span>
+          <span className="font-medium break-words">{reklama.reklamodawca}</span>
           <Chip stan={chip} />
         </Wiersz>
       )}
@@ -53,7 +54,7 @@ export default function Rejestr({ reklama }) {
             href={reklama.url && domena(reklama.url) === cel ? reklama.url : 'https://' + cel}
             target="_blank"
             rel="noreferrer"
-            className="truncate underline underline-offset-4"
+            className="max-w-full truncate underline underline-offset-4"
           >
             {cel}
           </a>
@@ -61,7 +62,7 @@ export default function Rejestr({ reklama }) {
       )}
       {zTekstu && (
         <Wiersz nazwa="Prowadzi do">
-          <span className="truncate">{zTekstu}</span>
+          <span className="max-w-full truncate">{zTekstu}</span>
         </Wiersz>
       )}
       {rejestr?.podmiot && (

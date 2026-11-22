@@ -1,11 +1,13 @@
 import { Download } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Filtry, { PUSTE_FILTRY } from '../czesci/Filtry.jsx'
 import TabelaSpraw from '../czesci/TabelaSpraw.jsx'
 import Trend from '../czesci/Trend.jsx'
 import Widoki, { WIDOKI } from '../czesci/Widoki.jsx'
-import { dzienCzytelny, ileReklam, ileSpraw, liczba } from '../nazwy.js'
+import Zaznaczone from '../czesci/Zaznaczone.jsx'
+import useSzeroki from '../useSzeroki.js'
+import { dzienCzytelny, ileReklam, liczba } from '../nazwy.js'
 import { pobierzPlik } from '../pobierz.js'
 import { nazwaRaportu, raport } from '../raport.js'
 import { dzienReklamy, najmocniejszyTag, odNajgorszych, tytul, wSprawy } from '../sprawy.js'
@@ -60,8 +62,10 @@ function Pusto({ poza, wyczysc }) {
   )
 }
 
-export default function Analityka({ wiersze, otwarteId, otworz }) {
-  const [filtry, setFiltry] = useState({ ...PUSTE_FILTRY, ...WIDOKI[0].zakres })
+export default function Analityka({ wiersze, otwarteId, otworz, podmien, szczegoly }) {
+  const szeroki = useSzeroki()
+  const [filtry, setFiltryBezZaznaczenia] = useState({ ...PUSTE_FILTRY, ...WIDOKI[0].zakres })
+  const [zaznaczone, setZaznaczone] = useState(new Set())
   const wszystkie = useMemo(() => wSprawy(wiersze), [wiersze])
   const ile = (zmiana) => wszystkie.filter((s) => pasujeSprawa(s, { ...filtry, ...zmiana })).length
 
@@ -79,6 +83,30 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
   )
 
   const tylkoSzukane = { ...PUSTE_FILTRY, szukaj: filtry.szukaj }
+  const zaznaczoneSprawy = sprawy.filter((s) => zaznaczone.has(s.klucz))
+
+  // Zaznaczenie dotyczy spraw widocznych w danym widoku, więc zmiana widoku albo filtrów je czyści.
+  function setFiltry(nowe) {
+    setFiltryBezZaznaczenia(nowe)
+    setZaznaczone(new Set())
+  }
+
+  function wybierz(s) {
+    otworz(doOtwarcia(s, filtry.szukaj), sprawy)
+  }
+
+  // Szczegóły obok listy nie stoją puste: przy starcie i po zmianie widoku albo filtrów pokazują pierwszą sprawę.
+  useEffect(() => {
+    if (szeroki && sprawy.length > 0) wybierz(sprawy[0])
+  }, [szeroki, filtry])
+
+  // Zamknięte sprawy wypadają z widoku, więc szczegóły przechodzą do pierwszej niezaznaczonej sprawy za wybraną.
+  function poZamknieciu() {
+    const i = sprawy.findIndex((s) => s.reklamy.some((r) => r.id === otwarteId))
+    const dalej = [...sprawy.slice(i), ...sprawy.slice(0, i)].find((s) => !zaznaczone.has(s.klucz))
+    if (szeroki && i !== -1 && zaznaczone.has(sprawy[i].klucz) && dalej) wybierz(dalej)
+    setZaznaczone(new Set())
+  }
 
   return (
     <>
@@ -93,20 +121,33 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
           Pobierz raport
         </Button>
       </Filtry>
-      <TabelaSpraw
-        key={JSON.stringify(filtry)}
-        sprawy={sprawy}
-        ile={ileSpraw(sprawy.length)}
-        kiedy={(s) => dzienCzytelny(s.dzien)}
-        otwarteId={otwarteId}
-        otworz={(s) => otworz(doOtwarcia(s, filtry.szukaj), sprawy)}
-        pusto={
-          <Pusto
-            poza={takieSame(filtry, tylkoSzukane) ? 0 : ile(tylkoSzukane)}
-            wyczysc={() => setFiltry(tylkoSzukane)}
+      <div className="flex min-h-0 flex-1 gap-4">
+        <div className="flex min-w-0 flex-1 flex-col">
+          {zaznaczoneSprawy.length > 0 && <Zaznaczone sprawy={zaznaczoneSprawy} podmien={podmien} poZamknieciu={poZamknieciu} />}
+          <TabelaSpraw
+            key={JSON.stringify(filtry)}
+            sprawy={sprawy}
+            kiedy={(s) => dzienCzytelny(s.dzien)}
+            otwarteId={otwarteId}
+            otworz={wybierz}
+            obok={szeroki}
+            zaznaczone={zaznaczone}
+            zaznacz={setZaznaczone}
+            pusto={
+              <Pusto
+                poza={takieSame(filtry, tylkoSzukane) ? 0 : ile(tylkoSzukane)}
+                wyczysc={() => setFiltry(tylkoSzukane)}
+              />
+            }
           />
-        }
-      />
+        </div>
+        {szeroki &&
+          (szczegoly ?? (
+            <aside className="flex w-[520px] shrink-0 items-center justify-center rounded-lg border text-muted-foreground">
+              Wybierz sprawę z listy
+            </aside>
+          ))}
+      </div>
     </>
   )
 }

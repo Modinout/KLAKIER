@@ -2,7 +2,7 @@ import { liczba } from '../nazwy.js'
 
 // Pierwszy widok jest widokiem startowym.
 export const WIDOKI = [
-  { nazwa: 'Podejrzane', zakres: { statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] } },
+  { nazwa: 'Do zrobienia', zakres: { statusy: ['nowa'], ryzyka: ['wysokie', 'srednie'] } },
   { nazwa: 'Niskie ryzyko', zakres: { statusy: ['nowa'], ryzyka: ['niskie'] } },
   { nazwa: 'W toku', zakres: { statusy: ['w_toku'], ryzyka: [] } },
   { nazwa: 'Zamknięte', zakres: { statusy: ['zamknieta'], ryzyka: [] } },
