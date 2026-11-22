@@ -149,6 +149,11 @@ def sprawdz(reklamodawca):
         w = wspolne(rdzen(nazwa), rdzen(n))
         if w > ile:
             najlepszy, ile = wpis, w
+    # Inna spółka marki z licencją MiCA to ten sam przypadek co inna spółka marki z rejestru KNF.
+    for wpis in _MICA:
+        w = wspolne(rdzen(nazwa), rdzen(klucz(wpis['nazwa'])))
+        if w > ile:
+            najlepszy, ile = wpis, w
     if najlepszy:
         return wynik('spoza_rejestru', najlepszy)
     # Cztery listy zawierają firmy inwestycyjne i biura maklerskie banków. Bank bez biura maklerskiego podlega
@@ -169,6 +174,8 @@ def sygnaly(platnik, rejestr, zrodlo=None):
     podstawa = f'Rejestry KNF, stan na {STAN_NA}'
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         opis = f'Płatnik „{platnik}” nie figuruje w rejestrach KNF. Marka odpowiada wpisowi „{rejestr["podmiot"]}” ({rejestr["panstwo"]}).'
+        if rejestr['lista'] == 'mica':
+            podstawa += f'; rejestr MiCA (ESMA), stan na {STAN_MICA}'
         return [{'modul': 'M1', 'kod': 'platnik_spoza_rejestru', 'opis': opis, 'podstawa': podstawa}]
     if rejestr and rejestr['stan'] == 'poza_listami':
         opis = f'Płatnik „{platnik}” nie figuruje w żadnym z czterech rejestrów firm inwestycyjnych KNF ani w rejestrze MiCA (ESMA).'

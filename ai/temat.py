@@ -24,6 +24,10 @@ INNE_RYNKI = re.compile(
     r'|\bimmobili\w*|\breal estate\b|\bproperty\b|\bodpad\w*|\bzłom\w*|\bsurowc\w+ wtórn\w+'
 )
 
+# Emitent produktu notowanego na giełdzie sprzedaje go przez domy maklerskie, a handel na rachunku symulowanym
+# nie angażuje pieniędzy klienta: żadne z nich nie wymaga zezwolenia firmy inwestycyjnej.
+BEZ_ZEZWOLENIA = re.compile(r'\betp\b|\bsimulated\b|\bsymulowan\w*|\bfunded\b|\bfunding\b|\bprop (?:firm|trading)\b')
+
 
 def o_inwestycjach(tekst):
     male = tekst.casefold()
@@ -38,4 +42,5 @@ def platnik_do_sprawdzenia(tekst, platnik, rejestr):
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         return True
     # Tekst zbyt krótki, by poznać temat, nie daje ustalenia: brak licencji ma znaczenie tylko dla oferty inwestycyjnej.
-    return o_inwestycjach(tekst + ' ' + (platnik or ''))
+    calosc = tekst + ' ' + (platnik or '')
+    return o_inwestycjach(calosc) and not BEZ_ZEZWOLENIA.search(calosc.casefold())

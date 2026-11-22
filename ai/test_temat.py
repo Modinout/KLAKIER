@@ -31,6 +31,9 @@ PLATNICY = [
     ('Handluj CFD na złocie z dźwignią 1:500', 'Vantage Global Prime Pty Ltd', OBCY, True),
     ('Wybieraj powiadomienia o cenie albo o zmianie w procentach, o resztę zadbamy my. Zainstaluj.', 'FxPro Global Markets Ltd', OBCY, True),
     ('24/7 Mobile Forex App', '上海纬祝网络科技有限公司', OBCY, True),
+    ('Virtune XRP ETP jest notowany na Giełdzie Papierów Wartościowych w Warszawie.', 'Virtune', OBCY, False),
+    ('Start simulated trading now.', 'FTMO s.r.o', OBCY, False),
+    ('Learn valuable skills as a futures trader.', 'Apex Trader Funding', OBCY, False),
     ('Ty masz odpady, ktoś ich szuka. Darmowa giełda odpadów bez pośredników', 'Utylizer.pl', OBCY, False),
     ('Co może się zmienić na rynku mieszkań w Warszawie? Sprawdź, co powstaje w Twojej dzielnicy.', 'natalia_drysiak', OBCY, False),
 ]

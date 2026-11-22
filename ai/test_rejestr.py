@@ -42,7 +42,7 @@ PROBY = [
     ('Trading Markets Finance', 'poza_listami', None),
     ('Securities Ltd', 'poza_listami', None),
     ('FTMO s.r.o', 'poza_listami', None),
-    ('Bybit Technology Limited', 'poza_listami', None),
+    ('Bybit Technology Limited', 'spoza_rejestru', 'Bybit EU GmbH'),
     ('Trade Republic Bank GmbH', 'mica', 'Trade Republic Bank GmbH'),
     ('Comdirect Bank GmbH', 'bank', None),
     ('Revolution Trading Ltd', 'poza_listami', None),
