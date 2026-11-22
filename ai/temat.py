@@ -16,7 +16,7 @@ INSTRUMENTY = re.compile(
     r'|\bmarkets\b|\bfinancial\b|\bwymian\w+ walut\w*|\bkantor\w*|\bgold\b|\boil\b|\bфорекс\w*|\bинвест\w*|\bзолото\b|\bнефть\b'
 )
 INWESTOWANIE = re.compile(
-    r'\b(?:za)?inwest\w*|\binvest\w*|\bzarabiaj\w*|\bzysk\w*|\bpomnaż\w*|\bpasywn\w+ doch\w+|\bwypłać\b'
+    r'\b(?:za)?inwest\w*|\binvest\w*|\bzarabiaj\w*|\bzarobi\w*|\bzysk\w*|\bpomnaż\w*|\bpasywn\w+ doch\w+|\bwypłać\b'
 )
 # Nieruchomości i towary sprzedaje się tymi samymi czasownikami, ale to nie sprawa nadzoru finansowego.
 INNE_RYNKI = re.compile(
