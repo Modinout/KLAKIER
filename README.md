@@ -11,10 +11,9 @@ Potrzebny jest Docker z Compose.
 ```
 cp .env.example .env
 docker compose up -d --build
-docker compose --profile zbieracz run --rm zbieracz python z_pliku.py pokaz.jsonl
 ```
 
-W pliku `.env` ustaw własne hasło bazy. Trzecia komenda wczytuje 144 prawdziwe reklamy z `zbieracz/pokaz.jsonl`, w tym 32 oszustwa z ostrzeżeń CSIRT KNF.
+W pliku `.env` ustaw własne hasło bazy. Przy pierwszym starcie baza wczytuje dane pokazowe zebrane 21.11.2026 z `baza/dane_pokazowe.sql.gz`: reklamy z Google, Meta, TikToka i YouTube, strony doradców oraz 32 oszustwa z ostrzeżeń CSIRT KNF. Obrazy reklam pochodzą z publicznych bibliotek reklam i z ostrzeżeń CSIRT KNF; prawa do nich mają ich autorzy, a tutaj służą wyłącznie jako materiał do analizy.
 
 Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone.
 
@@ -22,7 +21,7 @@ Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera
 
 - Panel: http://localhost:8080
 - Opis API w przeglądarce: http://localhost:8000/docs
-- Czysty start bazy: `docker compose down -v` (kasuje też to, czego model nauczył się od analityka, i dodane rodzaje oszustw)
+- Czysty start bazy: `docker compose down -v` kasuje bazę razem z tym, czego model nauczył się od analityka, i dodanymi rodzajami oszustw; kolejny `docker compose up -d` wczytuje dane pokazowe od nowa.
 
 ## Patrol listy ostrzeżeń
 
