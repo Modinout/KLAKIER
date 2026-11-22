@@ -81,7 +81,7 @@ export default function Kalibracja({ prog, ustawProg, wiersze, odswiez }) {
       {!blad && !progi && <p className="text-muted-foreground">Wczytywanie…</p>}
       {!blad && progi && <Progi progi={progi} prog={prog} ustawProg={ustawProg} wiersze={wiersze} />}
       <div className="mt-6 max-w-4xl rounded-lg border p-6">
-        <h2 className="mb-1 font-medium">Douczanie modelu</h2>
+        <h2 className="mb-1 font-medium">Douczanie modelu KAPSEL</h2>
         <Uczenie decyzje={wiersze.filter((r) => r.werdykt_analityka).length} odswiez={odswiez} />
       </div>
     </>

@@ -178,7 +178,7 @@ export function ileAlarmow(n) {
 
 export const OPISY = {
   alerty: 'Sprawy wysokiego ryzyka.',
-  kalibracja: 'Tu sprawdzasz, jak model oceniający tekst reklam zachowuje się przy różnych progach.',
+  kalibracja: 'Tu sprawdzasz, jak model KAPSEL oceniający tekst reklam zachowuje się przy różnych progach.',
   suwak:
     'Suwak służy tylko do symulacji i nie zmienia ocen spraw w kolejce. Twarde ustalenia, takie jak domena z listy ostrzeżeń KNF albo płatnik poza listami KNF, nie zależą od progu.',
   ucz: 'Gdy ustawisz lub poprawisz ocenę tekstu w szczegółach sprawy, możesz tu douczyć model i ponownie ocenić wszystkie reklamy w bazie.',

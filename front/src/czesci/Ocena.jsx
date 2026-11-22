@@ -47,7 +47,7 @@ export default function Ocena({ reklama, podmien }) {
   return (
     <div className="mt-6">
       {reklama.werdykt && (
-        <p className="mb-2 text-[13px] text-muted-foreground">Ocena modelu: {WERDYKTY_MODELU[reklama.werdykt]}</p>
+        <p className="mb-2 text-[13px] text-muted-foreground">Ocena modelu KAPSEL: {WERDYKTY_MODELU[reklama.werdykt]}</p>
       )}
       <div className="flex items-center gap-1.5">
         {Object.entries(OCENY).map(([werdykt, nazwa]) => (
