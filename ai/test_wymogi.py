@@ -118,11 +118,21 @@ print('OK  ' if dobrze else 'FAIL', 'a long quote is cut at word boundaries and 
 powtorka = wymogi.cytat('Family Office nowa usługa Family Office nowa usługa', re.search('usługa', 'Family Office nowa usługa'))
 zle += powtorka != 'Family Office nowa usługa'
 print('OK  ' if powtorka == 'Family Office nowa usługa' else 'FAIL', 'a phrase repeated side by side is quoted once |', powtorka)
+POCZATKI = [
+    ('﻿ Bieżące sygnały giełdowe', 'sygnały', 'Bieżące sygnały giełdowe'),
+    ('Sponsored 00:00 Najtańszy fundusz w Polsce', 'fundusz', 'Najtańszy fundusz w Polsce'),
+    ('Zobacz http://www.finax.eu/ OKI - Osobiste Konto Inwestycyjne', 'Konto', 'OKI - Osobiste Konto Inwestycyjne'),
+    ('Handel 24/7 trading bez przerw', 'trading', 'Handel 24/7 trading bez przerw'),
+]
+for tekst, slowo, oczekiwany in POCZATKI:
+    mam = wymogi.cytat(tekst, re.search(slowo, tekst))
+    zle += mam != oczekiwany
+    print('OK  ' if mam == oczekiwany else 'FAIL', 'a quote starts with the words of the ad |', repr(mam))
 
 menu = 'Szukaj pl menu dostępności wysoki kontrast oferujemy family office dla rodzin i firm w regionie'
 mam = doradztwo.sygnaly(menu, {'stan': 'poza_listami', 'podmiot': None, 'panstwo': None, 'lista': None})
 zle += mam != []
 print('OK  ' if mam == [] else 'FAIL', 'a site menu next to the phrase gives no finding |', [s['kod'] for s in mam])
 
-print(f'{len(PROBY) + 8 - zle} of {len(PROBY) + 8} checks passed')
+print(f'{len(PROBY) + len(POCZATKI) + 8 - zle} of {len(PROBY) + len(POCZATKI) + 8} checks passed')
 sys.exit(1 if zle else 0)

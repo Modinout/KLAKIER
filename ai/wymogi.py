@@ -84,6 +84,8 @@ _ZAPRZECZENIE = re.compile(r'\bnie\b|\bani\b|\bbez\b|\bżadn\w+|\bnot\b|\bno\b|\
 # Liczone w znakach, nie w zdaniach: zastrzeżenia są pełne "art." i "S.A.".
 _OKNO = 120
 _POWTORZENIE = re.compile(r'(\S.{14,}?) \1(?= |$)')
+# Przed zdaniem zostaje niewidoczny znak, napis odtwarzacza albo końcówka adresu.
+_SMIECI = re.compile(r'^(?:[\ufeff\u200b\s]+|Sponsored \d\d:\d\d\s+|\S*/\s+)+')
 
 
 def twierdzenie(wzor, male, przyjmij=lambda trafienie: True):
@@ -110,7 +112,7 @@ def cytat(tekst, trafienie):
             spacja = tekst.rfind(' ', trafienie.end(), do)
             do, po = (spacja if spacja > 0 else do), '…'
         poczatek, koniec = od, do
-    slowa = ' '.join(tekst[poczatek:koniec].split())
+    slowa = _SMIECI.sub('', ' '.join(tekst[poczatek:koniec].split()))
     # Strony powtarzają tytuł obok siebie; w cytacie wystarczy raz.
     return przed + _POWTORZENIE.sub(r'\1', slowa) + po
 
