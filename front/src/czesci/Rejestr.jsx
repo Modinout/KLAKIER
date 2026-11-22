@@ -23,7 +23,7 @@ export default function Rejestr({ reklama }) {
   const rejestr = reklama.rejestr
   const chip = stanRejestru(reklama)
   const cel = domenaDocelowa(reklama)
-  // Titled by the first domain in the text: no link, it was not checked as a target.
+  // Tytuł od pierwszej domeny w tekście: bez linku, bo nie była sprawdzana jako cel.
   const zTekstu = !cel && !reklama.reklamodawca && tytul(reklama) === pierwszaDomena(reklama.tekst) ? tytul(reklama) : null
   if (!reklama.reklamodawca && !cel && !zTekstu) return null
 

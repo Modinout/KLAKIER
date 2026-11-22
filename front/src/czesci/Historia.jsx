@@ -9,7 +9,7 @@ export default function Historia({ reklama }) {
   const [wpisy, setWpisy] = useState([])
   const [wszystkie, setWszystkie] = useState(false)
 
-  // The api does not push history, so it is read again after each change of this ad.
+  // Api nie wysyła historii samo, więc jest czytana ponownie po każdej zmianie tej reklamy.
   useEffect(() => {
     let aktualne = true
     pobierzHistorie(reklama.id)

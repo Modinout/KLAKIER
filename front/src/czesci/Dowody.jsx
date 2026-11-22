@@ -5,7 +5,7 @@ import { data } from '../nazwy.js'
 
 const RODZAJE = { komputer: 'Komputer', telefon: 'Telefon' }
 
-// The api lists rows oldest first, one computer and one phone row per visit.
+// Api zwraca wiersze od najstarszego, po jednym wierszu z komputera i z telefonu na wizytę.
 function wizyty(dowody) {
   const grupy = []
   for (const d of dowody) {

@@ -17,7 +17,7 @@ function Podpis({ children }) {
   return <p className="text-[13px] text-muted-foreground">{children}</p>
 }
 
-// The level sentence above the list already says it; the model line differs from it only in case and the final dot.
+// Zdanie o poziomie nad listą już to mówi; wiersz modelu różni się od niego tylko wielkością liter i końcową kropką.
 function powtarzaPowod(tytul, powod) {
   const bezKropki = (tekst) => tekst.replace(/\.$/, '').toLowerCase()
   return Boolean(powod) && bezKropki(tytul) === bezKropki(powod)

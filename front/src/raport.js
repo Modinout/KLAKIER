@@ -53,7 +53,7 @@ function wiersz(sprawa, reklama) {
   ]
 }
 
-// A leading = + - @, tab or carriage return would make a spreadsheet run the ad text as a formula.
+// Początkowy znak = + - @, tabulator albo powrót karetki sprawiłby, że arkusz wykona tekst reklamy jako formułę.
 function komorka(wartosc) {
   const tekst = String(wartosc ?? '')
   const bezpieczny = /^[=+\-@\t\r]/.test(tekst) ? "'" + tekst : tekst

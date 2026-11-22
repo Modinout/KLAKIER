@@ -20,7 +20,7 @@ function bladOdczytu(blad) {
 }
 
 function bladSprawdzenia(blad) {
-  // The api's validation messages start with the validator's English prefix.
+  // Komunikaty walidacji z api zaczynają się angielskim przedrostkiem walidatora.
   if (blad.status === 422) return blad.tresc?.detail?.[0]?.msg?.replace(/^Value error, /, '') ?? 'Podaj poprawny adres strony.'
   if (blad.status === 503) return blad.tresc?.detail ?? 'Sprawdzanie stron jest teraz niedostępne.'
   return BLAD_SPRAWDZANIA

@@ -49,7 +49,7 @@ export function zmienStatus(id, status) {
   return zmienReklame(id, { status })
 }
 
-// Takes [id, status] pairs, so an undo can give each ad its own earlier status.
+// Przyjmuje pary [id, status], żeby cofnięcie mogło przywrócić każdej reklamie jej poprzedni status.
 export function zmienStatusy(pary) {
   return Promise.all(pary.map(([id, status]) => zmienStatus(id, status)))
 }

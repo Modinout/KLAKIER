@@ -4,7 +4,7 @@ import { tytul } from '../sprawy.js'
 
 const ILE = 5
 
-// Rounding down keeps the shown score on the same side of the threshold as the real one.
+// Zaokrąglenie w dół trzyma pokazany wynik po tej samej stronie progu co prawdziwy.
 function ocena(ryzyko) {
   return (Math.floor(ryzyko * 100 + 1e-9) / 100).toLocaleString('pl-PL', { minimumFractionDigits: 2 })
 }

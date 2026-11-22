@@ -10,7 +10,7 @@ import { ustalenia } from '../ustalenia.js'
 
 export const PUSTE_FILTRY = { szukaj: '', od: '', do: '', zrodla: [], statusy: [], ryzyka: [], poziomy: [], moduly: [], tagi: [] }
 
-// Status and the risk range belong to the view, so clearing the filters keeps them.
+// Status i zakres ryzyka należą do widoku, więc wyczyszczenie filtrów ich nie rusza.
 const POLA = ['szukaj', 'od', 'do', 'zrodla', 'poziomy', 'moduly', 'tagi']
 
 function Chip({ etykieta, usun }) {

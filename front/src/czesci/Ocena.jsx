@@ -25,7 +25,7 @@ function procent(ryzyko) {
   return p === 0 ? 'poniżej 1%' : p + '%'
 }
 
-// The model does not score video descriptions.
+// Model nie ocenia opisów wideo.
 function opisFilmu(reklama) {
   return reklama.zrodlo === 'youtube'
 }

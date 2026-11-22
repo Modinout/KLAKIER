@@ -6,7 +6,7 @@ const KTO = {
   patrol_ostrzezen: 'Właściciel strony',
 }
 
-// For these sources the name is the author, not a payer, so a match on the KNF lists is information only.
+// Dla tych źródeł nazwa to autor, a nie płatnik, więc trafienie na listach KNF ma tylko charakter informacyjny.
 const AUTORZY = ['youtube', 'strony_doradcow']
 
 export const STANY_REJESTRU = {
@@ -28,7 +28,7 @@ export function stanRejestru(reklama) {
   return null
 }
 
-// A crypto-asset provider licensed in another EU state is found in the ESMA register, not on the KNF lists.
+// Dostawca kryptoaktywów z licencją w innym państwie UE jest w rejestrze ESMA, a nie na listach KNF.
 export function nazwaRejestru(rejestr) {
   return rejestr.lista === 'mica' ? 'W rejestrze MiCA' : 'W rejestrze KNF'
 }

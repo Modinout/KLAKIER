@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 const SAM_ADRES = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
 const SAMA_DATA = /^\d{1,4}[.\-/]\d{1,2}[.\-/]\d{1,4}( \d{1,2}:\d{2}(:\d{2})?)?$/
 
-// Some collectors save a page's scripts instead of its text.
+// Niektóre kolektory zapisują skrypty strony zamiast jej tekstu.
 function wygladaNaKod(tekst) {
   return tekst.trimStart().startsWith('(function') || ['SPDX-License', '<script', 'function('].some((k) => tekst.includes(k))
 }
@@ -19,7 +19,7 @@ export default function Tekst({ reklama, obraz }) {
   const [uciety, setUciety] = useState(false)
   const akapit = useRef(null)
   const tekst = bezNaglowka(reklama.tekst.trim())
-  // Text read from a picture is noise: it stays folded away until asked for.
+  // Tekst odczytany z obrazu to szum: zostaje zwinięty, dopóki ktoś o niego nie poprosi.
   const zwiniety = !obraz && !caly
 
   useLayoutEffect(() => {

@@ -51,7 +51,7 @@ export const NAZWY_LIST_KNF = {
   mica: 'dostawca usług w zakresie kryptoaktywów',
 }
 
-// Ordered from the strongest finding to the weakest.
+// Od najmocniejszego ustalenia do najsłabszego.
 export const TAGI = {
   reklama_domeny_z_ostrzezenia_knf: 'Strona jest na liście ostrzeżeń KNF',
   druga_domena_ostrzezonej_strony: 'Kopia strony z listy ostrzeżeń KNF',
@@ -113,7 +113,7 @@ export function domena(url) {
 
 const BIBLIOTEKI = ['adstransparency.google.com', 'library.tiktok.com']
 
-// An ad library page shows the ad itself, not where the ad leads.
+// Strona biblioteki reklam pokazuje samą reklamę, a nie to, dokąd prowadzi.
 export function zBiblioteki(url) {
   return BIBLIOTEKI.includes(domena(url)) || url.includes('facebook.com/ads/library')
 }
@@ -124,7 +124,7 @@ export function domenaDocelowa(reklama) {
   return null
 }
 
-// One case of letters in the ending, so "dywidendy.Skorzystaj" is not taken for a domain.
+// Jedna wielkość liter na końcu, żeby „dywidendy.Skorzystaj” nie zostało wzięte za domenę.
 const DOMENA = /\b(?:[A-Za-z0-9-]+\.)+(?:[a-z]{2,}|[A-Z]{2,})\b/
 
 export function pierwszaDomena(tekst) {

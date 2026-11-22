@@ -21,7 +21,7 @@ export default function useAlerty(dolacz) {
             dolacz([reklama])
             toast('Nowy alert', { description: reklama.reklamodawca ?? reklama.url })
           })
-          // The next list refresh brings the ad anyway.
+          // Następne odświeżenie listy i tak przyniesie reklamę.
           .catch(() => {})
       }
       gniazdo.onclose = () => {

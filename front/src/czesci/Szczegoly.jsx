@@ -71,7 +71,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
   const wSprawie = wiersze.filter((r) => ids.includes(r.id)).sort(odNajgorszej)
   const obraz = reklama.ma_obraz && bezObrazu !== reklama.id
 
-  // The sheet body mounts after the first render, and starts at the top anyway.
+  // Treść szczegółów montuje się po pierwszym renderze i tak zaczyna od góry.
   useEffect(() => {
     if (tresc.current) tresc.current.scrollTop = 0
   }, [reklama.id])
@@ -90,7 +90,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
       .catch(() => toast.error(BLAD_ZAPISU))
   }
 
-  // The open ad goes first in the report.
+  // Otwarta reklama idzie w raporcie jako pierwsza.
   const doZgloszenia = [reklama, ...wSprawie.filter((r) => r.id !== reklama.id)]
 
   function kopiujZgloszenie() {

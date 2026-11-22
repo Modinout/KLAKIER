@@ -4,7 +4,7 @@ import { pobierzSprawdzenie } from './api.js'
 export const BLAD_SPRAWDZANIA = 'Nie udało się sprawdzić strony. Spróbuj ponownie.'
 const CO_ILE_MS = 2000
 const NAJDLUZEJ_MS = 3 * 60 * 1000
-// A check that stays in progress this long has lost its worker.
+// Sprawdzenie, które trwa tak długo, straciło swojego wykonawcę.
 const BEZ_ZMIANY_MS = 2 * 60 * 1000
 
 function czekaj(ms) {
@@ -15,7 +15,7 @@ function blad(id, tekst) {
   toast.error(tekst, { id, duration: 10000 })
 }
 
-// Polls one link check in a toast, so it goes on after the add-ad dialog closes.
+// Odpytuje jedno sprawdzenie linku w powiadomieniu, więc trwa dalej po zamknięciu okna dodawania reklamy.
 export async function sledzSprawdzenie(id, host, gotowe) {
   const start = Date.now()
   const pokaz = () => toast.loading('Sprawdzam link: ' + host + ' · ' + Math.round((Date.now() - start) / 1000) + ' s', { id })

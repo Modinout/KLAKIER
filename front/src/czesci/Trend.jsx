@@ -8,7 +8,7 @@ const DNI = 30
 
 const KONFIGURACJA = { ile: { label: 'Sprawy wysokiego ryzyka', color: 'var(--chart-3)' } }
 
-// Days with a few cases stay visible next to the busiest day.
+// Dni z kilkoma sprawami zostają widoczne obok najbardziej obciążonego dnia.
 const NAJNIZSZY_SLUPEK = 3
 
 function zlicz(reklamy) {

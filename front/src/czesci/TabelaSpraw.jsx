@@ -56,7 +56,7 @@ function Naglowek({ children, className = '' }) {
   )
 }
 
-// As many rows as fit, so the table never scrolls inside itself.
+// Tyle wierszy, ile się mieści, żeby tabela nie przewijała się sama w sobie.
 function useWierszeWOknie() {
   const pole = useRef(null)
   const [ile, setIle] = useState(1)

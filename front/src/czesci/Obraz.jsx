@@ -5,7 +5,7 @@ const NAJMNIEJ = 60
 const PROBKI = 8
 const ROZNICA = 8
 
-// Some collectors save a blank tile or a pixel instead of the ad picture.
+// Niektóre kolektory zapisują pusty kafelek albo piksel zamiast obrazu reklamy.
 function pusty(img) {
   if (img.naturalWidth < NAJMNIEJ || img.naturalHeight < NAJMNIEJ) return true
   const plotno = document.createElement('canvas')
@@ -17,7 +17,7 @@ function pusty(img) {
   return piksele.every((wartosc, i) => Math.abs(wartosc - piksele[i % 4]) <= ROZNICA)
 }
 
-// A full-page screenshot of a site is many times taller than wide; its top is what matters.
+// Zrzut całej strony jest wielokrotnie wyższy niż szerszy; liczy się jego górna część.
 function stronaCala(img) {
   return img.naturalHeight > 2 * img.naturalWidth
 }

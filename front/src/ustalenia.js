@@ -1,10 +1,10 @@
 import { bezTekstu, liniaOszustwa, tag, TAG_MODELU, TAGI, tagModelu } from './nazwy.js'
 
-// Notes, not findings about the ad: whether operators block the domain (CERT), and a payer that is
-// a different company than the registered one with the same brand.
+// Uwagi, a nie ustalenia o reklamie: czy operatorzy blokują domenę (CERT) oraz płatnik, który
+// jest inną firmą niż zarejestrowana z tą samą marką.
 const KODY_NOTATEK = ['brak_na_liscie_cert', 'na_liscie_cert', 'platnik_spoza_rejestru']
 
-// The text model's finding outranks findings about the payer alone.
+// Ustalenie modelu tekstu ma pierwszeństwo przed ustaleniami samego płatnika.
 const KOLEJNOSC_TAGOW = Object.values(TAGI).flatMap((t) => (t === TAGI.doradztwo_bez_zezwolenia ? [t, TAG_MODELU] : [t]))
 
 export function ustalenia(reklama) {

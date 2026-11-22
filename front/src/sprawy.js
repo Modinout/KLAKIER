@@ -12,7 +12,7 @@ function ostrzezonaDomena(reklama) {
   return domenaDocelowa(reklama) ?? pierwszaDomena(sygnal.opis)
 }
 
-// Ads leading to a warned domain form one case whoever paid for them; otherwise one payer is one case.
+// Reklamy prowadzące do ostrzeżonej domeny tworzą jedną sprawę bez względu na płatnika; poza tym jeden płatnik to jedna sprawa.
 export function klucz(reklama) {
   const ostrzezona = ostrzezonaDomena(reklama)
   if (ostrzezona) return 'knf|' + ostrzezona
@@ -62,7 +62,7 @@ export function wSprawy(reklamy) {
   return [...grupy.values()].map(sprawa)
 }
 
-// Cases flagged only by the text model share one reason, whatever kind of fraud it names.
+// Sprawy oznaczone tylko przez model tekstu mają jeden powód, bez względu na rodzaj oszustwa.
 export function najmocniejszyTag(sprawa) {
   const reklama = sprawa.glowna
   if (ustalenia(reklama).length > 0) return tagi(reklama)[0]

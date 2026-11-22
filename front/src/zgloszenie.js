@@ -25,7 +25,7 @@ function rozne(lista) {
   return [...new Set(lista.filter(Boolean))]
 }
 
-// The reason is left out when the first case finding already says it.
+// Powód jest pomijany, gdy pierwsze ustalenie sprawy już go mówi.
 function wniosek(reklama, pierwszyPunkt) {
   const zdanie = zdaniePowodu(reklama)
   const powtorzone = zdanie && pierwszyPunkt && zdanie.startsWith(pierwszyPunkt.split('\n')[0])
@@ -44,8 +44,8 @@ function takieSamo(a, b) {
   return a.kod === b.kod && (a.podstawa ?? null) === (b.podstawa ?? null)
 }
 
-// A finding is shared when every ad has one with the same code and basis; the case keeps the
-// sentences all of them say, each ad keeps the rest of its own description.
+// Ustalenie jest wspólne, gdy każda reklama ma je z tym samym kodem i podstawą; sprawa trzyma
+// zdania, które mówią wszystkie, a każda reklama zachowuje resztę własnego opisu.
 function wspolneUstalenia(reklamy) {
   return ustalenia(reklamy[0]).flatMap((s) => {
     const takie = reklamy.map((r) => ustalenia(r).find((t) => takieSamo(s, t)))
@@ -99,7 +99,7 @@ function listaUwag(lista) {
   return lista.length ? [UWAGI, ...lista.map((p) => '- ' + p)] : []
 }
 
-// Findings shared by every ad of the case are listed once above the ads.
+// Ustalenia wspólne dla wszystkich reklam sprawy są wymienione raz nad reklamami.
 function blokReklamy(reklama, wspolneU, wspolnePunkty, wspolneUwagi) {
   return [
     [REKLAMA_NR + reklama.id, nazwaZrodla(reklama.zrodlo), ZEBRANO + data(reklama.zebrano)].join(' · '),
@@ -121,7 +121,7 @@ function blok(linie) {
   return linie.filter(Boolean).join('\n')
 }
 
-// The first ad is the one open on the sheet.
+// Pierwsza reklama to ta otwarta w szczegółach.
 export function zgloszenie(reklamy) {
   const glowna = reklamy[0]
   const wspolneU = wspolneUstalenia(reklamy)

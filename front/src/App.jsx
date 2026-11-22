@@ -12,7 +12,7 @@ import Alerty from './widoki/Alerty.jsx'
 import Analityka from './widoki/Analityka.jsx'
 import Kalibracja from './widoki/Kalibracja.jsx'
 
-// New ads arrive through the alert socket; this refresh catches the rest.
+// Nowe reklamy przychodzą przez gniazdo alertów; to odświeżenie łapie resztę.
 const CO_ILE_MS = 15000
 
 const BLAD_LISTY = 'Brak połączenia z serwerem. Panel spróbuje ponownie.'
@@ -25,11 +25,11 @@ export default function App() {
   const [reklamy, setReklamy] = useState(null)
   const [prog, setProg] = useState(0.4)
   const [otwarte, setOtwarte] = useState(null)
-  // A link check ends after a while; by then the analyst may have opened a case.
+  // Sprawdzenie linku kończy się po jakimś czasie; do tego czasu analityk mógł już otworzyć sprawę.
   const otwarteTeraz = useRef(null)
   const [obejrzane, setObejrzane] = useState(new Set())
   const najnowszeDodano = useRef(null)
-  // High-risk cases already there when the panel opened; only later ones count as new alerts.
+  // Sprawy wysokiego ryzyka obecne już przy otwarciu panelu; dopiero późniejsze liczą się jako nowe alerty.
   const poczatkowe = useRef(null)
 
   function zapamietajNajnowsze(lista) {
@@ -61,7 +61,7 @@ export default function App() {
     odswiez()
     const zegar = setInterval(() => {
       if (!najnowszeDodano.current) return odswiez()
-      // Only polled ads move the mark: an alert or an added ad can be newer than ads not fetched yet.
+      // Znacznik przesuwają tylko reklamy pobrane cyklicznie: alert albo dodana reklama może być nowsza niż reklamy jeszcze niepobrane.
       pobierzReklamy(najnowszeDodano.current)
         .then((nowe) => {
           zapamietajNajnowsze(nowe)
@@ -156,7 +156,7 @@ export default function App() {
           odswiez={odswiez}
         />
       )}
-      {/* The open sheet makes the rest of the page inert; the undo button in a toast must stay clickable. */}
+      {/* Otwarte szczegóły sprawy blokują resztę strony; przycisk „Cofnij” w powiadomieniu musi dalej działać. */}
       <Toaster position="bottom-left" className="toaster group pointer-events-auto" />
     </Tabs>
   )

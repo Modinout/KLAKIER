@@ -27,7 +27,7 @@ function pasujeReklama(r, filtry) {
   return true
 }
 
-// Risk and reason belong to the whole case, the other filters to its single ads.
+// Ryzyko i powód należą do całej sprawy, pozostałe filtry do jej pojedynczych reklam.
 function pasujeSprawa(s, filtry) {
   if (!s.reklamy.some((r) => pasujeReklama(r, filtry))) return false
   if (filtry.ryzyka.length && !filtry.ryzyka.includes(s.poziom)) return false

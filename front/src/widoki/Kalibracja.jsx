@@ -16,7 +16,7 @@ function Progi({ progi, prog, ustawProg, zapisany, zapisz, wiersze }) {
     przeoczone: Math.round(progi.oszustw - p.zlapane),
     alarmy: Math.round(p.falszywe_alarmy),
   }))
-  // A threshold saved through the api may fall between the tested points.
+  // Próg zapisany przez api może wypaść między przetestowanymi punktami.
   const punkt = punkty.find((p) => Math.abs(p.prog - prog) < 0.001)
   const zmienia = wiersze.filter((r) => !bezTekstu(r) && r.ryzyko >= prog && r.poziom !== 'wysokie').length
 
