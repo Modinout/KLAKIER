@@ -72,7 +72,7 @@ class Reklama(NowaReklama):
     def dolacz_sygnaly_i_poziom(cls, wiersz):
         # A row of the reklamy table keeps the collector's signals in their own column.
         sygnaly = wiersz['sygnaly_zbieracza'] + wiersz['sygnaly']
-        poziom_reklamy, powod = poziom.poziom(sygnaly, wiersz['ponad_progiem'], wiersz['rodzaj'])
+        poziom_reklamy, powod = poziom.poziom(sygnaly, wiersz['ponad_progiem'], wiersz['rodzaj'], wiersz['rejestr'])
         return {**wiersz, 'sygnaly': sygnaly, 'poziom': poziom_reklamy, 'powod': powod}
 
 

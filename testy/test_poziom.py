@@ -46,6 +46,20 @@ def test_tekst_oszustwa_daje_poziom_wysoki():
     assert zapisana['powod'].startswith('Treść typowa dla fałszywych inwestycji')
 
 
+def test_tekst_oszustwa_od_platnika_z_licencja_daje_poziom_sredni():
+    zapisana = dodaj({**nowa_reklama(OSZUSTWO), 'reklamodawca': 'XTB S.A.'})
+    assert zapisana['rejestr']['stan'] == 'w_rejestrze'
+    assert zapisana['poziom'] == 'srednie'
+    assert zapisana['powod'].endswith('do sprawdzenia.')
+
+
+def test_twarde_ustalenie_przy_platniku_z_licencja_zostaje_wysokie():
+    sygnal = {'modul': 'M1', 'kod': 'obca_domena', 'opis': 'Opis ustalenia obca_domena', 'podstawa': ''}
+    zapisana = dodaj({**nowa_reklama(OSZUSTWO), 'reklamodawca': 'XTB S.A.', 'sygnaly': [sygnal]})
+    assert zapisana['poziom'] == 'wysokie'
+    assert zapisana['powod'] == sygnal['opis']
+
+
 def test_zwykla_reklama_ma_poziom_niski():
     zapisana = dodaj(nowa_reklama(NIEWINNY_TEKST))
     assert zapisana['poziom'] == 'niskie'
