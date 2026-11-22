@@ -57,6 +57,16 @@ POLSKIE_SLOWA = re.compile(r'\b(?:się|jest|nie|dla|oraz|już|dziś|twoje?|twój
 RYZYKO_PL = re.compile(r'\bryzyk\w*|\bstrat\w*|\butrat\w*|\bstraci\w*')
 RYZYKO_EN = re.compile(r'\brisk\w*|\blose money|\bloss(?:es)?\b')
 
+POROWNANIE = re.compile(
+    r'\blepsz\w* (?:niż|od)\b|\bw porównaniu (?:z|do)\b|\bnajtańsz\w*|\bnajniższ\w* (?:prowizj|opłat|spread|koszt)\w*'
+    r'|\bnajlepsz\w* (?:broker|platform|aplikacj|kont)\w*|\bnr ?1\b|\bnumer jeden\b'
+    r'|\bcheapest\b|\blowest (?:fees|spreads?|commissions?|costs?)\b|\bbetter than\b|\bcompared (?:to|with)\b'
+    r'|\bbest (?:broker|platform|app|trading)\w*|\bvs\.?\s'
+)
+# Podstawa porównania: źródło, ranking, data albo okres.
+PODSTAWA_POROWNANIA = re.compile(r'\bźródł\w*|\bsource\b|\bwedług\b|\bna podstawie\b|\bstan na\b|\bas (?:of|at)\b|\bbased on\b'
+                                 r'|\branking\w*|\bbadani\w*|\bsurvey\b|\b(?:19|20)\d{2}\b')
+
 PODATKI = re.compile(r'\bbez podatku|\bulg\w+ podatkow\w+|\bzwrot\w* podatku|\btax[- ]free')
 ZASTRZEZENIE_PODATKOW = re.compile(r'indywidualn\w+ sytuacj\w*|zależ\w+ od|(?:może|mogą) ulec zmianie|individual circumstances|may change')
 
@@ -184,6 +194,13 @@ def sygnaly(tekst, rejestr, zrodlo=None):
             f'art. 44 ust. 2 lit. f {ROZPORZADZENIE}; kryterium UKNF nr 10',
         ))
 
+    porownanie = twierdzenie(POROWNANIE, male)
+    if porownanie and not PODSTAWA_POROWNANIA.search(male):
+        wynik.append(sygnal(
+            'porownanie_bez_podstawy',
+            f'Reklama porównuje ofertę („{cytat(tekst, porownanie)}”) bez źródła, założeń ani okresu porównania.',
+            f'art. 44 ust. 3 {ROZPORZADZENIE}; kryterium UKNF nr 11',
+        ))
     podatki = twierdzenie(PODATKI, male)
     if podatki and not ZASTRZEZENIE_PODATKOW.search(male):
         wynik.append(sygnal(

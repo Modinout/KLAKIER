@@ -6,7 +6,7 @@ KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaj
 
 KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
 
-M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 10 sprawdzamy w pełni, 5 częściowo, 4 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
+M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 11 sprawdzamy w pełni, 6 częściowo, 2 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
 
 ## Uruchomienie
 
@@ -40,7 +40,7 @@ Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z reje
 
 | Kryterium UKNF | Stan | Jak sprawdzamy |
 | --- | --- | --- |
-| 1 Identyfikacja firmy | jeszcze nie | porównujemy płatnika z rejestrami, nie nazwę firmy w materiale |
+| 1 Identyfikacja firmy | częściowo | platforma podaje nad reklamą nazwę reklamodawcy, a my porównujemy ją z rejestrami KNF i MiCA (M1); czy sam tekst reklamy nazywa firmę, nie sprawdzamy |
 | 2 Oznaczenie reklamy | częściowo | tylko opisy filmów z linkiem lub kodem polecającym bez oznaczenia współpracy (`ai/polecenia.py`); reklam na platformach nie sprawdzamy |
 | 3 Informacja o ryzyku | jest | `zysk_bez_ryzyka`: informacja o ryzyku w dowolnym miejscu tekstu |
 | 4 Rozmiar czcionki ostrzeżenia | jest | strona: czcionka ostrzeżenia wobec przeważającej |
@@ -50,7 +50,7 @@ Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z reje
 | 8 Responsywność | częściowo | komputer, tablet i telefon; przycięcia nie sprawdzamy |
 | 9 Zrozumiałość | jeszcze nie | |
 | 10 Spójność językowa | jest | `ryzyko_w_innym_jezyku`: polska reklama z ostrzeżeniem tylko po angielsku |
-| 11 Porównania produktów | jeszcze nie | |
+| 11 Porównania produktów | jest | `porownanie_bez_podstawy`: „lepszy niż”, „w porównaniu z”, „najtańszy”, „najniższe prowizje”, „nr 1” bez źródła, rankingu ani daty |
 | 12a Wyniki historyczne: okres i źródło | jest | `wyniki_bez_okresu`, gdy reklama podaje wynik w procentach |
 | 12b Wyniki historyczne: opłaty i waluta | jest | `wyniki_bez_oplat_i_waluty` |
 | 13 Dominacja wyników historycznych | jeszcze nie | wymaga oceny układu reklamy |
@@ -60,7 +60,7 @@ Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z reje
 | 17 Aprobata organu nadzoru | jest | `nadzor_jako_argument`: „zatwierdzony”, „rekomendowany” albo „approved” obok KNF, CySEC lub FCA |
 | 18 Nadzór jako argument bezpieczeństwa | jest | `nadzor_jako_argument` |
 
-Razem 10 kryteriów jest, 5 częściowo, 4 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
+Razem 11 punktów jest, 6 częściowo, 2 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
 
 ### Jak trafne są ustalenia
 
