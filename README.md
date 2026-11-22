@@ -38,7 +38,7 @@ Reklamy z Mety (Facebook, Instagram, Messenger) zbiera `meta_api.py` przez oficj
 
 W tym repozytorium tokenu nie ma, dlatego reklamy Mety w danych pokazowych pochodzą z ręcznego importu: analityk zapisuje stronę wyników Biblioteki reklam w przeglądarce, a `python meta.py strona.html` wczytuje z niej reklamy do bazy. Automatycznych wizyt na stronie biblioteki nie robimy, bo Meta ich zabrania.
 
-Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy po przecinku, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
+Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy oddzielone znakiem `|`, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
 
 ## Źródła reklam: dziś i docelowo
 

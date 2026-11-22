@@ -221,8 +221,8 @@ def test_zlec_bez_argumentow_bierze_cala_liste(monkeypatch):
 
 def test_rotacja_bierze_kolejne_wartosci_po_kolei(monkeypatch):
     monkeypatch.setattr(rotacja, 'uzyte', {})
-    monkeypatch.setenv('ZBIERACZ_USER_AGENTS', 'agent-a/1, agent-b/1')
-    monkeypatch.setenv('ZBIERACZ_PROXY', 'http://p1:8080,http://p2:8080')
+    monkeypatch.setenv('ZBIERACZ_USER_AGENTS', 'agent-a/1 | agent-b/1')
+    monkeypatch.setenv('ZBIERACZ_PROXY', 'http://p1:8080|http://p2:8080')
     pierwsze, drugie, trzecie = rotacja.ustawienia(), rotacja.ustawienia(), rotacja.ustawienia()
     assert pierwsze == {'user_agent': 'agent-a/1', 'proxy': {'server': 'http://p1:8080'}}
     assert drugie == {'user_agent': 'agent-b/1', 'proxy': {'server': 'http://p2:8080'}}

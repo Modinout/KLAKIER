@@ -5,8 +5,8 @@ uzyte = {}
 
 
 def kolejny(nazwa):
-    """Next value of the comma-separated list in the environment variable, or None when it is empty."""
-    wartosci = [wartosc.strip() for wartosc in os.environ.get(nazwa, '').split(',') if wartosc.strip()]
+    """Next value of the '|'-separated list in the environment variable, or None when it is empty."""
+    wartosci = [wartosc.strip() for wartosc in os.environ.get(nazwa, '').split('|') if wartosc.strip()]
     if not wartosci:
         return None
     numer = uzyte.get(nazwa, 0)
