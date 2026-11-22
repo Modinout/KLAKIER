@@ -2,26 +2,76 @@
 
 Kontrola Linków, Afiliacji, Kampanii I Ekspertów Rynku.
 
-Narzędzie dla analityka nadzoru finansowego. Zbiera reklamy inwestycyjne, ocenia ryzyko oszustwa i pokazuje je w panelu od najbardziej podejrzanych.
+KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaje naruszeń: kto płaci za reklamę usług inwestycyjnych, choć nie ma go w rejestrach KNF ani MiCA (M1), czy reklama firmy z rejestru podaje informacje o ryzyku zgodnie z kryteriami UKNF (M2) i kto oferuje doradztwo inwestycyjne bez zezwolenia KNF (M3). Reklamy zbiera z publicznych bibliotek reklam, a w panelu pokazuje je jako sprawy z cytatem, dowodami i podstawą prawną.
+
+KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
+
+## Co sprawdza
+
+### M2: kryteria UKNF dla informacji o ryzyku
+
+Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z rejestrów KNF. Stronę docelową reklamy mierzy przeglądarka (`zbieracz/pomiar_ostrzezenia.js`, `api/ostrzezenie_strony.py`) w widoku komputera (1366 px), tabletu (768 px) i telefonu (390 px). Ustalenia z tekstu podają w podstawie numer kryterium UKNF, ustalenia ze strony powołują się na ESMA i WCAG.
+
+| Kryterium UKNF | Stan | Jak sprawdzamy |
+| --- | --- | --- |
+| 1 Identyfikacja firmy | jeszcze nie | porównujemy płatnika z rejestrami, nie nazwę firmy w materiale |
+| 2 Oznaczenie reklamy | częściowo | tylko opisy filmów z linkiem lub kodem polecającym bez oznaczenia współpracy (`ai/polecenia.py`); reklam na platformach nie sprawdzamy |
+| 3 Informacja o ryzyku | jest | `zysk_bez_ryzyka`: informacja o ryzyku w dowolnym miejscu tekstu |
+| 4 Rozmiar czcionki ostrzeżenia | jest | strona: czcionka ostrzeżenia wobec przeważającej |
+| 5 Ekspozycja i kontrast | częściowo | strona: kontrast według WCAG (4,5:1); zasłaniania przez inne elementy nie sprawdzamy |
+| 6 Ukrywanie ryzyka | częściowo | strona: ukryty element liczy się jako niewidoczny; przypisu ani zakładki „Legal” nie oznaczamy |
+| 7 Dostępność za jednym kliknięciem | częściowo | strona: ostrzeżenie w zwiniętym elemencie liczy się jako brak; klikania nie testujemy |
+| 8 Responsywność | częściowo | komputer, tablet i telefon; przycięcia nie sprawdzamy |
+| 9 Zrozumiałość | jeszcze nie | |
+| 10 Spójność językowa | jest | `ryzyko_w_innym_jezyku`: polska reklama z ostrzeżeniem tylko po angielsku |
+| 11 Porównania produktów | jeszcze nie | |
+| 12a Wyniki historyczne: okres i źródło | jest | `wyniki_bez_okresu`, gdy reklama podaje wynik w procentach |
+| 12b Wyniki historyczne: opłaty i waluta | jest | `wyniki_bez_oplat_i_waluty` |
+| 13 Dominacja wyników historycznych | jeszcze nie | wymaga oceny układu reklamy |
+| 14 Ostrzeżenie przy wynikach historycznych | jest | `wyniki_bez_zastrzezenia` |
+| 15 Prognozy | jest | `prognoza_bez_zastrzezenia`: prognoza z liczbą |
+| 16 Informacja podatkowa | jest | `podatki_bez_zastrzezenia` |
+| 17 Aprobata organu nadzoru | jest | `nadzor_jako_argument`: „zatwierdzony”, „rekomendowany” albo „approved” obok KNF, CySEC lub FCA |
+| 18 Nadzór jako argument bezpieczeństwa | jest | `nadzor_jako_argument` |
+
+Razem 10 kryteriów jest, 5 częściowo, 4 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
+
+### Jak trafne są ustalenia
+
+Baza pokazowa, 1782 materiały:
+
+- M1, płatnik a rejestry: 169 ustaleń (87 razy płaci inny podmiot marki z rejestru, 82 razy płatnika nie ma w rejestrach KNF ani w rejestrze MiCA); 59 przypadków w `ai/test_rejestr.py`.
+- M1, polecenia u finfluencerów: 54 ustalenia; 20 losowo wybranych przeczytaliśmy ręcznie i wszystkie to prawdziwe linki albo kody polecające. Nie wiemy, czy oznaczenie współpracy padło w samym filmie, dlatego każde takie ustalenie jest „do sprawdzenia”.
+- M2, tekst: 9 ustaleń, wszystkie przeczytane ręcznie: 8 trafnych (4 reklamy CFD bez odsetka rachunków ze stratą, 4 obietnice podatkowe bez zastrzeżenia), 1 słabe.
+- M2, strona: 13 ustaleń (10 ostrzeżeń mniejszych od tekstu albo o słabym kontraście, 3 strony CFD bez widocznego ostrzeżenia), zmierzonych w przeglądarce, nieprzeczytanych ręcznie.
+- M3, doradztwo: 5 ustaleń, 1 słabe (artykuł z listą grup z sygnałami, a nie oferta).
+- KAPSEL: 95 prawdziwych oszustw i 374 uczciwe reklamy inwestycyjne, 5 podziałów po 5 losowań, z reklamami jednej kampanii, szablonu, strony albo płatnika zawsze po tej samej stronie podziału. Od progu 0,7 łapie średnio 74 z 95 oszustw bez fałszywego alarmu, od progu 0,3 kieruje do człowieka 90 z 95 przy 8 fałszywych alarmach na 374. Świeży test po wyborze modelu: 24 opublikowane oszustwa, wszystkie od 0,3 w górę (19 od 0,7), i 153 zwykłe reklamy bez fałszywego alarmu. Inne modele na tych samych cechach (naiwny Bayes, SVM) wypadają w granicach szumu, a reguły na słowach kluczowych łapią 23 z 95. Reklamę wideo model ocenia po tekście posta i jednej klatce; mowy nie słyszy.
+
+To małe próby: pokazują kierunek, nie dokładny odsetek.
 
 ## Uruchomienie
 
-Potrzebny jest Docker z Compose.
+Potrzebny jest Docker z Compose. Karta graficzna nie jest potrzebna. Obrazy zajmują około 6 GB na dysku, a działające usługi około 2 GB pamięci. Pierwsze budowanie pobiera biblioteki i modele do odczytu tekstu z obrazów; na laptopie z 8-rdzeniowym procesorem trwało około 6 minut, nie licząc pobierania obrazów bazowych.
 
 ```
 cp .env.example .env
+```
+
+W pliku `.env` ustaw własne hasło bazy, a potem uruchom usługi:
+
+```
 docker compose up -d --build
 ```
 
-W pliku `.env` ustaw własne hasło bazy. Przy pierwszym starcie baza wczytuje dane pokazowe zebrane 21.11.2026 z `baza/dane_pokazowe.sql.gz`: reklamy z Google, Meta, TikToka i YouTube, strony doradców oraz 32 oszustwa z ostrzeżeń CSIRT KNF. Obrazy reklam pochodzą z publicznych bibliotek reklam i z ostrzeżeń CSIRT KNF; prawa do nich mają ich autorzy, a tutaj służą wyłącznie jako materiał do analizy.
-
-Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone.
+Przy pierwszym starcie baza zapisuje to hasło i wczytuje dane pokazowe zebrane 21–22.11.2026 z `baza/dane_pokazowe.sql.gz`: reklamy z Google, Meta, TikToka i YouTube, strony doradców oraz 32 oszustwa z ostrzeżeń CSIRT KNF. Obrazy reklam pochodzą z publicznych bibliotek reklam i z ostrzeżeń CSIRT KNF; prawa do nich mają ich autorzy, a tutaj służą wyłącznie jako materiał do analizy. Hasło zmienione później w `.env` zadziała dopiero po wyczyszczeniu bazy przez `docker compose down -v`.
 
 Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera.
 
 - Panel: http://localhost:8080
 - Opis API w przeglądarce: http://localhost:8000/docs
 - Czysty start bazy: `docker compose down -v` kasuje bazę razem z tym, czego model nauczył się od analityka, i dodanymi rodzajami oszustw; kolejny `docker compose up -d` wczytuje dane pokazowe od nowa.
+
+Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone. Adres to pełny adres zapytań chat completions serwera zgodnego z API OpenAI, także lokalnego vLLM, llama.cpp albo Ollamy. Sama ocena reklam nie potrzebuje dużego modelu.
 
 ## Patrol listy ostrzeżeń
 
@@ -87,7 +137,7 @@ docker compose run --rm odczyt python test_czytaj.py
 docker compose --profile patrol run --rm --no-deps patrol python -m pytest test_pomiar_ostrzezenia.py test_patrol.py
 ```
 
-Test z katalogu `testy` wymaga działających usług. Reklamy testowe, które dodaje do bazy, usuwa na końcu. Model zostawia taki, jaki był.
+Test z katalogu `testy` uruchamia się na komputerze przez `uv` i wymaga działających usług. Reklamy testowe, które dodaje do bazy, usuwa na końcu. Model zostawia taki, jaki był.
 
 GitHub Actions (`.github/workflows/sprawdzenie.yml`) przy każdym pushu i pull requeście buduje panel, uruchamia testy `ai` i `zbieracz`, które nie potrzebują działających usług, i skanuje zależności (`npm audit`, `pip-audit`). Dependabot (`.github/dependabot.yml`) co tydzień proponuje aktualizacje bibliotek, obrazów Dockera i akcji.
 
