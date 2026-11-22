@@ -4,3 +4,5 @@
 0 3 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python tiktok.py >> /proc/1/fd/1 2>&1
 # Every night at 04:00 measure the risk warning on the landing pages of licensed firms' ads.
 0 4 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python strony_docelowe.py >> /proc/1/fd/1 2>&1
+# Every night at 05:00 search Meta's ad library API for the investment phrases; without META_TOKEN it does nothing.
+0 5 * * * root cd /app && API_URL=http://api:8000 /usr/local/bin/python meta_api.py >> /proc/1/fd/1 2>&1

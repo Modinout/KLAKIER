@@ -32,11 +32,31 @@ docker compose --profile patrol run --rm --no-deps patrol python strony_docelowe
 docker compose --profile patrol run --rm --no-deps patrol python wiek_domen.py [domena ...]
 ```
 
-Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc uruchamia patrol domen z listy ostrzeżeń KNF, wyszukiwanie fraz w bibliotece reklam TikToka i pomiar ostrzeżenia o ryzyku na stronach docelowych. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy. Piąta sprawdza w RDAP, kiedy zarejestrowano domeny docelowe reklam, najwyżej jednym zapytaniem na sekundę, i zapisuje datę w api; bez podanych domen bierze wszystkie domeny docelowe z bazy.
+Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc uruchamia patrol domen z listy ostrzeżeń KNF, wyszukiwanie fraz w bibliotece reklam TikToka, pomiar ostrzeżenia o ryzyku na stronach docelowych, a gdy w `.env` jest `META_TOKEN`, także zbieranie reklam Mety przez oficjalne API. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy. Piąta sprawdza w RDAP, kiedy zarejestrowano domeny docelowe reklam, najwyżej jednym zapytaniem na sekundę, i zapisuje datę w api; bez podanych domen bierze wszystkie domeny docelowe z bazy.
 
-Reklamy z Mety (Facebook, Instagram, Messenger): analityk zapisuje stronę wyników Biblioteki reklam w przeglądarce, a `python meta.py strona.html` wczytuje z niej reklamy do bazy. Meta nie pozwala na automatyczne wizyty w bibliotece, dlatego urząd w pracy docelowej korzysta z oficjalnego API Biblioteki reklam z tokenem.
+Reklamy z Mety (Facebook, Instagram, Messenger) zbiera `meta_api.py` przez oficjalne API Biblioteki reklam Mety. Harmonogram uruchamia go co noc: szuka tych samych pięciu fraz inwestycyjnych co zbieracz TikToka w reklamach, które dotarły do Polski w ostatnich dwóch dniach, i wysyła nowe do bazy. API zwraca reklamy pokazane w Unii Europejskiej na każdy temat, więc obejmuje też reklamy inwestycyjne. Potrzebny jest token dostępu wpisany w `.env` jako `META_TOKEN`; jak go uzyskać, opisuje https://www.facebook.com/ads/library/api/. Bez tokenu `meta_api.py` tylko zapisuje w logu, że pomija Metę. Ręczne uruchomienie: `docker compose --profile patrol run --rm --no-deps -e META_TOKEN=<token> patrol python meta_api.py`.
+
+W tym repozytorium tokenu nie ma, dlatego reklamy Mety w danych pokazowych pochodzą z ręcznego importu: analityk zapisuje stronę wyników Biblioteki reklam w przeglądarce, a `python meta.py strona.html` wczytuje z niej reklamy do bazy. Automatycznych wizyt na stronie biblioteki nie robimy, bo Meta ich zabrania.
 
 Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy po przecinku, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
+
+## Źródła reklam: dziś i docelowo
+
+Dziś system bierze reklamy z Centrum przejrzystości reklam Google, z publicznej biblioteki reklam TikToka, z opisów filmów na YouTube i z ręcznie zapisanych stron Biblioteki reklam Mety. Domeny docelowe sprawdza na liście ostrzeżeń publicznych KNF, w ostrzeżeniach CSIRT KNF i na liście ostrzeżeń CERT Polska.
+
+Docelowo reklamy powinny przychodzić z oficjalnych interfejsów, które duże platformy muszą udostępniać na mocy aktu o usługach cyfrowych (DSA):
+
+- Meta: API Biblioteki reklam; `meta_api.py` jest gotowy, brakuje tokenu.
+- TikTok: Commercial Content API zamiast strony biblioteki; dostęp dostaje się po zatwierdzeniu wniosku przez TikToka.
+- Google: zbiór Ads Transparency Center w BigQuery (Europejski Obszar Gospodarczy i Turcja), z osobną tabelą reklam usuniętych przez Google, z miejscem i powodem usunięcia.
+- Microsoft: publiczne API biblioteki reklam z wyszukiwarki Bing, bez logowania.
+- X, LinkedIn, Snapchat, Pinterest: biblioteki reklam z obowiązku DSA, do sprawdzenia.
+
+Czego brakuje:
+
+- tokenu do API Mety i dostępu do API TikToka;
+- pola na płatnika i beneficjenta reklamy, które API Mety podaje dla reklam pokazanych w Unii;
+- źródła reklam na portalach informacyjnych, np. podrobionych artykułów ze znanymi osobami w ramkach z polecanymi tekstami: takie reklamy nie mają publicznej biblioteki.
 
 ## Usługi
 

@@ -105,7 +105,10 @@ services:
       context: ./zbieracz
       dockerfile: Dockerfile.patrol
     profiles: [patrol]
-    command: ["cron", "-f"]
+    command: ["sh", "-c", "printenv | grep -E '^(API_URL|KOLEJKA_URL|META_TOKEN|ZBIERACZ_)' > /etc/environment && exec cron -f"]
+    environment:
+      API_URL: http://api:8000
+      META_TOKEN: ${META_TOKEN:-}
     restart: unless-stopped
     depends_on:
       kolejka:
