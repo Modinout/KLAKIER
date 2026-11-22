@@ -1,4 +1,4 @@
-import { bezTekstu, liniaOszustwa, tag, TAG_MODELU, TAGI, tagModelu } from './nazwy.js'
+import { bezTresci, liniaOszustwa, tag, TAG_MODELU, TAGI, tagModelu } from './nazwy.js'
 
 // Uwagi, a nie ustalenia o reklamie: czy operatorzy blokują domenę (CERT) oraz płatnik, który
 // jest inną firmą niż zarejestrowana z tą samą marką.
@@ -15,13 +15,13 @@ export function notatki(reklama) {
   return reklama.sygnaly.filter((s) => KODY_NOTATEK.includes(s.kod))
 }
 
+// O ustaleniu decyduje próg z Kalibracji, a nie werdykt, który model liczy ze stałym progiem.
 export function ocenaModelu(reklama) {
-  if (bezTekstu(reklama) || reklama.werdykt !== 'oszustwo') return null
-  return liniaOszustwa(reklama)
+  return reklama.ponad_progiem ? liniaOszustwa(reklama) : null
 }
 
 export function modelZalecaSprawdzenie(reklama) {
-  return !bezTekstu(reklama) && reklama.werdykt === 'do_sprawdzenia'
+  return !bezTresci(reklama) && !reklama.ponad_progiem && (reklama.werdykt === 'do_sprawdzenia' || reklama.werdykt === 'oszustwo')
 }
 
 // Etykieta modelu jest najmocniejsza tylko wtedy, gdy żadna reguła nic nie ustaliła.

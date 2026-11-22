@@ -14,6 +14,9 @@ import Kalibracja from './widoki/Kalibracja.jsx'
 
 // Nowe reklamy przychodzą przez gniazdo alertów; to odświeżenie łapie resztę.
 const CO_ILE_MS = 15000
+// Reklama już pobrana zmienia się po cichu (obraz, tekst z obrazu, nowa ocena, praca innego analityka),
+// więc co kilka odświeżeń wraca cała lista.
+const CALA_LISTA_CO = 4
 
 const BLAD_LISTY = 'Brak połączenia z serwerem. Panel spróbuje ponownie.'
 
@@ -29,6 +32,7 @@ export default function App() {
   const [otwarte, setOtwarte] = useState(null)
   const [obejrzane, setObejrzane] = useState(new Set())
   const najnowszeDodano = useRef(null)
+  const zmiany = useRef(0)
   // Sprawy wysokiego ryzyka obecne już przy otwarciu panelu; dopiero późniejsze liczą się jako nowe alerty.
   const poczatkowe = useRef(null)
 
@@ -40,6 +44,7 @@ export default function App() {
 
   const dolacz = useCallback((nowe) => {
     if (nowe.length === 0) return
+    zmiany.current += 1
     setReklamy((lista) => {
       const poId = new Map((lista ?? []).map((r) => [r.id, r]))
       for (const r of bezTestowych(nowe)) poId.set(r.id, r)
@@ -48,8 +53,11 @@ export default function App() {
   }, [])
 
   function odswiez() {
+    const przed = zmiany.current
     return pobierzReklamy()
       .then((lista) => {
+        // Lista pobrana przed zmianą zrobioną w panelu cofnęłaby ją na ekranie.
+        if (zmiany.current !== przed) return odswiez()
         zapamietajNajnowsze(lista)
         poczatkowe.current ??= new Set(lista.filter((r) => r.poziom === 'wysokie').map(klucz))
         setReklamy(bezTestowych(lista))
@@ -59,8 +67,10 @@ export default function App() {
 
   useEffect(() => {
     odswiez()
+    let ktore = 0
     const zegar = setInterval(() => {
-      if (!najnowszeDodano.current) return odswiez()
+      ktore += 1
+      if (!najnowszeDodano.current || ktore % CALA_LISTA_CO === 0) return odswiez()
       // Znacznik przesuwają tylko reklamy pobrane cyklicznie: alert albo dodana reklama może być nowsza niż reklamy jeszcze niepobrane.
       pobierzReklamy(najnowszeDodano.current)
         .then((nowe) => {
@@ -80,6 +90,7 @@ export default function App() {
   const nieobejrzane = alerty.filter(nowyAlert).length
 
   function podmien(nowa) {
+    zmiany.current += 1
     setReklamy((lista) => lista.map((r) => (r.id === nowa.id ? nowa : r)))
   }
 

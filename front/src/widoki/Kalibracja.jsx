@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { pobierzProg, pobierzProgi, zapiszProg } from '../api.js'
-import { BLAD_ZAPISU, bezTekstu, ileOszustw, ileReklam, ileUczciwych, liczba, procent } from '../nazwy.js'
+import { BLAD_ZAPISU, bezTresci, ileOszustw, ileReklam, ileUczciwych, liczba, procent } from '../nazwy.js'
 import { ustalenia } from '../ustalenia.js'
 import Uczenie from '../czesci/Uczenie.jsx'
 import WykresProgow from '../czesci/WykresProgow.jsx'
@@ -17,7 +17,7 @@ function zdanieKolejki(wiersze, prog, zapisany) {
   if (rowne(prog, zapisany)) return 'Próg ' + procent(prog) + ' działa teraz w kolejce.'
   if (prog < zapisany) {
     const n = wiersze.filter(
-      (r) => !bezTekstu(r) && r.zrodlo !== 'youtube' && r.ryzyko >= prog && r.ryzyko < zapisany && r.poziom !== 'wysokie'
+      (r) => !bezTresci(r) && r.zrodlo !== 'youtube' && r.ryzyko >= prog && r.ryzyko < zapisany && r.poziom !== 'wysokie'
     ).length
     const ile = ileReklam(n)
     if (n > 0) return 'Po zapisaniu progu ' + procent(prog) + ' do „Do zrobienia” ' + (ile.endsWith('reklamy') ? 'trafią' : 'trafi') + ' jeszcze ' + ile + '.'

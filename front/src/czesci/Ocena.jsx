@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { pobierzProg, zmienWerdyktAnalityka } from '../api.js'
-import { BLAD_ZAPISU, bezTekstu } from '../nazwy.js'
+import { BLAD_ZAPISU, bezTresci } from '../nazwy.js'
 import { zdecydowalModel } from '../ustalenia.js'
 
 const OCENY = {
@@ -33,14 +33,20 @@ function opisFilmu(reklama) {
   return reklama.zrodlo === 'youtube'
 }
 
+// Ryzyko poniżej progu z Kalibracji nie jest ustaleniem, nawet gdy model nazwał tekst oszustwem.
+function werdyktModelu(reklama) {
+  if (reklama.ponad_progiem) return WERDYKTY_MODELU.oszustwo
+  return WERDYKTY_MODELU[reklama.werdykt === 'oszustwo' ? 'do_sprawdzenia' : reklama.werdykt]
+}
+
 function linia(reklama, prog) {
   if (opisFilmu(reklama)) return 'Model KAPSEL: nie ocenia opisów filmów'
-  if (bezTekstu(reklama)) return 'Model KAPSEL: brak tekstu do oceny'
+  if (bezTresci(reklama)) return 'Model KAPSEL: brak tekstu do oceny'
   const kto = zdecydowalModel(reklama) ? 'Zdecydował model KAPSEL: ' : 'Model KAPSEL (ocenia tylko tekst): '
   const analityk = WERDYKTY_ANALITYKA[reklama.werdykt_analityka]
   return (
     kto +
-    WERDYKTY_MODELU[reklama.werdykt] +
+    werdyktModelu(reklama) +
     ', ryzyko ' +
     procent(reklama.ryzyko) +
     (prog == null ? '' : ', próg ' + Math.round(prog * 100) + '%') +
@@ -56,7 +62,7 @@ function slowa(reklama) {
 export default function Ocena({ reklama, podmien }) {
   const [otwarta, setOtwarta] = useState(Boolean(reklama.werdykt_analityka))
   const [prog, setProg] = useState(null)
-  const zTekstem = !bezTekstu(reklama) && !opisFilmu(reklama)
+  const zTekstem = !bezTresci(reklama) && !opisFilmu(reklama)
 
   useEffect(() => {
     pobierzProg()

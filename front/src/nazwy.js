@@ -4,6 +4,11 @@ export function bezTekstu(reklama) {
   return reklama.tekst.trim() === ''
 }
 
+// Model ocenia tekst razem z mową z nagrania.
+export function bezTresci(reklama) {
+  return bezTekstu(reklama) && !reklama.mowa?.trim()
+}
+
 export const NAZWY_STATUSOW = {
   nowa: 'Nowa',
   w_toku: 'W toku',
