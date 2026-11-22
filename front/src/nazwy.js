@@ -48,6 +48,7 @@ export const NAZWY_LIST_KNF = {
   banki_maklerskie: 'bank maklerski',
   oddzialy_zagranicznych_firm: 'oddział zagranicznej firmy',
   notyfikowane_zagraniczne: 'notyfikowana firma zagraniczna',
+  mica: 'dostawca usług w zakresie kryptoaktywów',
 }
 
 // Ordered from the strongest finding to the weakest.

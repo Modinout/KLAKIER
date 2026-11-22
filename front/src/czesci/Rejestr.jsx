@@ -1,5 +1,5 @@
 import { domena, domenaDocelowa, pierwszaDomena } from '../nazwy.js'
-import { kto, STANY_REJESTRU, stanRejestru, wpisRejestru } from '../rejestr.js'
+import { kto, nazwaRejestru, STANY_REJESTRU, stanRejestru, wpisRejestru } from '../rejestr.js'
 import { tytul } from '../sprawy.js'
 
 const KOLORY = {
@@ -7,6 +7,7 @@ const KOLORY = {
   spoza_rejestru: 'bg-amber-100 text-amber-800',
   poza_listami: 'bg-destructive/10 text-destructive',
   bank: 'bg-muted text-muted-foreground',
+  mica: 'bg-muted text-muted-foreground',
 }
 
 function Wiersz({ nazwa, children }) {
@@ -52,7 +53,7 @@ export default function Rejestr({ reklama }) {
         </Wiersz>
       )}
       {rejestr?.podmiot && (
-        <Wiersz nazwa="W rejestrze KNF">
+        <Wiersz nazwa={nazwaRejestru(rejestr)}>
           <span className="font-medium">
             {rejestr.podmiot}
             <small className="block text-[13px] font-normal text-muted-foreground">

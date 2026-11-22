@@ -14,6 +14,7 @@ export const STANY_REJESTRU = {
   spoza_rejestru: 'inna spółka niż w rejestrze',
   poza_listami: 'brak na listach KNF',
   bank: 'bank, poza listami firm inwestycyjnych',
+  mica: 'licencja MiCA w innym kraju UE',
 }
 
 export function kto(reklama) {
@@ -25,6 +26,11 @@ export function stanRejestru(reklama) {
   if (!AUTORZY.includes(reklama.zrodlo)) return STANY_REJESTRU[rejestr?.stan] ? rejestr.stan : null
   if (rejestr?.stan === 'w_rejestrze' || (rejestr?.stan === 'spoza_rejestru' && rejestr.podmiot)) return 'w_rejestrze'
   return null
+}
+
+// A crypto-asset provider licensed in another EU state is found in the ESMA register, not on the KNF lists.
+export function nazwaRejestru(rejestr) {
+  return rejestr.lista === 'mica' ? 'W rejestrze MiCA' : 'W rejestrze KNF'
 }
 
 export function wpisRejestru(rejestr) {

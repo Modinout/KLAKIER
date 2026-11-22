@@ -1,6 +1,6 @@
 import { adresObrazu } from './api.js'
 import { bezTekstu, data, domenaDocelowa, dzien, dzienCzytelny, nazwaZrodla } from './nazwy.js'
-import { kto, STANY_REJESTRU, stanRejestru, wpisRejestru } from './rejestr.js'
+import { kto, nazwaRejestru, STANY_REJESTRU, stanRejestru, wpisRejestru } from './rejestr.js'
 import { POZIOMY } from './ryzyko.js'
 import { tytul } from './sprawy.js'
 import { notatki, ocenaModelu, ustalenia, zdaniePowodu } from './ustalenia.js'
@@ -10,7 +10,6 @@ const SPORZADZONO = 'Sporządzono: '
 const REKLAM_W_SPRAWIE = 'Reklamy w sprawie: '
 const RYZYKO = ' ryzyko'
 const PROWADZI_DO = 'Prowadzi do: '
-const W_REJESTRZE = 'W rejestrze KNF: '
 const REKLAMA_NR = 'Reklama nr '
 const ZEBRANO = 'zebrano '
 const ADRES = 'Adres: '
@@ -72,8 +71,10 @@ function platnicy(reklamy) {
 }
 
 function podmioty(reklamy) {
-  const wpisy = reklamy.filter((r) => r.rejestr?.podmiot).map((r) => [r.rejestr.podmiot, ...wpisRejestru(r.rejestr)].join(', '))
-  return rozne(wpisy).map((wpis) => W_REJESTRZE + wpis)
+  const wpisy = reklamy
+    .filter((r) => r.rejestr?.podmiot)
+    .map((r) => nazwaRejestru(r.rejestr) + ': ' + [r.rejestr.podmiot, ...wpisRejestru(r.rejestr)].join(', '))
+  return rozne(wpisy)
 }
 
 function punkty(reklama, wspolneU) {
