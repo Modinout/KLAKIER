@@ -15,6 +15,7 @@ export const STANY_REJESTRU = {
   poza_listami: 'brak w rejestrach KNF',
   bank: 'bank, poza rejestrami firm inwestycyjnych',
   mica: 'licencja MiCA w innym kraju UE',
+  tfi: 'TFI w rejestrze KNF',
 }
 
 export function kto(reklama) {
@@ -31,6 +32,11 @@ export function stanRejestru(reklama) {
 // Dostawca kryptoaktywów z licencją w innym państwie UE jest w rejestrze ESMA, a nie w rejestrach KNF.
 export function nazwaRejestru(rejestr) {
   return rejestr.lista === 'mica' ? 'W rejestrze MiCA' : 'W rejestrze KNF'
+}
+
+// Firmę, do której prowadzi link polecający, api podaje przy ustaleniu o poleceniu.
+export function polecanaFirma(reklama) {
+  return reklama.sygnaly.find((s) => s.kod === 'polecenie_bez_oznaczenia' && s.firma)?.firma ?? null
 }
 
 export function wpisRejestru(rejestr) {

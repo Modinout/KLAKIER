@@ -1,5 +1,5 @@
 import { bezTekstu, data, domenaDocelowa, dzien, dzienCzytelny, NAZWY_STATUSOW, nazwaZrodla } from './nazwy.js'
-import { STANY_REJESTRU, stanRejestru, wpisRejestru } from './rejestr.js'
+import { polecanaFirma, STANY_REJESTRU, stanRejestru, wpisRejestru } from './rejestr.js'
 import { POZIOMY } from './ryzyko.js'
 import { ocenaModelu, ustalenia, zdaniePowodu } from './ustalenia.js'
 
@@ -13,6 +13,7 @@ const KOLUMNY = [
   'Reklamodawca',
   'Stan w rejestrze KNF',
   'Firma w rejestrze KNF',
+  'Polecana firma',
   'Prowadzi do',
   'Adres',
   'Źródło',
@@ -33,6 +34,7 @@ function listaUstalen(reklama) {
 
 function wiersz(sprawa, reklama) {
   const stan = stanRejestru(reklama)
+  const polecona = polecanaFirma(reklama)
   return [
     sprawa.tytul,
     reklama.id,
@@ -43,6 +45,7 @@ function wiersz(sprawa, reklama) {
     reklama.reklamodawca,
     stan ? STANY_REJESTRU[stan] : '',
     reklama.rejestr?.podmiot ? [reklama.rejestr.podmiot, ...wpisRejestru(reklama.rejestr)].join(', ') : '',
+    polecona ? polecona.nazwa + (polecona.stan_rejestru ? ' (' + STANY_REJESTRU[polecona.stan_rejestru] + ')' : '') : '',
     domenaDocelowa(reklama),
     reklama.url,
     nazwaZrodla(reklama.zrodlo),

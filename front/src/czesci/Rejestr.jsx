@@ -1,5 +1,5 @@
 import { domena, domenaDocelowa, pierwszaDomena } from '../nazwy.js'
-import { kto, nazwaRejestru, STANY_REJESTRU, stanRejestru, wpisRejestru } from '../rejestr.js'
+import { kto, nazwaRejestru, polecanaFirma, STANY_REJESTRU, stanRejestru, wpisRejestru } from '../rejestr.js'
 import { tytul } from '../sprawy.js'
 
 const KOLORY = {
@@ -8,6 +8,11 @@ const KOLORY = {
   poza_listami: 'bg-destructive/10 text-destructive',
   bank: 'bg-muted text-muted-foreground',
   mica: 'bg-muted text-muted-foreground',
+  tfi: 'bg-muted text-muted-foreground',
+}
+
+function Chip({ stan }) {
+  return stan && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + KOLORY[stan]}>{STANY_REJESTRU[stan]}</span>
 }
 
 function Wiersz({ nazwa, children }) {
@@ -25,14 +30,21 @@ export default function Rejestr({ reklama }) {
   const cel = domenaDocelowa(reklama)
   // Tytuł od pierwszej domeny w tekście: bez linku, bo nie była sprawdzana jako cel.
   const zTekstu = !cel && !reklama.reklamodawca && tytul(reklama) === pierwszaDomena(reklama.tekst) ? tytul(reklama) : null
-  if (!reklama.reklamodawca && !cel && !zTekstu) return null
+  const polecona = polecanaFirma(reklama)
+  if (!reklama.reklamodawca && !cel && !zTekstu && !polecona) return null
 
   return (
     <div className="mb-4 divide-y rounded-lg border">
       {reklama.reklamodawca && (
         <Wiersz nazwa={kto(reklama)}>
           <span className="font-medium">{reklama.reklamodawca}</span>
-          {chip && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + KOLORY[chip]}>{STANY_REJESTRU[chip]}</span>}
+          <Chip stan={chip} />
+        </Wiersz>
+      )}
+      {polecona && (
+        <Wiersz nazwa="Polecana firma">
+          <span className="font-medium">{polecona.nazwa}</span>
+          <Chip stan={polecona.stan_rejestru} />
         </Wiersz>
       )}
       {cel && (

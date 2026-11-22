@@ -69,6 +69,10 @@ export const TAGI = {
   podatki_bez_zastrzezenia: 'Korzyść podatkowa bez zastrzeżenia',
   wyniki_bez_zastrzezenia: 'Dawne zyski bez zastrzeżenia',
   nadzor_jako_argument: 'Zachwala się nadzorem KNF',
+  wyniki_bez_okresu: 'Wyniki z przeszłości bez okresu 5 lat i źródła',
+  wyniki_bez_oplat_i_waluty: 'Wyniki z przeszłości bez wpływu opłat lub walut',
+  prognoza_bez_zastrzezenia: 'Prognoza bez zastrzeżenia',
+  ryzyko_w_innym_jezyku: 'Ostrzeżenie o ryzyku w innym języku',
   test_zbieracza: 'Sygnał testowy',
 }
 
