@@ -87,10 +87,10 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
               <TableRow className="hover:bg-transparent">
                 <Naglowek className="w-full">Sprawa</Naglowek>
                 <Naglowek>Powód</Naglowek>
-                <Naglowek>Źródło</Naglowek>
+                <Naglowek className="hidden lg:table-cell">Źródło</Naglowek>
                 <Naglowek>Ryzyko</Naglowek>
                 <Naglowek>Status</Naglowek>
-                <Naglowek>Data</Naglowek>
+                <Naglowek className="hidden lg:table-cell">Data</Naglowek>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -104,14 +104,20 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
               {naStronie.map((s) => (
                 <TableRow
                   key={s.klucz}
-                  className="cursor-pointer"
+                  className="cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                   data-state={s.reklamy.some((r) => r.id === otwarteId) ? 'selected' : undefined}
+                  tabIndex={0}
                   onClick={() => otworz(s)}
+                  onKeyDown={(e) => {
+                    if (e.key !== 'Enter' && e.key !== ' ') return
+                    e.preventDefault()
+                    otworz(s)
+                  }}
                 >
                   <TableCell className="h-[44px] max-w-0 px-3">
                     <div className="flex items-center gap-2">
                       {nowe && <span className={'size-1.5 shrink-0 rounded-full ' + (nowe(s) ? 'bg-foreground' : 'bg-transparent')} />}
-                      <span className="max-w-[340px] shrink-0 truncate font-medium">{s.tytul}</span>
+                      <span className="max-w-[340px] truncate font-medium">{s.tytul}</span>
                       {s.reklamy.length > 1 && (
                         <span className="shrink-0 text-xs text-muted-foreground">{ileReklam(s.reklamy.length)}</span>
                       )}
@@ -120,14 +126,14 @@ export default function TabelaSpraw({ sprawy, ile, kiedy, nowe, otwarteId, otwor
                   <TableCell className="px-3">
                     <Powod sprawa={s} />
                   </TableCell>
-                  <TableCell className="px-3">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
+                  <TableCell className="hidden px-3 lg:table-cell">{nazwaZrodla(s.glowna.zrodlo)}</TableCell>
                   <TableCell className="px-3">
                     <ZIkona ikona={IKONY_RYZYKA[s.poziom]}>{POZIOMY[s.poziom]}</ZIkona>
                   </TableCell>
                   <TableCell className="px-3">
                     <ZIkona ikona={IKONY_STATUSU[s.glowna.status]}>{NAZWY_STATUSOW[s.glowna.status]}</ZIkona>
                   </TableCell>
-                  <TableCell className="px-3 text-muted-foreground">{kiedy(s)}</TableCell>
+                  <TableCell className="hidden px-3 text-muted-foreground lg:table-cell">{kiedy(s)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

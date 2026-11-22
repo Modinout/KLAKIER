@@ -84,6 +84,8 @@ function InneWSprawie({ reklama, reklamy, otworz }) {
 
 export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, podmien, odswiez }) {
   const tresc = useRef(null)
+  // Arkusz otwiera się ze stanu, bez wyzwalacza Radix, więc po zamknięciu fokus wraca tu ręcznie.
+  const otwierajacy = useRef(document.activeElement)
   const [bezObrazu, setBezObrazu] = useState(null)
   const i = sprawy.findIndex((s) => s.reklamy.some((r) => r.id === reklama.id))
   const nastepna = i === -1 ? null : sprawy[i + 1]
@@ -136,8 +138,12 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
   return (
     <Sheet open onOpenChange={zamknij}>
       <SheetContent
-        className="gap-0 data-[side=right]:w-[560px] data-[side=right]:sm:max-w-[560px]"
+        className="gap-0 data-[side=right]:w-full data-[side=right]:sm:w-[560px] data-[side=right]:sm:max-w-[560px]"
         onInteractOutside={(e) => e.target.closest?.('[data-sonner-toaster]') && e.preventDefault()}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault()
+          otwierajacy.current?.focus()
+        }}
       >
         <div ref={tresc} className="min-h-0 flex-1 overflow-auto px-6 pb-4">
           <div className="sticky top-0 -mx-6 bg-popover px-6 pt-6 pb-1">

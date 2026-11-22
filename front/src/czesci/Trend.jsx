@@ -35,7 +35,7 @@ export default function Trend({ reklamy }) {
         {szczyt.ile > 0 && ' · najwięcej ' + szczyt.ile + ' (' + szczyt.kiedy.slice(0, 5) + ')'}
       </p>
       <ChartContainer config={KONFIGURACJA} className="aspect-auto h-[44px] w-full">
-        <BarChart data={punkty} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+        <BarChart data={punkty} accessibilityLayer={false} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
           <XAxis dataKey="kiedy" tickLine={false} axisLine={false} tickMargin={4} minTickGap={24} height={20} fontSize={11} />
           <ChartTooltip cursor={false} content={<ChartTooltipContent formatter={(ile) => KONFIGURACJA.ile.label + ': ' + ile} />} />
           <Bar
