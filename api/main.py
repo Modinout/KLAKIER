@@ -23,11 +23,9 @@ import sprawdzenia
 import wiek_domeny
 from schematy import (
     Alert,
-    DodanyRodzaj,
     Nagranie,
     Nauka,
     NowaReklama,
-    NowyRodzaj,
     Obraz,
     OdczytanyTekst,
     PodobnaReklama,
@@ -73,8 +71,7 @@ def dodaj_reklame(reklama: NowaReklama):
     if baza.jest(reklama.zrodlo, reklama.id_zrodla):
         raise HTTPException(409, 'Ta reklama jest już w bazie')
     ocena = ocen(reklama.model_dump())
-    sedzia = None if ocena['pewny'] else drugi_sedzia(reklama.tekst)
-    wiersz = baza.dodaj(reklama.model_dump(), ocena, sedzia)
+    wiersz = baza.dodaj(reklama.model_dump(), ocena)
     if wiersz is None:
         raise HTTPException(409, 'Ta reklama jest już w bazie')
     wiersz = z_sygnalem_domeny([wiersz])[0]
@@ -166,15 +163,6 @@ def rodzaje():
     return httpx.get(f'{AI_URL}/rodzaje', timeout=10).raise_for_status().json()
 
 
-@app.post('/rodzaje', response_model=DodanyRodzaj, summary='Dodaj rodzaj', tags=['Model i próg'])
-def dodaj_rodzaj(rodzaj: NowyRodzaj):
-    odpowiedz = httpx.post(f'{AI_URL}/rodzaje', json=rodzaj.model_dump(), timeout=300)
-    if odpowiedz.status_code in (409, 503):
-        raise HTTPException(odpowiedz.status_code, odpowiedz.json()['detail'])
-    dodany = odpowiedz.raise_for_status().json()
-    return {**dodany, 'przeliczono': przelicz_wszystkie()}
-
-
 @app.get('/progi', summary='Progi modelu', tags=['Model i próg'])
 def progi():
     return httpx.get(f'{AI_URL}/progi', timeout=10).raise_for_status().json()
@@ -189,14 +177,6 @@ def ocen(reklama, klient=httpx):
     dane = {pole: reklama[pole] for pole in ('tekst', 'reklamodawca', 'url', 'zrodlo')}
     dane['mowa'] = reklama.get('mowa')
     return klient.post(f'{AI_URL}/ocen', json=dane, timeout=60).raise_for_status().json()
-
-
-def drugi_sedzia(tekst):
-    """Werdykt dużego modelu albo None, gdy nie jest skonfigurowany lub nie odpowiedział."""
-    odpowiedz = httpx.post(f'{AI_URL}/drugi_sedzia', json={'tekst': tekst}, timeout=120)
-    if odpowiedz.status_code == 503:
-        return None
-    return odpowiedz.raise_for_status().json()
 
 
 def odczytaj_tekst(obraz):

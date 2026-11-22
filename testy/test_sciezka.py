@@ -27,7 +27,7 @@ def test_reklama_przechodzi_cala_sciezke():
     assert zapisana['ryzyko'] > 0.5
     assert zapisana['status'] == 'nowa'
     assert isinstance(zapisana['powody'], list)
-    assert {'rodzaj', 'drugi_sedzia'} <= set(zapisana)
+    assert 'rodzaj' in zapisana
     assert zapisana['werdykt_analityka'] is None
 
     powtorka = httpx.post(f'{API}/reklamy', json=reklama, timeout=60)

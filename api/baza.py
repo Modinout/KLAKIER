@@ -21,19 +21,18 @@ def jest(zrodlo, id_zrodla):
         ).fetchone() is not None
 
 
-def dodaj(reklama, ocena, drugi_sedzia):
+def dodaj(reklama, ocena):
     """Zwraca zapisany wiersz albo None, gdy ta reklama (zrodlo + id_zrodla) jest już zapisana."""
-    pola = {**reklama, **kolumny_oceny(ocena), 'sygnaly_zbieracza': Jsonb(reklama['sygnaly']),
-            'drugi_sedzia': Jsonb(drugi_sedzia) if drugi_sedzia else None}
+    pola = {**reklama, **kolumny_oceny(ocena), 'sygnaly_zbieracza': Jsonb(reklama['sygnaly'])}
     with polacz() as baza:
         return baza.execute(
             """
             INSERT INTO reklamy (zrodlo, id_zrodla, platforma, url, domena, reklamodawca, tekst, zebrano, opublikowano,
                                  sygnaly_zbieracza,
-                                 werdykt, ryzyko, pewny, rejestr, sygnaly, powody, rodzaj, drugi_sedzia)
+                                 werdykt, ryzyko, pewny, rejestr, sygnaly, powody, rodzaj)
             VALUES (%(zrodlo)s, %(id_zrodla)s, %(platforma)s, %(url)s, %(domena)s, %(reklamodawca)s, %(tekst)s,
                     %(zebrano)s, %(opublikowano)s, %(sygnaly_zbieracza)s,
-                    %(werdykt)s, %(ryzyko)s, %(pewny)s, %(rejestr)s, %(sygnaly)s, %(powody)s, %(rodzaj)s, %(drugi_sedzia)s)
+                    %(werdykt)s, %(ryzyko)s, %(pewny)s, %(rejestr)s, %(sygnaly)s, %(powody)s, %(rodzaj)s)
             ON CONFLICT (zrodlo, id_zrodla) DO NOTHING
             RETURNING *
             """,

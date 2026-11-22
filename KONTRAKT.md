@@ -82,7 +82,6 @@ Pola jak wyżej oraz:
 | `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnał `polecenie_bez_oznaczenia` z linkiem do polecanej firmy ma też `firma` = `{"nazwa", "domena", "stan_rejestru"}` (`stan_rejestru` jak `rejestr.stan` albo null), u innych sygnałów `firma` jest null; sygnały zbieracza zostają przy każdym ponownym ocenianiu; sygnał `wielu_platnikow_domeny` (moduł `M1`) oznacza, że reklamy tej samej `domena` opłaca co najmniej trzech różnych płatników, którzy nie są w rejestrze KNF i nie mają w nazwie marki z domeny. Api liczy go przy każdym odczycie ze wszystkich reklam domeny i nie zapisuje go w bazie, więc dostają go też starsze reklamy domeny, gdy przybędzie płatnik; sygnał `obca_domena` (moduł `M1`) oznacza, że płatnik ma nazwę marki z rejestru KNF, ale reklama prowadzi do domeny bez tej nazwy, czyli do strony innej marki. Api też liczy go przy każdym odczycie; sygnały modułu `M2` z pomiaru strony domeny (`PUT /strony/{domena}`), też liczone przy każdym odczycie: `ostrzezenie_nieczytelne`, gdy ostrzeżenie o ryzyku CFD jest mniejsze niż przeważający tekst, ma kontrast poniżej 4,5:1 (3:1 przy dużym tekście) albo nie widać go w jednym z widoków, i `brak_ostrzezenia_strony`, gdy strona mówi o CFD, a ostrzeżenia nie widać w żadnym widoku; sygnał `mloda_domena` (moduł `M1`) z daty rejestracji domeny (`PUT /domeny/{domena}`), też liczony przy każdym odczycie: reklama o inwestycjach (ten sam test tematu co w `ai`, na tekście i nazwie płatnika) prowadzi do domeny zarejestrowanej mniej niż 30 dni przed `opublikowano`, a bez tej daty przed dniem odczytu; domena zarejestrowana po tym dniu sygnału nie daje |
 | `powody` | lista | słowa, które najmocniej wpłynęły na ocenę; każde ma `slowo` i `waga`; pusta przy ryzyku poniżej 0,1 |
 | `rodzaj` | tekst lub null | rodzaj oszustwa według modelu, np. jeden z `GET /rodzaje` |
-| `drugi_sedzia` | obiekt lub null | ocena dużego modelu, gdy mały nie jest pewny: `werdykt`, `uzasadnienie`; null, gdy duży model nie jest ustawiony |
 | `status` | `nowa`, `w_toku`, `zamknieta` | etap pracy analityka |
 | `werdykt_analityka` | `ok`, `do_sprawdzenia`, `oszustwo` lub null | werdykt analityka; z tych werdyktów model uczy się przez `POST /ucz` |
 | `notatka` | tekst lub null | notatka analityka do sprawy; null, dopóki nikt jej nie napisze |
@@ -107,7 +106,6 @@ Pola jak wyżej oraz:
 | `GET /reklamy/{id}/obraz` | obraz reklamy z typem `image/png` albo `image/jpeg`; `404`, gdy reklama nie ma obrazu |
 | `POST /ucz` | uczy model na reklamach z `werdykt_analityka` i ocenia od nowa wszystkie reklamy; każdej reklamie, której zmienił się werdykt albo poziom, dopisuje wpis do historii; zwraca `przyklady`, `przeliczono` |
 | `GET /rodzaje` | lista rodzajów oszustw, które zna model |
-| `POST /rodzaje` | dodaje rodzaj oszustwa, treść: `{"nazwa": "...", "opis": "..."}`, i ocenia od nowa wszystkie reklamy; zwraca `nazwa`, `przyklady`, `przeliczono`; `409`, gdy taki rodzaj już jest, `503`, gdy nie ma dużego modelu |
 | `GET /progi` | dane dla suwaka progu: ile oszustw łapie dany próg i ile daje fałszywych alarmów |
 | `GET /prog` | zapisany próg ryzyka: `{"prog": 0.7}`; od niego tekst reklamy sam daje poziom `wysokie`, a z nim alert; werdykt zostaje taki, jak dał model |
 | `PUT /prog` | zapisuje próg, treść: `{"prog": 0.6}`, liczba większa od 0 i mniejsza od 1; zwraca zapisany próg; działa od razu na poziom wszystkich reklam; `422` dla progu spoza przedziału |
@@ -192,8 +190,6 @@ Dowody się tylko dopisuje: żadnego się nie zmienia ani nie zastępuje. `POST 
 | Adres | Co robi |
 | --- | --- |
 | `POST /ocen` | przyjmuje `tekst`, `reklamodawca`, `url`, `zrodlo` (dla `youtube` i `strony_doradcow` nazwa to autor materiału, a nie płatnik reklamy, więc rejestr nie daje ustalenia `M1`; dla `youtube` tekstu nie ocenia też model: werdykt `ok`, ryzyko 0); zwraca `werdykt`, `ryzyko`, `pewny`, `rejestr`, `sygnaly`, `powody`, `rodzaj` |
-| `POST /drugi_sedzia` | przyjmuje `tekst`; zwraca `werdykt`, `uzasadnienie` od dużego modelu; `503`, gdy go nie ma albo nie odpowiedział |
 | `POST /ucz` | przyjmuje `przyklady` (lista `tekst`, `werdykt`), zastępuje nimi wszystkie przykłady analityka i uczy model od nowa; zwraca `przyklady`, `razem` |
 | `GET /rodzaje` | lista nazw rodzajów oszustw |
-| `POST /rodzaje` | przyjmuje `nazwa`, `opis`; duży model pisze przykłady, model uczy się nowego rodzaju; zwraca `nazwa`, `przyklady`; `409`, gdy nazwa już jest, `503`, gdy nie ma dużego modelu |
 | `GET /progi` | tabela progów z `ai/progi.csv` |

@@ -3,14 +3,11 @@ import pathlib
 import threading
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 import dopisane
 import doradztwo
-import drugi_sedzia
-import duzy_model
-import nowy_rodzaj
 import polecenia
 import ucz
 import wymogi
@@ -82,28 +79,9 @@ class Przyklady(BaseModel):
     przyklady: list[Przyklad]
 
 
-class NowyRodzaj(BaseModel):
-    nazwa: str
-    opis: str
-
-
 @app.post('/osadz')
 def osadz_tekst(material: Tekst):
     return {'osadzenie': osadz(material.tekst)}
-
-
-def _wymagaj_duzego_modelu():
-    if not duzy_model.skonfigurowany():
-        raise HTTPException(503, 'Duży model nie jest skonfigurowany.')
-
-
-@app.post('/drugi_sedzia')
-def ocen_drugim_sedzia(material: Tekst):
-    _wymagaj_duzego_modelu()
-    try:
-        return drugi_sedzia.ocen(material.tekst)
-    except Exception as blad:
-        raise HTTPException(503, 'Duży model nie ocenił reklamy: ' + str(blad)) from blad
 
 
 @app.post('/ucz')
@@ -124,19 +102,6 @@ def ucz_na_przykladach(zadanie: Przyklady):
 @app.get('/rodzaje')
 def rodzaje():
     return znane_rodzaje()
-
-
-@app.post('/rodzaje')
-def dodaj_rodzaj(rodzaj: NowyRodzaj):
-    if rodzaj.nazwa in znane_rodzaje():
-        raise HTTPException(409, f'Rodzaj „{rodzaj.nazwa}” już jest znany.')
-    _wymagaj_duzego_modelu()
-    try:
-        teksty = nowy_rodzaj.napisz(rodzaj.opis)
-    except Exception as blad:
-        raise HTTPException(503, 'Duży model nie napisał przykładów: ' + str(blad)) from blad
-    nowy_rodzaj.dodaj(rodzaj.nazwa, teksty)
-    return {'nazwa': rodzaj.nazwa, 'przyklady': len(teksty)}
 
 
 @app.get('/progi')

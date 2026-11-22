@@ -17,10 +17,6 @@ services:
 
   ai:
     build: ./ai
-    environment:
-      DUZY_MODEL_URL: ${DUZY_MODEL_URL:-}
-      DUZY_MODEL_NAZWA: ${DUZY_MODEL_NAZWA:-}
-      DUZY_MODEL_KLUCZ: ${DUZY_MODEL_KLUCZ:-}
     volumes:
       - stan_ai:/app/stan
     healthcheck: &zdrowie

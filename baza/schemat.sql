@@ -22,7 +22,6 @@ CREATE TABLE reklamy (
     sygnaly_zbieracza JSONB NOT NULL DEFAULT '[]',
     powody        JSONB NOT NULL DEFAULT '[]',
     rodzaj        TEXT,
-    drugi_sedzia  JSONB,
     status        TEXT NOT NULL DEFAULT 'nowa',
     werdykt_analityka TEXT,
     notatka       TEXT,

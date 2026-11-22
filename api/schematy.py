@@ -32,11 +32,6 @@ class Powod(BaseModel):
     waga: float
 
 
-class DrugiSedzia(BaseModel):
-    werdykt: Werdykt
-    uzasadnienie: str
-
-
 class Rejestr(BaseModel):
     stan: Literal['w_rejestrze', 'spoza_rejestru', 'tfi', 'bank', 'mica', 'poza_listami']
     podmiot: str | None
@@ -68,7 +63,6 @@ class Reklama(NowaReklama):
     sygnaly: list[Sygnal]
     powody: list[Powod]
     rodzaj: str | None
-    drugi_sedzia: DrugiSedzia | None
     status: Status
     werdykt_analityka: Werdykt | None
     notatka: str | None
@@ -139,17 +133,6 @@ class RejestracjaDomeny(BaseModel):
 class Domena(RejestracjaDomeny):
     domena: str
     sprawdzono: datetime
-
-
-class NowyRodzaj(BaseModel):
-    nazwa: str
-    opis: str
-
-
-class DodanyRodzaj(BaseModel):
-    nazwa: str
-    przyklady: int
-    przeliczono: int
 
 
 class Nauka(BaseModel):
