@@ -1,4 +1,5 @@
-# Checks the payer of an ad against the four KNF lists of investment firms in rejestr_knf.csv.
+# Checks the payer of an ad against the four KNF lists of investment firms in rejestr_knf.csv,
+# then against the ESMA register of crypto-asset service providers in rejestr_mica.csv.
 #   from rejestr import sprawdz
 #   sprawdz('Tickmill Ltd')
 #   -> {'stan': 'spoza_rejestru', 'podmiot': 'Tickmill Europe Ltd | Vipro Markets Ltd', 'panstwo': 'Cypr', 'lista': 'notyfikowane_zagraniczne'}
@@ -110,6 +111,16 @@ _PO_NAZWIE = {nazwa: wpis for wpis, nazwa in reversed(_NAZWY)}
 with pathlib.Path(__file__).with_name('marki_knf.csv').open(encoding='utf-8', newline='') as _plik:
     _MARKI = {klucz(r['marka']): _PO_NAZWIE[klucz(r['nazwa_w_rejestrze'])] for r in csv.DictReader(_plik, delimiter=';')}
 
+# Crypto-asset service providers authorised in an EU state under MiCA, from the ESMA interim register.
+# They may serve Poland on that licence, so they are not on the KNF lists.
+STAN_MICA = '18.11.2026'
+with pathlib.Path(__file__).with_name('rejestr_mica.csv').open(encoding='utf-8', newline='') as _plik:
+    _MICA = [{'nazwa': r['nazwa'], 'marka': r['marka'], 'panstwo': r['panstwo'], 'lista': 'mica'}
+             for r in csv.DictReader(_plik, delimiter=';')]
+_MICA_PO_NAZWIE = {klucz(w['nazwa']): w for w in reversed(_MICA)}
+# A trade name stands for the licensed entity only when the payer gives no legal form: Revolut, not Revolut Ltd.
+_MICA_PO_MARCE = {klucz(w['marka']): w for w in reversed(_MICA) if klucz(w['marka'])}
+
 
 def sprawdz(reklamodawca):
     nazwa = klucz(reklamodawca or '')
@@ -127,6 +138,9 @@ def sprawdz(reklamodawca):
         podmioty = {w['nazwa']: w for w, n in reversed(_NAZWY) if rdzen(n) == rdzen(nazwa)}
         if len(podmioty) == 1:
             return wynik('w_rejestrze', *podmioty.values())
+    wpis = _MICA_PO_NAZWIE.get(nazwa) or _MICA_PO_NAZWIE.get(marka) or _MICA_PO_MARCE.get(marka)
+    if wpis:
+        return wynik('mica', wpis)
     # There is no TFI list among the four, so a fund company cannot be checked here.
     if 'tfi' in nazwa.split() or 'towarzystwo funduszy inwestycyjnych' in nazwa:
         return wynik('tfi')
@@ -157,6 +171,7 @@ def sygnaly(platnik, rejestr, zrodlo=None):
         opis = f'Płatnik „{platnik}” nie figuruje w rejestrach KNF. Marka odpowiada wpisowi „{rejestr["podmiot"]}” ({rejestr["panstwo"]}).'
         return [{'modul': 'M1', 'kod': 'platnik_spoza_rejestru', 'opis': opis, 'podstawa': podstawa}]
     if rejestr and rejestr['stan'] == 'poza_listami':
-        opis = f'Płatnik „{platnik}” nie figuruje na żadnej z czterech list firm inwestycyjnych KNF.'
+        opis = f'Płatnik „{platnik}” nie figuruje na żadnej z czterech list firm inwestycyjnych KNF ani w rejestrze MiCA (ESMA).'
+        podstawa += f'; rejestr MiCA (ESMA), stan na {STAN_MICA}'
         return [{'modul': 'M1', 'kod': 'platnik_poza_listami', 'opis': opis, 'podstawa': podstawa}]
     return []

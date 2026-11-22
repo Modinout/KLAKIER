@@ -22,9 +22,10 @@ TEMATY = [
 ]
 # text, payer, register result, does the register finding stay
 PLATNICY = [
-    ('', 'Nieznana Sp. z o.o.', OBCY, True),
+    ('', 'Nieznana Sp. z o.o.', OBCY, False),
     ('Revolut Install Install', 'Revolut Ltd', MARKA, True),
-    ('Bitpanda Installieren Installieren', 'Bitpanda GmbH', OBCY, True),
+    ('Bitpanda Installieren Installieren', 'Bitpanda GmbH', OBCY, False),
+    ('Handluj CFD na złocie z dźwignią 1:500', 'Vantage Global Prime Pty Ltd', OBCY, True),
     ('Wybieraj powiadomienia o cenie albo o zmianie w procentach, o resztę zadbamy my. Zainstaluj.', 'FxPro Global Markets Ltd', OBCY, True),
     ('24/7 Mobile Forex App', '上海纬祝网络科技有限公司', OBCY, True),
     ('Ty masz odpady, ktoś ich szuka. Darmowa giełda odpadów bez pośredników', 'Utylizer.pl', OBCY, False),

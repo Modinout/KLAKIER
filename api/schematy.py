@@ -30,7 +30,7 @@ class DrugiSedzia(BaseModel):
 
 
 class Rejestr(BaseModel):
-    stan: Literal['w_rejestrze', 'spoza_rejestru', 'tfi', 'bank', 'poza_listami']
+    stan: Literal['w_rejestrze', 'spoza_rejestru', 'tfi', 'bank', 'mica', 'poza_listami']
     podmiot: str | None
     panstwo: str | None
     lista: str | None

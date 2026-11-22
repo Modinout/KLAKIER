@@ -30,6 +30,9 @@ PROBY = [
     ('XTB', 'w_rejestrze', 'XTB S.A.'),
     ('Biuro maklerskie mBanku', 'w_rejestrze', 'mBANK S.A.'),
     ('mBank S.A. (Biuro Maklerskie mBanku)', 'w_rejestrze', 'mBANK S.A.'),
+    ('Bitpanda GmbH', 'mica', 'Bitpanda GmbH'),
+    ('Bybit EU GmbH', 'mica', 'Bybit EU GmbH'),
+    ('Bybit', 'mica', 'Bybit EU GmbH'),
     ('Saxo Bank', 'bank', None),
     ('Saxo Bank A/S', 'bank', None),
     ('Dom Maklerski', 'poza_listami', None),
@@ -40,7 +43,8 @@ PROBY = [
     ('Securities Ltd', 'poza_listami', None),
     ('FTMO s.r.o', 'poza_listami', None),
     ('Bybit Technology Limited', 'poza_listami', None),
-    ('Trade Republic Bank GmbH', 'bank', None),
+    ('Trade Republic Bank GmbH', 'mica', 'Trade Republic Bank GmbH'),
+    ('Comdirect Bank GmbH', 'bank', None),
     ('Revolution Trading Ltd', 'poza_listami', None),
     ('Erste Towarzystwo Funduszy Inwestycyjnych S.A.', 'tfi', None),
     ('Tom Crosshill', 'poza_listami', None),
@@ -67,6 +71,9 @@ for nazwa in ['Kanał o inwestowaniu', 'Revolut Ltd']:
         dobrze = len(sygnaly(nazwa, sprawdz(nazwa), zrodlo)) == ile
         zle += not dobrze
         print('OK  ' if dobrze else 'FAIL', (nazwa + ', source ' + zrodlo).ljust(48), '| expected', ile, 'signal(s)')
-razem = len(PROBY) + 2 + 2 * len(ZRODLA)
+dobrze = sygnaly('Bitpanda GmbH', sprawdz('Bitpanda GmbH'), 'google_ads') == []
+zle += not dobrze
+print('OK  ' if dobrze else 'FAIL', 'Bitpanda GmbH (MiCA), source google_ads'.ljust(48), '| expected 0 signals')
+razem = len(PROBY) + 2 + 2 * len(ZRODLA) + 1
 print('REJESTR', razem - zle, 'of', razem, 'passed')
 sys.exit(1 if zle else 0)

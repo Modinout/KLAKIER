@@ -25,9 +25,6 @@ INNE_RYNKI = re.compile(
 )
 
 
-# An image ad read by OCR is often a logo and a button: too little to say what it sells.
-ZA_MALO_SLOW = 12
-
 
 def o_inwestycjach(tekst):
     male = tekst.casefold()
@@ -41,9 +38,5 @@ def platnik_do_sprawdzenia(tekst, platnik, rejestr):
     # A brand that the register knows under another entity sells financial services whatever the ad says.
     if rejestr and rejestr['stan'] == 'spoza_rejestru':
         return True
-    return nie_do_oceny(tekst) or o_inwestycjach(tekst + ' ' + (platnik or ''))
-
-
-def nie_do_oceny(tekst):
-    """True when the text is too short to tell its topic and names no other market."""
-    return len(tekst.split()) < ZA_MALO_SLOW and not INNE_RYNKI.search(tekst.casefold())
+    # A text too short to tell its topic gives no finding: a missing licence matters only for an investment offer.
+    return o_inwestycjach(tekst + ' ' + (platnik or ''))

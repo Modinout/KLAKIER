@@ -120,11 +120,12 @@ Panel woła te same adresy z przedrostkiem `/api`.
 | --- | --- | --- |
 | `w_rejestrze` | nazwa płatnika to nazwa wpisu z list KNF | ten wpis: nazwa jak na liście, państwo, nazwa listy |
 | `spoza_rejestru` | płatnika nie ma na listach, ale jego marka ma tam inny podmiot, np. `Tickmill Ltd` i `Tickmill Europe Ltd` | wpis tej marki |
+| `mica` | płatnik to dostawca usług w zakresie kryptoaktywów z licencją MiCA w innym państwie UE (rejestr ESMA) | ten wpis: nazwa, kod państwa, `mica` |
 | `tfi` | płatnik to towarzystwo funduszy inwestycyjnych, a list TFI tu nie ma | null |
 | `bank` | płatnik to bank spoza listy banków z działalnością maklerską, a rejestru banków tu nie ma | null |
-| `poza_listami` | ani płatnika, ani jego marki nie ma na listach | null |
+| `poza_listami` | ani płatnika, ani jego marki nie ma na listach KNF ani w rejestrze MiCA | null |
 
-`lista` to jedna z `domy_maklerskie`, `banki_maklerskie`, `oddzialy_zagranicznych_firm`, `notyfikowane_zagraniczne`. Stany `spoza_rejestru` i `poza_listami` dają też sygnał modułu `M1` w `sygnaly`.
+`lista` to jedna z `domy_maklerskie`, `banki_maklerskie`, `oddzialy_zagranicznych_firm`, `notyfikowane_zagraniczne`. Stany `spoza_rejestru` i `poza_listami` dają też sygnał modułu `M1` w `sygnaly`; `poza_listami` tylko wtedy, gdy tekst lub nazwa płatnika dotyczy inwestowania.
 
 ## Historia zmian
 
