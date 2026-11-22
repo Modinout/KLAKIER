@@ -2,6 +2,8 @@
 
 Kontrola Linków, Afiliacji, Kampanii I Ekspertów Rynku.
 
+Całość działa na zwykłym laptopie z Dockerem: bez karty graficznej, bez płatnych usług i bez zewnętrznego modelu językowego. Klucza wymaga tylko opcjonalne zbieranie reklam z Mety (token jej oficjalnego API). Działające usługi zajmują około 2 GB pamięci. Po zbudowaniu panel, model i dane pokazowe działają bez internetu; potrzebują go tylko zbieranie nowych reklam i sprawdzanie linków.
+
 KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaje naruszeń: kto płaci za reklamę usług inwestycyjnych, choć nie ma go w rejestrach KNF ani MiCA (M1), czy reklama firmy z rejestru podaje informacje o ryzyku zgodnie z kryteriami UKNF (M2) i kto oferuje doradztwo inwestycyjne bez zezwolenia KNF (M3). Reklamy zbiera z publicznych bibliotek reklam, a w panelu pokazuje je jako sprawy z cytatem, dowodami i podstawą prawną.
 
 KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
