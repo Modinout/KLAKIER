@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 import alerty
 import baza
+import ostrzezenie_strony
 import platnicy_domeny
 from schematy import (
     Alert,
@@ -21,8 +22,10 @@ from schematy import (
     Obraz,
     OdczytanyTekst,
     PodobnaReklama,
+    PomiarStrony,
     Reklama,
     Status,
+    Strona,
     Werdykt,
     ZmianaReklamy,
 )
@@ -108,6 +111,11 @@ def pobierz_obraz(id: int):
     return Response(obraz['dane'], media_type=obraz['typ'])
 
 
+@app.put('/strony/{domena}', response_model=Strona)
+def zapisz_strone(domena: str, pomiar: PomiarStrony):
+    return baza.zapisz_strone(domena, pomiar.model_dump())
+
+
 @app.post('/ucz', response_model=Nauka)
 def ucz():
     przyklady = baza.przyklady_analityka()
@@ -187,13 +195,16 @@ def przelicz_wszystkie():
 
 
 def z_sygnalem_domeny(wiersze):
-    """Rows of the reklamy table with the findings that compare payers with landing domains.
+    """Rows of the reklamy table with the findings about their landing domain: payers compared with the domain, and
+    the risk warning on its page.
 
-    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad must show on the older ads
-    of its domain at once.
+    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad or a new measurement of
+    the page must show on the older ads of the domain at once.
     """
     sygnaly = platnicy_domeny.sygnaly_domen(baza.platnicy_domen())
-    return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + platnicy_domeny.sygnaly_reklamy(wiersz, sygnaly)}
+    strony = baza.strony()
+    return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + platnicy_domeny.sygnaly_reklamy(wiersz, sygnaly)
+             + ostrzezenie_strony.sygnaly(wiersz['domena'], strony.get(wiersz['domena']))}
             for wiersz in wiersze]
 
 

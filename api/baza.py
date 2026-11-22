@@ -144,3 +144,25 @@ def zapisz_obraz(id, typ, dane):
 def obraz(id):
     with polacz() as baza:
         return baza.execute('SELECT typ, dane FROM obrazy_reklam WHERE reklama_id = %s', [id]).fetchone()
+
+
+def zapisz_strone(domena, pomiar):
+    """Replaces an earlier measurement of the domain and returns the stored row."""
+    widoki = {nazwa: Jsonb(widok) if widok else None for nazwa, widok in pomiar.items()}
+    with polacz() as baza:
+        return baza.execute(
+            """
+            INSERT INTO strony (domena, zmierzono, komputer, telefon)
+            VALUES (%(domena)s, now(), %(komputer)s, %(telefon)s)
+            ON CONFLICT (domena) DO UPDATE
+            SET zmierzono = EXCLUDED.zmierzono, komputer = EXCLUDED.komputer, telefon = EXCLUDED.telefon
+            RETURNING *
+            """,
+            {'domena': domena, **widoki},
+        ).fetchone()
+
+
+def strony():
+    """Measured landing pages by domain."""
+    with polacz() as baza:
+        return {strona['domena']: strona for strona in baza.execute('SELECT * FROM strony').fetchall()}

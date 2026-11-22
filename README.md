@@ -28,9 +28,10 @@ Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są o
 docker compose --profile patrol up -d --no-deps kolejka robotnik harmonogram
 docker compose --profile patrol run --rm --no-deps patrol python patrol.py <domena>
 docker compose --profile patrol run --rm --no-deps patrol python tiktok.py [fraza ...]
+docker compose --profile patrol run --rm --no-deps patrol python strony_docelowe.py [domena ...]
 ```
 
-Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc zleca sprawdzenie każdej domeny z listy ostrzeżeń KNF. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę.
+Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc zleca sprawdzenie każdej domeny z listy ostrzeżeń KNF. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy.
 
 Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy po przecinku, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
 
@@ -39,10 +40,10 @@ Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy
 | Katalog | Co robi |
 | --- | --- |
 | `zbieracz` | wysyła reklamy z pliku JSONL do `api`; patrol sprawdza domeny z listy ostrzeżeń KNF (reklamy Google na Polskę, druga domena tej samej strony, lista CERT) |
-| `api` | przyjmuje reklamy, prosi `ai` o ocenę, zapisuje je w bazie i podaje panelowi |
+| `api` | przyjmuje reklamy, prosi `ai` o ocenę, zapisuje je w bazie i podaje panelowi; przy każdym odczycie dokłada ustalenia o domenie docelowej: płatnicy domeny i ostrzeżenie o ryzyku na stronie |
 | `ai` | ocenia tekst reklamy małym klasyfikatorem na CPU (opis i ograniczenia: `ai/KARTA_MODELU.md`); uczy się z werdyktów analityka; stan nauki trzyma w wolumenie `stan_ai`; dodaje ustalenia trzech modułów: M1 płatnik a rejestry KNF (`rejestr.py`), M2 informacja o ryzyku (`wymogi.py`), M3 doradztwo bez zezwolenia (`doradztwo.py`) |
 | `odczyt` | odczytuje tekst z obrazu reklamy (PP-OCR na CPU); modele są w obrazie Dockera |
-| `baza` | Postgres, jedna tabela `reklamy` (`baza/schemat.sql`) |
+| `baza` | Postgres, tabele `reklamy`, `obrazy_reklam` i `strony` (`baza/schemat.sql`) |
 | `front` | panel: kolejka spraw z filtrami (data, źródło, status, ryzyko, moduł) i wykresem trendu, karta sprawy z obrazem reklamy, ustaleniami i decyzją, alerty na żywo, kalibracja progu |
 
 Pola reklamy i adresy API opisuje `KONTRAKT.md`.
@@ -59,6 +60,7 @@ docker compose run --rm ai python test_temat.py
 docker compose run --rm ai python test_polecenia.py
 uv run --with pytest --with httpx --with websockets pytest testy
 docker compose run --rm odczyt python test_czytaj.py
+docker compose --profile patrol run --rm --no-deps patrol python -m pytest test_pomiar_ostrzezenia.py test_patrol.py
 ```
 
 Test z katalogu `testy` wymaga działających usług. Reklamy testowe, które dodaje do bazy, usuwa na końcu. Model zostawia taki, jaki był.

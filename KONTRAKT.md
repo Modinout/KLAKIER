@@ -31,6 +31,20 @@ Odpowiedź: `201` i pełna reklama, albo `409`, gdy taka reklama już jest w baz
 
 Odpowiedź: `200` i `{"tekst": "..."}`, `422`, gdy to nie jest obraz, albo `503`, gdy usługa `odczyt` nie działa. Odczytany tekst wysyła się potem jako `tekst` w `POST /reklamy`.
 
+## Pomiar strony docelowej
+
+`PUT /strony/{domena}` od `zbieracz/strony_docelowe.py`, który otwiera stronę główną domeny na komputerze (okno 1366 × 900) i na telefonie (okno 390 × 844, User-Agent przeglądarki bez zmian). Nowy pomiar domeny zastępuje poprzedni.
+
+| Pole | Typ | Opis |
+| --- | --- | --- |
+| `komputer`, `telefon` | obiekt lub null | pomiar w jednym widoku; null, gdy strona się w nim nie otworzyła |
+| `adres` | tekst | adres strony po przekierowaniach |
+| `przewazajacy_px` | liczba | rozmiar czcionki, którym napisano najwięcej widocznego tekstu |
+| `cfd` | prawda / fałsz | czy widoczny tekst strony mówi o kontraktach CFD |
+| `ostrzezenie` | obiekt lub null | najbardziej widoczna kopia standardowego ostrzeżenia o ryzyku CFD; null, gdy go nie ma. Pola: `tekst`, `px`, `pogrubienie`, `kontrast` (według WCAG, od 1 do 21; null, gdy za tekstem jest obraz albo gradient), `widoczne`, `bez_przewijania` |
+
+Odpowiedź: `200` i zapisany pomiar z `domena` i `zmierzono`.
+
 ## Reklama w bazie i w panelu
 
 Pola jak wyżej oraz:
@@ -45,7 +59,7 @@ Pola jak wyżej oraz:
 | `ryzyko` | liczba 0-1 | prawdopodobieństwo oszustwa |
 | `pewny` | prawda / fałsz | fałsz przy werdykcie `do_sprawdzenia`: ocenić powinien człowiek |
 | `rejestr` | obiekt lub null | czy płatnik reklamy jest na listach KNF (domy maklerskie, banki maklerskie, oddziały zagranicznych firm, zagraniczne firmy notyfikowane); null, gdy reklama nie podaje płatnika. Pola: `stan`, `podmiot`, `panstwo`, `lista` |
-| `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnały zbieracza zostają przy każdym ponownym ocenianiu; sygnał `wielu_platnikow_domeny` (moduł `M1`) oznacza, że reklamy tej samej `domena` opłaca co najmniej trzech różnych płatników, którzy nie są w rejestrze KNF i nie mają w nazwie marki z domeny. Api liczy go przy każdym odczycie ze wszystkich reklam domeny i nie zapisuje go w bazie, więc dostają go też starsze reklamy domeny, gdy przybędzie płatnik; sygnał `obca_domena` (moduł `M1`) oznacza, że płatnik ma nazwę marki z rejestru KNF, ale reklama prowadzi do domeny bez tej nazwy, czyli do strony innej marki. Api też liczy go przy każdym odczycie |
+| `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnały zbieracza zostają przy każdym ponownym ocenianiu; sygnał `wielu_platnikow_domeny` (moduł `M1`) oznacza, że reklamy tej samej `domena` opłaca co najmniej trzech różnych płatników, którzy nie są w rejestrze KNF i nie mają w nazwie marki z domeny. Api liczy go przy każdym odczycie ze wszystkich reklam domeny i nie zapisuje go w bazie, więc dostają go też starsze reklamy domeny, gdy przybędzie płatnik; sygnał `obca_domena` (moduł `M1`) oznacza, że płatnik ma nazwę marki z rejestru KNF, ale reklama prowadzi do domeny bez tej nazwy, czyli do strony innej marki. Api też liczy go przy każdym odczycie; sygnały modułu `M2` z pomiaru strony domeny (`PUT /strony/{domena}`), też liczone przy każdym odczycie: `ostrzezenie_nieczytelne`, gdy ostrzeżenie o ryzyku CFD jest mniejsze niż przeważający tekst, ma kontrast poniżej 4,5:1 (3:1 przy dużym tekście) albo nie widać go w jednym z widoków, i `brak_ostrzezenia_strony`, gdy strona mówi o CFD, a ostrzeżenia nie widać w żadnym widoku |
 | `powody` | lista | słowa, które najmocniej wpłynęły na ocenę; każde ma `slowo` i `waga`; pusta przy ryzyku poniżej 0,1 |
 | `rodzaj` | tekst lub null | rodzaj oszustwa według modelu, np. jeden z `GET /rodzaje` |
 | `drugi_sedzia` | obiekt lub null | ocena dużego modelu, gdy mały nie jest pewny: `werdykt`, `uzasadnienie`; null, gdy duży model nie jest ustawiony |
@@ -71,6 +85,7 @@ Pola jak wyżej oraz:
 | `POST /rodzaje` | dodaje rodzaj oszustwa, treść: `{"nazwa": "...", "opis": "..."}`, i ocenia od nowa wszystkie reklamy; zwraca `nazwa`, `przyklady`, `przeliczono`; `409`, gdy taki rodzaj już jest, `503`, gdy nie ma dużego modelu |
 | `GET /progi` | dane dla suwaka progu: ile oszustw łapie dany próg i ile daje fałszywych alarmów |
 | `POST /odczytaj` | odczytuje tekst z obrazu reklamy, opis wyżej w „Tekst z obrazu reklamy” |
+| `PUT /strony/{domena}` | zapisuje pomiar ostrzeżenia o ryzyku na stronie domeny, opis wyżej w „Pomiar strony docelowej” |
 | `/alerty` (WebSocket) | po każdej nowej reklamie (`POST /reklamy` z odpowiedzią `201`) z poziomem `wysokie` wysyła każdemu połączonemu klientowi jedną wiadomość JSON: `{"id", "reklamodawca", "ryzyko", "werdykt", "zrodlo", "dodano", "poziom", "powod"}`; klient nic nie wysyła |
 
 Panel woła te same adresy z przedrostkiem `/api`.

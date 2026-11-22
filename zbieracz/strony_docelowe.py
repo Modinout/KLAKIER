@@ -1,0 +1,89 @@
+# Measures the risk warning on the home pages that ads of firms from the KNF register lead to, on a computer and on
+# a phone, and sends each measurement to the api, which turns it into findings on every read.
+# Usage: python strony_docelowe.py [domena ...]; with no domains it takes the landing domains of those ads.
+import os
+import re
+import sys
+from pathlib import Path
+
+import httpx
+
+import rotacja
+
+POMIAR = Path(__file__).with_name('pomiar_ostrzezenia.js').read_text(encoding='utf-8')
+WIDOKI = {
+    'komputer': {'viewport': {'width': 1366, 'height': 900}},
+    # A narrow window with the browser's own User-Agent, so the site shows the layout it gives phones by width.
+    'telefon': {'viewport': {'width': 390, 'height': 844}, 'is_mobile': True, 'has_touch': True},
+}
+STANY_Z_REJESTRU = {'w_rejestrze', 'spoza_rejestru'}
+WERYFIKACJA = re.compile(r'just a moment|attention required|access denied|verify you are human|captcha', re.I)
+
+
+def domeny_z_rejestru():
+    reklamy = httpx.get(f"{os.environ['API_URL']}/reklamy", timeout=120).raise_for_status().json()
+    return sorted({reklama['domena'] for reklama in reklamy
+                   if reklama['domena'] and reklama['rejestr'] and reklama['rejestr']['stan'] in STANY_Z_REJESTRU})
+
+
+def zmierz(przegladarka, domena, widok):
+    """Measurement of the home page in one view, or None when it does not open or shows a bot check."""
+    from playwright.sync_api import Error
+
+    kontekst = przegladarka.new_context(locale='pl-PL', **WIDOKI[widok], **rotacja.ustawienia())
+    karta = kontekst.new_page()
+    try:
+        odpowiedz = karta.goto(f'https://{domena}/', wait_until='domcontentloaded', timeout=30000)
+        karta.wait_for_timeout(5000)
+        if odpowiedz is None or odpowiedz.status >= 400 or WERYFIKACJA.search(karta.title()):
+            pomiar = None
+        else:
+            pomiar = {'adres': karta.url, **karta.evaluate(POMIAR)}
+    except Error as blad:
+        print(f'{domena} ({widok}): {" ".join(blad.message.split())[:150]}')
+        pomiar = None
+    kontekst.close()
+    return pomiar
+
+
+def opis(pomiar):
+    if pomiar is None:
+        return 'nie otworzyła się'
+    ostrzezenie = pomiar['ostrzezenie']
+    if ostrzezenie is None:
+        return 'brak ostrzeżenia' + (', jest mowa o CFD' if pomiar['cfd'] else '')
+    return (f'ostrzeżenie {ostrzezenie["px"]} px przy {pomiar["przewazajacy_px"]} px, kontrast {ostrzezenie["kontrast"]}, '
+            f'widoczne {ostrzezenie["widoczne"]}, bez przewijania {ostrzezenie["bez_przewijania"]}')
+
+
+def obsluz(przegladarka, domena):
+    """Measures one domain and sends the measurement; returns whether it was measured and the line to print."""
+    komputer = zmierz(przegladarka, domena, 'komputer')
+    if komputer is None:
+        # A site that refused the first visit is not asked again.
+        return False, f'{domena}: strona nie otworzyła się albo odmówiła, pomijam'
+    telefon = zmierz(przegladarka, domena, 'telefon')
+    httpx.put(f"{os.environ['API_URL']}/strony/{domena}", json={'komputer': komputer, 'telefon': telefon},
+              timeout=30).raise_for_status()
+    return True, f'{domena}: komputer: {opis(komputer)}; telefon: {opis(telefon)}'
+
+
+def zmierz_wszystkie(domeny):
+    from playwright.sync_api import sync_playwright
+
+    zmierzone = 0
+    with sync_playwright() as playwright:
+        przegladarka = playwright.chromium.launch(headless=True)
+        for domena in domeny:
+            try:
+                zmierzona, linia = obsluz(przegladarka, domena)
+            except httpx.HTTPError as blad:
+                zmierzona, linia = False, f'{domena}: api nie przyjęło pomiaru: {blad}'
+            zmierzone += zmierzona
+            print(linia, flush=True)
+        przegladarka.close()
+    print(f'Podsumowanie: domen {len(domeny)}, zmierzone {zmierzone}, pominięte {len(domeny) - zmierzone}')
+
+
+if __name__ == '__main__':
+    zmierz_wszystkie(sys.argv[1:] or domeny_z_rejestru())

@@ -34,3 +34,11 @@ CREATE TABLE obrazy_reklam (
     typ           TEXT NOT NULL,
     dane          BYTEA NOT NULL
 );
+
+-- The risk warning on landing pages as the collector measured it; the api turns it into findings on each read.
+CREATE TABLE strony (
+    domena        TEXT PRIMARY KEY,
+    zmierzono     TIMESTAMPTZ NOT NULL,
+    komputer      JSONB,
+    telefon       JSONB
+);

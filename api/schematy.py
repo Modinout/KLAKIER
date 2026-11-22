@@ -118,6 +118,34 @@ class Nauka(BaseModel):
     przeliczono: int
 
 
+class OstrzezenieStrony(BaseModel):
+    tekst: str
+    px: float
+    pogrubienie: float
+    kontrast: float | None
+    widoczne: bool
+    bez_przewijania: bool
+
+
+class WidokStrony(BaseModel):
+    adres: str
+    przewazajacy_px: float
+    cfd: bool
+    ostrzezenie: OstrzezenieStrony | None
+
+
+class PomiarStrony(BaseModel):
+    """A view is None when the page did not open in it."""
+
+    komputer: WidokStrony | None
+    telefon: WidokStrony | None
+
+
+class Strona(PomiarStrony):
+    domena: str
+    zmierzono: datetime
+
+
 class Obraz(BaseModel):
     obraz: str
 
