@@ -1,5 +1,6 @@
 import csv
 import pathlib
+import threading
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
@@ -22,6 +23,8 @@ from temat import platnik_do_sprawdzenia
 PROGI = pathlib.Path(__file__).with_name('progi.csv')
 # The classifier was trained and measured on ads. A video description is another kind of text, so it is not scored.
 BEZ_OCENY = {'werdykt': 'ok', 'prawdopodobienstwa': {'oszustwo': 0.0}, 'pewny': True, 'powody': [], 'rodzaj': None}
+# Two retrainings at once would overwrite each other's examples file.
+_uczenie = threading.Lock()
 
 app = FastAPI(title='KLAKIER AI')
 
@@ -105,9 +108,10 @@ def ucz_na_przykladach(zadanie: Przyklady):
         tekst = oczysc(przyklad.tekst)
         if tekst.strip() and przyklad.werdykt != 'do_sprawdzenia':
             analityka.append({'tekst': tekst, 'werdykt': przyklad.werdykt, 'rodzaj': None, 'pochodzenie': 'analityk'})
-    dopisane.zapisz([w for w in dopisane.czytaj() if w['pochodzenie'] != 'analityk'] + analityka)
-    przeucz()
-    return {'przyklady': len(analityka), 'razem': len(ucz.wiersze())}
+    with _uczenie:
+        dopisane.zapisz([w for w in dopisane.czytaj() if w['pochodzenie'] != 'analityk'] + analityka)
+        przeucz()
+        return {'przyklady': len(analityka), 'razem': len(ucz.wiersze())}
 
 
 @app.get('/rodzaje')

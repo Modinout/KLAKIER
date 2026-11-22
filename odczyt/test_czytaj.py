@@ -1,6 +1,8 @@
 # Smoke test of the reader. Run: docker compose run --rm odczyt python test_czytaj.py
+import io
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
+from PIL import Image
 from czytaj import czytaj
 
 liczba = zle = 0
@@ -24,6 +26,14 @@ try:
     sprawdz(False, 'bytes that are not an image raise ValueError')
 except ValueError:
     sprawdz(True, 'bytes that are not an image raise ValueError')
+
+olbrzym = io.BytesIO()
+Image.new('L', (6000, 6000)).save(olbrzym, 'PNG')
+try:
+    czytaj(olbrzym.getvalue())
+    sprawdz(False, 'a 36 MP image raises ValueError before decoding')
+except ValueError:
+    sprawdz(True, 'a 36 MP image raises ValueError before decoding,', len(olbrzym.getvalue()), 'bytes')
 
 print('SMOKE', liczba - zle, 'of', liczba, 'passed')
 sys.exit(1 if zle else 0)

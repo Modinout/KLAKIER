@@ -1,11 +1,16 @@
 # Reads the text from an ad image with PP-OCR on the CPU. The models load once, when this module is imported.
 #   from czytaj import czytaj
 #   czytaj(open('probka.png', 'rb').read())  ->  'Zainwestuj 900 zł i zarabiaj\n20 000 zł miesięcznie\n...'
+import io
 import threading
 
 import cv2
 import numpy as np
 from paddleocr import PaddleOCR
+from PIL import Image
+
+# A small file can unpack into a huge bitmap, so the size is read from the header before decoding.
+NAJWIECEJ_PIKSELI = 25_000_000
 
 # oneDNN is off: with it this Paddle version fails on the CPU.
 # Four threads: with more, a read took longer and its time varied more on a busy machine.
@@ -17,6 +22,13 @@ _kolejka = threading.Lock()
 
 
 def czytaj(obraz):
+    try:
+        with Image.open(io.BytesIO(obraz)) as naglowek:
+            szerokosc, wysokosc = naglowek.size
+    except Exception as blad:
+        raise ValueError('To nie jest obraz.') from blad
+    if szerokosc * wysokosc > NAJWIECEJ_PIKSELI:
+        raise ValueError('Obraz jest za duży.')
     piksele = cv2.imdecode(np.frombuffer(obraz, np.uint8), cv2.IMREAD_COLOR)
     if piksele is None:
         raise ValueError('To nie jest obraz.')

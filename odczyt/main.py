@@ -23,3 +23,5 @@ def odczytaj(obraz: Obraz):
         return {'tekst': czytaj(base64.b64decode(obraz.obraz, validate=True))}
     except ValueError as blad:
         raise HTTPException(422, 'Nie udało się odczytać obrazu.') from blad
+    except Exception as blad:
+        raise HTTPException(500, 'Odczyt obrazu się nie powiódł.') from blad
