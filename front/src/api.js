@@ -28,6 +28,10 @@ export function dodajReklame(reklama) {
   return wyslij('/api/reklamy', json('POST', reklama))
 }
 
+export function adresObrazu(id) {
+  return '/api/reklamy/' + id + '/obraz'
+}
+
 export function zapiszObraz(id, obraz) {
   return wyslij('/api/reklamy/' + id + '/obraz', json('PUT', { obraz }))
 }

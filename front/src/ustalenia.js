@@ -20,6 +20,10 @@ export function ocenaModelu(reklama) {
   return liniaOszustwa(reklama)
 }
 
+export function zdaniePowodu(reklama) {
+  return reklama.powod && reklama.powod.replace(/^Tekst reklamy wygląda na oszustwo/, liniaOszustwa(reklama))
+}
+
 export function sila(t) {
   const i = KOLEJNOSC_TAGOW.indexOf(t)
   return i === -1 ? KOLEJNOSC_TAGOW.length : i

@@ -1,3 +1,5 @@
+import { adresObrazu } from '../api.js'
+
 const NAJMNIEJ = 60
 const PROBKI = 8
 const ROZNICA = 8
@@ -18,7 +20,7 @@ export default function Obraz({ reklama, ukryj }) {
   return (
     <div className="my-4 flex justify-center rounded-lg bg-muted p-3">
       <img
-        src={'/api/reklamy/' + reklama.id + '/obraz'}
+        src={adresObrazu(reklama.id)}
         alt="Obraz reklamy"
         className="max-h-80 max-w-full object-contain"
         onLoad={(e) => pusty(e.currentTarget) && ukryj()}

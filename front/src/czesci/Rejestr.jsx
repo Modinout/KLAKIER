@@ -1,27 +1,12 @@
-import { domena, domenaDocelowa, NAZWY_LIST_KNF, pierwszaDomena } from '../nazwy.js'
+import { domena, domenaDocelowa, pierwszaDomena } from '../nazwy.js'
+import { kto, STANY_REJESTRU, stanRejestru, wpisRejestru } from '../rejestr.js'
 import { tytul } from '../sprawy.js'
 
-const KTO = {
-  youtube: 'Kanał',
-  strony_doradcow: 'Właściciel strony',
-  patrol_ostrzezen: 'Właściciel strony',
-}
-
-// For these sources the name is the author, not a payer, so a match on the KNF lists is information only.
-const AUTORZY = ['youtube', 'strony_doradcow']
-
-const STANY = {
-  w_rejestrze: { tekst: 'na liście KNF', kolor: 'bg-muted text-muted-foreground' },
-  spoza_rejestru: { tekst: 'inna spółka niż w rejestrze', kolor: 'bg-amber-100 text-amber-800' },
-  poza_listami: { tekst: 'brak na listach KNF', kolor: 'bg-destructive/10 text-destructive' },
-  bank: { tekst: 'bank, poza listami firm inwestycyjnych', kolor: 'bg-muted text-muted-foreground' },
-}
-
-function stan(reklama) {
-  const rejestr = reklama.rejestr
-  if (!AUTORZY.includes(reklama.zrodlo)) return STANY[rejestr?.stan]
-  if (rejestr?.stan === 'w_rejestrze' || (rejestr?.stan === 'spoza_rejestru' && rejestr.podmiot)) return STANY.w_rejestrze
-  return null
+const KOLORY = {
+  w_rejestrze: 'bg-muted text-muted-foreground',
+  spoza_rejestru: 'bg-amber-100 text-amber-800',
+  poza_listami: 'bg-destructive/10 text-destructive',
+  bank: 'bg-muted text-muted-foreground',
 }
 
 function Wiersz({ nazwa, children }) {
@@ -35,7 +20,7 @@ function Wiersz({ nazwa, children }) {
 
 export default function Rejestr({ reklama }) {
   const rejestr = reklama.rejestr
-  const chip = stan(reklama)
+  const chip = stanRejestru(reklama)
   const cel = domenaDocelowa(reklama)
   // Titled by the first domain in the text: no link, it was not checked as a target.
   const zTekstu = !cel && !reklama.reklamodawca && tytul(reklama) === pierwszaDomena(reklama.tekst) ? tytul(reklama) : null
@@ -44,9 +29,9 @@ export default function Rejestr({ reklama }) {
   return (
     <div className="mb-4 divide-y rounded-lg border">
       {reklama.reklamodawca && (
-        <Wiersz nazwa={KTO[reklama.zrodlo] ?? 'Zapłacił'}>
+        <Wiersz nazwa={kto(reklama)}>
           <span className="font-medium">{reklama.reklamodawca}</span>
-          {chip && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + chip.kolor}>{chip.tekst}</span>}
+          {chip && <span className={'rounded-md px-2 py-0.5 text-xs font-medium ' + KOLORY[chip]}>{STANY_REJESTRU[chip]}</span>}
         </Wiersz>
       )}
       {cel && (
@@ -71,7 +56,7 @@ export default function Rejestr({ reklama }) {
           <span className="font-medium">
             {rejestr.podmiot}
             <small className="block text-[13px] font-normal text-muted-foreground">
-              {[rejestr.panstwo, NAZWY_LIST_KNF[rejestr.lista] ?? rejestr.lista].filter(Boolean).join(' · ')}
+              {wpisRejestru(rejestr).join(' · ')}
             </small>
           </span>
         </Wiersz>

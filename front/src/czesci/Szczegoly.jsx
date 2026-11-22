@@ -4,9 +4,10 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { zmienStatusy } from '../api.js'
-import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, liniaOszustwa, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
+import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, NAZWY_STATUSOW, nazwaZrodla, zBiblioteki } from '../nazwy.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
+import { zdaniePowodu } from '../ustalenia.js'
 import ListaUstalen from './ListaUstalen.jsx'
 import Obraz from './Obraz.jsx'
 import Ocena from './Ocena.jsx'
@@ -14,6 +15,7 @@ import Podobne from './Podobne.jsx'
 import Rejestr from './Rejestr.jsx'
 import Sekcja from './Sekcja.jsx'
 import Tekst from './Tekst.jsx'
+import Zgloszenie from './Zgloszenie.jsx'
 
 const KOMUNIKATY = {
   nowa: 'Przywrócono do nowych',
@@ -27,7 +29,7 @@ function Wniosek({ reklama }) {
       <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
         {POZIOMY[reklama.poziom]} ryzyko
       </span>
-      {reklama.powod && ': ' + reklama.powod.replace(/^Tekst reklamy wygląda na oszustwo/, liniaOszustwa(reklama))}
+      {reklama.powod && ': ' + zdaniePowodu(reklama)}
     </p>
   )
 }
@@ -125,8 +127,13 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
         </div>
-        <div className="flex shrink-0 items-center gap-2 border-t px-6 py-4">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 border-t px-6 py-4">
           {reklama.status === 'nowa' && <Button onClick={() => ustawStatus('w_toku')}>Biorę do wyjaśnienia</Button>}
+          {reklama.status === 'w_toku' && (
+            <Zgloszenie reklamy={[reklama, ...wSprawie.filter((r) => r.id !== reklama.id)]}>
+              <Button>Przygotuj zgłoszenie</Button>
+            </Zgloszenie>
+          )}
           {reklama.status !== 'zamknieta' && (
             <Button variant="outline" onClick={() => ustawStatus('zamknieta')}>
               Zamknij sprawę
