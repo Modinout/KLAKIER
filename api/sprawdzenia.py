@@ -15,7 +15,8 @@ KOLEJKA = redis.Redis.from_url(os.environ['KOLEJKA_URL'])
 router = APIRouter()
 
 
-@router.post('/sprawdz', response_model=NoweSprawdzenie, status_code=202)
+@router.post('/sprawdz', response_model=NoweSprawdzenie, status_code=202, summary='Zleć sprawdzenie linku',
+             tags=['Sprawdzanie linków'])
 def zlec(zlecenie: Zlecenie):
     id = baza.dodaj_sprawdzenie(zlecenie.url)
     try:
@@ -26,12 +27,14 @@ def zlec(zlecenie: Zlecenie):
     return {'id': id}
 
 
-@router.get('/sprawdz/{id}', response_model=Sprawdzenie)
+@router.get('/sprawdz/{id}', response_model=Sprawdzenie, summary='Stan sprawdzenia linku',
+            tags=['Sprawdzanie linków'])
 def stan(id: int):
     return znalezione(baza.sprawdzenie(id))
 
 
-@router.put('/sprawdz/{id}', response_model=Sprawdzenie)
+@router.put('/sprawdz/{id}', response_model=Sprawdzenie, summary='Zapisz stan sprawdzenia',
+            tags=['Dla zbieraczy'])
 def zapisz_stan(id: int, sprawdzenie: Sprawdzenie):
     """Robotnik zgłasza tu, jak idzie sprawdzenie."""
     return znalezione(baza.zapisz_sprawdzenie(id, sprawdzenie.model_dump()))

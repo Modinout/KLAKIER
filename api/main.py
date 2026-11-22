@@ -43,7 +43,8 @@ ODCZYT_URL = os.environ['ODCZYT_URL']
 # Usługa odczyt czyta jeden obraz naraz i potrafi zająć nawet minuty na obraz.
 ODCZYT_PO_KOLEI = threading.Lock()
 
-app = FastAPI(title='KLAKIER API')
+app = FastAPI(title='KLAKIER API',
+              description='API systemu KLAKIER: zbiera reklamy inwestycyjne, ocenia ryzyko oszustwa i prowadzi sprawy analityka.')
 app.add_api_websocket_route('/alerty', alerty.sluchaj)
 app.include_router(historia.router)
 app.include_router(prog.router)
@@ -58,12 +59,12 @@ async def usluga_nie_odpowiada(zapytanie, blad):
     return JSONResponse({'detail': 'Usługa, która ocenia albo odczytuje reklamy, nie odpowiedziała.'}, status_code=503)
 
 
-@app.get('/zdrowie')
+@app.get('/zdrowie', summary='Stan usługi', tags=['Usługa'])
 def zdrowie():
     return {'ok': True}
 
 
-@app.post('/reklamy', response_model=Reklama, status_code=201)
+@app.post('/reklamy', response_model=Reklama, status_code=201, summary='Dodaj reklamę', tags=['Reklamy'])
 def dodaj_reklame(reklama: NowaReklama):
     # Sprawdzane przed oceną, żeby ponowne uruchomienie zbieracza nie kosztowało wywołań modelu.
     if baza.jest(reklama.zrodlo, reklama.id_zrodla):
@@ -80,18 +81,18 @@ def dodaj_reklame(reklama: NowaReklama):
     return wiersz
 
 
-@app.get('/reklamy', response_model=list[Reklama])
+@app.get('/reklamy', response_model=list[Reklama], summary='Lista reklam', tags=['Reklamy'])
 def lista_reklam(werdykt: Werdykt | None = None, status: Status | None = None, min_ryzyko: float = 0,
                  od: datetime | None = None):
     return z_sygnalem_domeny(baza.lista(werdykt, status, min_ryzyko, od))
 
 
-@app.get('/reklamy/{id}', response_model=Reklama)
+@app.get('/reklamy/{id}', response_model=Reklama, summary='Jedna reklama', tags=['Reklamy'])
 def jedna_reklama(id: int):
     return z_sygnalem_domeny([znaleziona(baza.jedna(id))])[0]
 
 
-@app.patch('/reklamy/{id}', response_model=Reklama)
+@app.patch('/reklamy/{id}', response_model=Reklama, summary='Zmień reklamę', tags=['Reklamy'])
 def zmien_reklame(id: int, zmiana: ZmianaReklamy, kto: str = Header('analityk', alias='X-Analityk')):
     przed = znaleziona(baza.jedna(id))
     zmiany = zmiana.model_dump(exclude_unset=True)
@@ -100,7 +101,7 @@ def zmien_reklame(id: int, zmiana: ZmianaReklamy, kto: str = Header('analityk', 
     return z_sygnalem_domeny([zmieniona])[0]
 
 
-@app.get('/reklamy/{id}/podobne', response_model=list[PodobnaReklama])
+@app.get('/reklamy/{id}/podobne', response_model=list[PodobnaReklama], summary='Podobne reklamy', tags=['Reklamy'])
 def podobne_reklamy(id: int):
     znaleziona(baza.jedna(id))
     try:
@@ -109,7 +110,7 @@ def podobne_reklamy(id: int):
         raise HTTPException(503, 'Szukanie podobnych reklam trwało za długo.') from blad
 
 
-@app.put('/reklamy/{id}/obraz', response_model=Reklama)
+@app.put('/reklamy/{id}/obraz', response_model=Reklama, summary='Dodaj obraz', tags=['Dla zbieraczy'])
 def dodaj_obraz(id: int, obraz: Obraz):
     reklama = znaleziona(baza.jedna(id))
     typ, dane = odkoduj_obraz(obraz.obraz)
@@ -121,7 +122,7 @@ def dodaj_obraz(id: int, obraz: Obraz):
     return z_sygnalem_domeny([baza.zapisz_obraz(id, typ, dane)])[0]
 
 
-@app.get('/reklamy/{id}/obraz')
+@app.get('/reklamy/{id}/obraz', summary='Pobierz obraz', tags=['Reklamy'])
 def pobierz_obraz(id: int):
     obraz = baza.obraz(id)
     if obraz is None:
@@ -129,12 +130,12 @@ def pobierz_obraz(id: int):
     return Response(obraz['dane'], media_type=obraz['typ'])
 
 
-@app.put('/strony/{domena}', response_model=Strona)
+@app.put('/strony/{domena}', response_model=Strona, summary='Zapisz stronę', tags=['Dla zbieraczy'])
 def zapisz_strone(domena: str, pomiar: PomiarStrony):
     return baza.zapisz_strone(domena, pomiar.model_dump())
 
 
-@app.post('/ucz', response_model=Nauka)
+@app.post('/ucz', response_model=Nauka, summary='Doucz model', tags=['Model i próg'])
 def ucz(kto: str = Header('model', alias='X-Analityk')):
     przyklady = baza.przyklady_analityka()
     nauka = httpx.post(f'{AI_URL}/ucz', json={'przyklady': przyklady}, timeout=120).raise_for_status().json()
@@ -144,12 +145,12 @@ def ucz(kto: str = Header('model', alias='X-Analityk')):
     return {'przyklady': nauka['przyklady'], 'przeliczono': przeliczono}
 
 
-@app.get('/rodzaje', response_model=list[str])
+@app.get('/rodzaje', response_model=list[str], summary='Lista rodzajów', tags=['Model i próg'])
 def rodzaje():
     return httpx.get(f'{AI_URL}/rodzaje', timeout=10).raise_for_status().json()
 
 
-@app.post('/rodzaje', response_model=DodanyRodzaj)
+@app.post('/rodzaje', response_model=DodanyRodzaj, summary='Dodaj rodzaj', tags=['Model i próg'])
 def dodaj_rodzaj(rodzaj: NowyRodzaj):
     odpowiedz = httpx.post(f'{AI_URL}/rodzaje', json=rodzaj.model_dump(), timeout=300)
     if odpowiedz.status_code in (409, 503):
@@ -158,12 +159,12 @@ def dodaj_rodzaj(rodzaj: NowyRodzaj):
     return {**dodany, 'przeliczono': przelicz_wszystkie()}
 
 
-@app.get('/progi')
+@app.get('/progi', summary='Progi modelu', tags=['Model i próg'])
 def progi():
     return httpx.get(f'{AI_URL}/progi', timeout=10).raise_for_status().json()
 
 
-@app.post('/odczytaj', response_model=OdczytanyTekst)
+@app.post('/odczytaj', response_model=OdczytanyTekst, summary='Odczytaj tekst z obrazu', tags=['Model i próg'])
 def odczytaj(obraz: Obraz):
     return {'tekst': odczytaj_tekst(obraz.obraz)}
 

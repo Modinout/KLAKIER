@@ -115,7 +115,7 @@ def test_rekord_drugiej_domeny():
     assert rekord['tekst'] == 'Broker Handel'
     sygnal, = rekord['sygnaly']
     assert sygnal['kod'] == 'druga_domena_ostrzezonej_strony'
-    assert 'zgodne tytuł, ikona strony.' in sygnal['opis']
+    assert 'Zgadzają się: tytuł i ikona strony.' in sygnal['opis']
 
 
 def test_sygnal_cert(monkeypatch):

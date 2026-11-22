@@ -6,12 +6,12 @@ from schematy import Prog
 router = APIRouter()
 
 
-@router.get('/prog', response_model=Prog)
+@router.get('/prog', response_model=Prog, summary='Czytaj próg', tags=['Model i próg'])
 def czytaj_prog():
     return {'prog': zapisany()}
 
 
-@router.put('/prog', response_model=Prog)
+@router.put('/prog', response_model=Prog, summary='Zmień próg', tags=['Model i próg'])
 def zmien_prog(prog: Prog):
     with baza.polacz() as polaczenie:
         polaczenie.execute('UPDATE ustawienia SET prog = %s', [prog.prog])

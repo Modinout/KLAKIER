@@ -44,6 +44,10 @@ def rekord_reklamy(domena, wpis, reklama, zebrano):
     }
 
 
+def wymien(elementy):
+    return ' i '.join([', '.join(elementy[:-1]), elementy[-1]] if len(elementy) > 1 else elementy)
+
+
 def rekord_drugiej_domeny(domena, wpis, druga, zebrano):
     return {
         'zrodlo': 'patrol_ostrzezen',
@@ -57,8 +61,8 @@ def rekord_drugiej_domeny(domena, wpis, druga, zebrano):
         'sygnaly': [{
             'modul': 'M3',
             'kod': 'druga_domena_ostrzezonej_strony',
-            'opis': f'Ta sama strona co {domena} z listy ostrzeżeń publicznych KNF: '
-                    f'zgodne {", ".join(druga["zgodne"])}. Tej domeny nie ma na liście.',
+            'opis': f'Ta sama strona co {domena} z listy ostrzeżeń publicznych KNF. '
+                    f'Zgadzają się: {wymien(druga["zgodne"])}. Tej domeny nie ma na liście.',
             'podstawa': podstawa_knf(wpis),
         }],
     }

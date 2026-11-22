@@ -8,7 +8,8 @@ from tytul import tytul
 router = APIRouter()
 
 
-@router.get('/reklamy/{id}/powiazane', response_model=list[PowiazanaReklama])
+@router.get('/reklamy/{id}/powiazane', response_model=list[PowiazanaReklama], summary='Powiązane reklamy',
+            tags=['Reklamy'])
 def powiazane_reklamy(id: int):
     reklama = baza.jedna(id)
     if reklama is None:

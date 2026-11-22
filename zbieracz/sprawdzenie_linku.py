@@ -143,9 +143,11 @@ def wpis_knf(host, ostrzezenia):
 def sygnaly(wizyta, ostrzezenia, z_cert):
     """Hosty łańcucha przekierowań z listy ostrzeżeń KNF oraz lista CERT Polska dla hosta końcowego."""
     wynik = []
+    widziane = set()
     for host in dict.fromkeys(urlsplit(adres).hostname for adres in wizyta['lancuch'] + [wizyta['adres']]):
         wpis = wpis_knf(host, ostrzezenia)
-        if wpis:
+        if wpis and wpis not in widziane:
+            widziane.add(wpis)
             wynik.append({'modul': 'M3', 'kod': 'reklama_domeny_z_ostrzezenia_knf',
                           'opis': f'Link prowadzi przez domenę {host}, która jest na liście ostrzeżeń publicznych KNF.',
                           'podstawa': patrol.podstawa_knf(wpis)})

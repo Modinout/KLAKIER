@@ -16,7 +16,8 @@ PNG = b'\x89PNG\r\n\x1a\n'
 router = APIRouter()
 
 
-@router.post('/reklamy/{id}/dowody', response_model=Dowod, status_code=201)
+@router.post('/reklamy/{id}/dowody', response_model=Dowod, status_code=201, summary='Dodaj dowód',
+             tags=['Dla zbieraczy'])
 def dodaj_dowod(id: int, dowod: NowyDowod):
     """Robotnik dodaje tu wizytę; hasze liczone są z bajtów w takiej postaci, w jakiej zostały zapisane."""
     znaleziona(baza.jedna(id))
@@ -32,18 +33,18 @@ def dodaj_dowod(id: int, dowod: NowyDowod):
                                  'sha256_html': hashlib.sha256(html).hexdigest()})
 
 
-@router.get('/reklamy/{id}/dowody', response_model=list[Dowod])
+@router.get('/reklamy/{id}/dowody', response_model=list[Dowod], summary='Dowody reklamy', tags=['Sprawdzanie linków'])
 def dowody(id: int):
     znaleziona(baza.jedna(id))
     return baza.dowody(id)
 
 
-@router.get('/dowody/{id}/obraz')
+@router.get('/dowody/{id}/obraz', summary='Obraz dowodu', tags=['Sprawdzanie linków'])
 def obraz_dowodu(id: int):
     return Response(znaleziony(baza.dowod(id))['obraz'], media_type='image/png')
 
 
-@router.get('/dowody/{id}/html')
+@router.get('/dowody/{id}/html', summary='Kod HTML dowodu', tags=['Sprawdzanie linków'])
 def html_dowodu(id: int):
     # Zapisana strona może zawierać skrypty, więc przeglądarka dostaje ją zawsze tylko jako plik tekstowy do zapisania.
     return Response(znaleziony(baza.dowod(id))['html'], media_type='text/plain; charset=utf-8',
@@ -51,7 +52,7 @@ def html_dowodu(id: int):
                              'X-Content-Type-Options': 'nosniff'})
 
 
-@router.get('/reklamy/{id}/paczka')
+@router.get('/reklamy/{id}/paczka', summary='Paczka dowodów (ZIP)', tags=['Sprawdzanie linków'])
 def paczka(id: int):
     """ZIP z plikami każdej wizyty i manifestem ich SHA-256 policzonych w chwili, gdy wizyta wpłynęła."""
     reklama = znaleziona(baza.jedna(id))

@@ -8,7 +8,7 @@ from schematy import WpisHistorii
 router = APIRouter()
 
 
-@router.get('/reklamy/{id}/historia', response_model=list[WpisHistorii])
+@router.get('/reklamy/{id}/historia', response_model=list[WpisHistorii], summary='Historia reklamy', tags=['Reklamy'])
 def historia_reklamy(id: int):
     if baza.jedna(id) is None:
         raise HTTPException(404, 'Nie ma takiej reklamy')

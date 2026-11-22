@@ -6,7 +6,7 @@ from schematy import Domena, RejestracjaDomeny
 router = APIRouter()
 
 
-@router.put('/domeny/{domena}', response_model=Domena)
+@router.put('/domeny/{domena}', response_model=Domena, summary='Zapisz rejestrację domeny', tags=['Dla zbieraczy'])
 def zapisz_rejestracje(domena: str, rejestracja: RejestracjaDomeny):
     """Zastępuje wcześniejszą datę domeny."""
     with baza.polacz() as polaczenie:

@@ -80,6 +80,13 @@ def test_domena_z_ostrzezenia_knf_w_lancuchu_i_lista_cert(monkeypatch):
     assert 'www.dobra.pl' in sygnaly[1]['opis']
 
 
+def test_jeden_wpis_ostrzezenia_dla_dwoch_hostow_daje_jeden_sygnal():
+    lancuch = ['https://quomarkets.com/', 'https://www.quomarkets.com/x']
+    sygnaly = sprawdzenie_linku.sygnaly(wizyta(lancuch=lancuch), {'quomarkets.com': 'Quo Markets'}, False)
+    assert [sygnal['kod'] for sygnal in sygnaly] == ['reklama_domeny_z_ostrzezenia_knf']
+    assert 'domenę quomarkets.com,' in sygnaly[0]['opis']
+
+
 def test_bez_listy_cert_i_bez_ostrzezenia_nie_ma_sygnalow():
     assert sprawdzenie_linku.sygnaly(wizyta(), OSTRZEZENIA, False) == []
 

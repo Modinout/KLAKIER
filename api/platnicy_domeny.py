@@ -43,7 +43,7 @@ def sygnal(domena, platnicy):
         'modul': 'M1',
         'kod': 'wielu_platnikow_domeny',
         'opis': f'Reklamy domeny {domena} opłaca {len(platnicy)} różnych płatników niezwiązanych z marką: {nazwy}.',
-        'podstawa': 'reklamy tej domeny zebrane w bazie',
+        'podstawa': 'Reklamy tej domeny zebrane w bazie',
     }
 
 
@@ -73,7 +73,7 @@ def obca_domena(reklama):
         'kod': 'obca_domena',
         'opis': f'Płatnik {reklama["reklamodawca"]} ma nazwę marki z rejestru KNF ({rejestr["podmiot"]}), '
                 f'ale reklama prowadzi do domeny {reklama["domena"]}, która tej nazwy nie zawiera.',
-        'podstawa': 'nazwa płatnika i domena, do której prowadzi reklama',
+        'podstawa': 'Porównanie nazwy płatnika z domeną, do której prowadzi reklama',
     }
 
 
