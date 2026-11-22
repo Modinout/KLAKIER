@@ -31,6 +31,16 @@ Odpowiedź: `201` i pełna reklama, albo `409`, gdy taka reklama już jest w baz
 
 Odpowiedź: `200` i `{"tekst": "..."}`, `422`, gdy to nie jest obraz, albo `503`, gdy usługa `odczyt` nie działa. Odczytany tekst wysyła się potem jako `tekst` w `POST /reklamy`.
 
+## Nagranie reklamy wideo
+
+`PUT /reklamy/{id}/nagranie` od analityka, który ma nagranie reklamy wideo.
+
+| Pole | Typ | Opis |
+| --- | --- | --- |
+| `nagranie` | tekst | plik mp4, mp3, wav, m4a albo webm, zakodowany w base64, do 50 MB pliku |
+
+Api wysyła nagranie do usługi `odczyt`, zapisuje odczytaną mowę w polu `mowa` reklamy, ocenia reklamę od nowa z tą mową i dopisuje jeden wpis do historii. Nowe nagranie zastępuje poprzednią mowę. Odpowiedź: `200` i pełna reklama, `404`, gdy nie ma reklamy, `422`, gdy nagranie jest większe niż 50 MB albo `odczyt` uznaje, że to nie dźwięk, albo `503`, gdy usługa `odczyt` nie działa.
+
 ## Pomiar strony docelowej
 
 `PUT /strony/{domena}` od `zbieracz/strony_docelowe.py`, który otwiera stronę główną domeny na komputerze (okno 1366 × 900), na tablecie (okno 768 × 1024) i na telefonie (okno 390 × 844, User-Agent przeglądarki bez zmian). Nowy pomiar domeny zastępuje poprzedni. Taki sam pomiar strony pod linkiem, ale bez tabletu, wysyła sprawdzenie linku z panelu, opis niżej w „Sprawdzenie linku z panelu”.
@@ -77,6 +87,7 @@ Pola jak wyżej oraz:
 | `werdykt_analityka` | `ok`, `do_sprawdzenia`, `oszustwo` lub null | werdykt analityka; z tych werdyktów model uczy się przez `POST /ucz` |
 | `notatka` | tekst lub null | notatka analityka do sprawy; null, dopóki nikt jej nie napisze |
 | `ma_obraz` | prawda / fałsz | czy reklama ma obraz pod `GET /reklamy/{id}/obraz` |
+| `mowa` | tekst lub null | mowa z nagrania reklamy wideo, dodana przez `PUT /reklamy/{id}/nagranie`; model ocenia ją razem z tekstem; null, dopóki nikt nie dodał nagrania |
 | `poziom` | `wysokie`, `srednie`, `niskie` | jeden poziom ryzyka z sygnałów i ryzyka, liczony przy każdym odczycie, nie zapisywany w bazie: `wysokie`, gdy jest twarde ustalenie (domena z listy ostrzeżeń KNF, kopia ostrzeżonej strony, domena opłacana przez wielu niepowiązanych płatników, marka z rejestru płacąca za cudzą domenę, płatnik poza listami KNF, doradztwo bez zezwolenia, reklama z listy oszustw CSIRT KNF) albo treść jest typowa dla fałszywych inwestycji (reklama ma tekst, a jej `ryzyko` jest co najmniej progiem z `GET /prog`; przy domyślnym progu 0,7 to te same reklamy co z werdyktem `oszustwo`); `srednie`, gdy jest inny sygnał, czyli naruszenie zasad reklamy przez firmę z rejestru; `niskie`, gdy nie ma ustaleń (samo ryzyko poniżej progu poziomu nie podnosi); sygnały o liście CERT (`brak_na_liscie_cert`, `na_liscie_cert`) i płatnik będący inną spółką marki z rejestru (`platnik_spoza_rejestru`) to notatki i poziomu nie podnoszą |
 | `powod` | tekst lub null | jedno zdanie, które decyduje o poziomie: `opis` najmocniejszego sygnału albo zdanie o ocenie tekstu; null przy poziomie `niskie` |
 
@@ -92,6 +103,7 @@ Pola jak wyżej oraz:
 | `GET /reklamy/{id}/podobne` | do 50 innych reklam o podobnym początku tekstu (pierwsze 1000 znaków, `podobienstwo` od 0.5 do 1), od najbardziej podobnej; `503`, gdy szukanie trwa ponad 5 s |
 | `GET /reklamy/{id}/powiazane` | inne reklamy, których `tekst` ma ten sam numer telefonu albo adres komunikatora, od najstarszej: lista `{"id", "tytul", "powod", "wartosc"}`, jedna pozycja na reklamę; `tytul` jak tytuł sprawy w panelu (domena z ostrzeżenia KNF, płatnik, domena docelowa, pierwsza domena z tekstu albo `Reklama bez nadawcy`); `powod` `ten_sam_telefon` z numerem w `wartosc` jako `+` i same cyfry (polski numer z 9 cyfr dostaje `+48`), albo `ten_sam_komunikator` z adresem `t.me/nazwa` (nazwa małymi literami), `t.me/+kod` (zaproszenie) lub `wa.me/cyfry`; daty, kwoty, numery NIP, REGON, KRS, PESEL i kont, cyfry w adresach stron i wzory z formularzy (np. `+48 512 345 678`) numerami nie są; gdy reklamy łączy kilka kontaktów, `powod` i `wartosc` dotyczą jednego z nich; `404`, gdy nie ma reklamy |
 | `PUT /reklamy/{id}/obraz` | zapisuje obraz reklamy, treść: `{"obraz": "..."}` (PNG albo JPEG w base64), drugi obraz zastępuje pierwszy; gdy reklama ma pusty `tekst`, odczytuje go z obrazu i ocenia reklamę od nowa, reklama z tekstem go zachowuje; zwraca pełną reklamę; `404`, gdy nie ma reklamy, `422`, gdy to nie jest PNG ani JPEG, `503`, gdy tekst trzeba było odczytać, a usługa `odczyt` nie działa |
+| `PUT /reklamy/{id}/nagranie` | zamienia nagranie reklamy wideo na `mowa` i ocenia reklamę od nowa, opis wyżej w „Nagranie reklamy wideo” |
 | `GET /reklamy/{id}/obraz` | obraz reklamy z typem `image/png` albo `image/jpeg`; `404`, gdy reklama nie ma obrazu |
 | `POST /ucz` | uczy model na reklamach z `werdykt_analityka` i ocenia od nowa wszystkie reklamy; każdej reklamie, której zmienił się werdykt albo poziom, dopisuje wpis do historii; zwraca `przyklady`, `przeliczono` |
 | `GET /rodzaje` | lista rodzajów oszustw, które zna model |

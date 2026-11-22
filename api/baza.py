@@ -106,7 +106,7 @@ def przyklady_analityka():
 
 def do_oceny():
     with polacz() as baza:
-        return baza.execute('SELECT id, tekst, reklamodawca, url, zrodlo FROM reklamy').fetchall()
+        return baza.execute('SELECT id, tekst, mowa, reklamodawca, url, zrodlo FROM reklamy').fetchall()
 
 
 def zapisz_oceny(oceny):
@@ -126,6 +126,11 @@ def zapisz_oceny(oceny):
 def zapisz_tekst(id, tekst):
     with polacz() as baza:
         baza.execute('UPDATE reklamy SET tekst = %s WHERE id = %s', [tekst, id])
+
+
+def zapisz_mowe(id, mowa):
+    with polacz() as baza:
+        baza.execute('UPDATE reklamy SET mowa = %s WHERE id = %s', [mowa, id])
 
 
 def zapisz_obraz(id, typ, dane):

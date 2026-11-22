@@ -24,6 +24,7 @@ import wiek_domeny
 from schematy import (
     Alert,
     DodanyRodzaj,
+    Nagranie,
     Nauka,
     NowaReklama,
     NowyRodzaj,
@@ -42,6 +43,8 @@ AI_URL = os.environ['AI_URL']
 ODCZYT_URL = os.environ['ODCZYT_URL']
 # Usługa odczyt czyta jeden obraz naraz i potrafi zająć nawet minuty na obraz.
 ODCZYT_PO_KOLEI = threading.Lock()
+# 50 MB pliku w base64.
+NAJWIEKSZE_NAGRANIE = 50 * 1024 * 1024 * 4 // 3 + 4
 
 app = FastAPI(title='KLAKIER API',
               description='API systemu KLAKIER: zbiera reklamy inwestycyjne, ocenia ryzyko oszustwa i prowadzi sprawy analityka.')
@@ -122,6 +125,19 @@ def dodaj_obraz(id: int, obraz: Obraz):
     return z_sygnalem_domeny([baza.zapisz_obraz(id, typ, dane)])[0]
 
 
+@app.put('/reklamy/{id}/nagranie', response_model=Reklama, summary='Dodaj nagranie', tags=['Reklamy'])
+def dodaj_nagranie(id: int, nagranie: Nagranie, kto: str = Header('analityk', alias='X-Analityk')):
+    reklama = znaleziona(baza.jedna(id))
+    if len(nagranie.nagranie) > NAJWIEKSZE_NAGRANIE:
+        raise HTTPException(422, 'Nagranie jest większe niż 50 MB.')
+    mowa = posluchaj(nagranie.nagranie)
+    ocena = ocen({**reklama, 'mowa': mowa})
+    baza.zapisz_mowe(id, mowa)
+    baza.zapisz_oceny([{'id': id, **ocena}])
+    historia.zapisz(kto, [(id, f'Dodano nagranie: {len(mowa)} znaków mowy' if mowa else 'Dodano nagranie bez mowy')])
+    return z_sygnalem_domeny([baza.jedna(id)])[0]
+
+
 @app.get('/reklamy/{id}/obraz', summary='Pobierz obraz', tags=['Reklamy'])
 def pobierz_obraz(id: int):
     obraz = baza.obraz(id)
@@ -171,6 +187,7 @@ def odczytaj(obraz: Obraz):
 
 def ocen(reklama, klient=httpx):
     dane = {pole: reklama[pole] for pole in ('tekst', 'reklamodawca', 'url', 'zrodlo')}
+    dane['mowa'] = reklama.get('mowa')
     return klient.post(f'{AI_URL}/ocen', json=dane, timeout=60).raise_for_status().json()
 
 
@@ -194,6 +211,22 @@ def odczytaj_tekst(obraz):
             opis = odpowiedz.json()['detail']
         except (ValueError, KeyError) as blad:
             raise HTTPException(503, 'Odczyt obrazu nie powiódł się.') from blad
+        raise HTTPException(odpowiedz.status_code, opis)
+    return odpowiedz.json()['tekst']
+
+
+def posluchaj(nagranie):
+    """Mowa z nagrania w base64, odczytana przez usługę odczyt."""
+    try:
+        with ODCZYT_PO_KOLEI:
+            odpowiedz = httpx.post(f'{ODCZYT_URL}/posluchaj', json={'nagranie': nagranie}, timeout=300)
+    except httpx.TransportError as blad:
+        raise HTTPException(503, 'Odczyt mowy jest niedostępny.') from blad
+    if odpowiedz.status_code != 200:
+        try:
+            opis = odpowiedz.json()['detail']
+        except (ValueError, KeyError) as blad:
+            raise HTTPException(503, 'Odczyt mowy nie powiódł się.') from blad
         raise HTTPException(odpowiedz.status_code, opis)
     return odpowiedz.json()['tekst']
 

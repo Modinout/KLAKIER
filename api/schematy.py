@@ -59,6 +59,7 @@ class NowaReklama(BaseModel):
 
 class Reklama(NowaReklama):
     id: int
+    mowa: str | None = None
     dodano: datetime
     werdykt: Werdykt
     ryzyko: float
@@ -188,6 +189,10 @@ class Strona(PomiarStrony):
 
 class Obraz(BaseModel):
     obraz: str
+
+
+class Nagranie(BaseModel):
+    nagranie: str
 
 
 class OdczytanyTekst(BaseModel):
