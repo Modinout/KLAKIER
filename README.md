@@ -56,6 +56,7 @@ docker compose run --rm ai python test_rejestr.py
 docker compose run --rm ai python test_wymogi.py
 docker compose run --rm ai python test_osadzenia.py
 docker compose run --rm ai python test_temat.py
+docker compose run --rm ai python test_polecenia.py
 uv run --with pytest --with httpx --with websockets pytest testy
 docker compose run --rm odczyt python test_czytaj.py
 ```

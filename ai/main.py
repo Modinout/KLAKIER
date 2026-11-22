@@ -10,6 +10,7 @@ import doradztwo
 import drugi_sedzia
 import duzy_model
 import nowy_rodzaj
+import polecenia
 import ucz
 import wymogi
 from osadzenia import osadz
@@ -53,6 +54,7 @@ def ocen(material: Material):
             (sygnaly(material.reklamodawca, rejestr, material.zrodlo) if na_temat else [])
             + wymogi.sygnaly(material.tekst, rejestr, material.zrodlo)
             + doradztwo.sygnaly(material.tekst, rejestr)
+            + polecenia.sygnaly(material.tekst, rejestr, material.zrodlo)
         ),
     }
 
