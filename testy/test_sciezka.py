@@ -58,9 +58,10 @@ def test_platnik_spoza_rejestru_daje_sygnal():
 def test_sygnal_zbieracza_zostaje_po_przeliczeniu():
     sygnal = {'modul': 'M3', 'kod': 'test_zbieracza', 'opis': 'Sygnał zbieracza', 'podstawa': ''}
     numer = httpx.post(f'{API}/reklamy', json={**nowa_reklama(), 'sygnaly': [sygnal]}, timeout=180).json()['id']
-    assert sygnal in httpx.get(f'{API}/reklamy/{numer}').json()['sygnaly']
+    zapisany = {**sygnal, 'firma': None}
+    assert zapisany in httpx.get(f'{API}/reklamy/{numer}').json()['sygnaly']
     httpx.post(f'{API}/ucz', timeout=600).raise_for_status()
-    assert sygnal in httpx.get(f'{API}/reklamy/{numer}').json()['sygnaly']
+    assert zapisany in httpx.get(f'{API}/reklamy/{numer}').json()['sygnaly']
 
 
 def test_data_publikacji_wraca_z_reklama():

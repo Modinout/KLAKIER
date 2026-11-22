@@ -12,11 +12,19 @@ Status = Literal['nowa', 'w_toku', 'zamknieta']
 Poziom = Literal['wysokie', 'srednie', 'niskie']
 
 
+class Firma(BaseModel):
+    nazwa: str
+    domena: str
+    stan_rejestru: str | None
+
+
 class Sygnal(BaseModel):
     modul: str
     kod: str
     opis: str
     podstawa: str = ''
+    # Tylko przy poleceniu z linkiem: polecana firma i jej stan w rejestrach.
+    firma: Firma | None = None
 
 
 class Powod(BaseModel):
