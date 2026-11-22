@@ -20,8 +20,8 @@ def poziom(sygnaly, ponad_progiem, rodzaj, rejestr):
         if sygnal['kod'] in WYSOKIE:
             return 'wysokie', sygnal['opis']
     if ponad_progiem and rejestr and rejestr['stan'] in LICENCJE:
-        return 'srednie', ('Treść typowa dla fałszywych inwestycji, ale płatnik jest na liście KNF '
-                           'lub w rejestrze MiCA: do sprawdzenia.')
+        return 'srednie', ('Treść typowa dla fałszywych inwestycji, ale płatnik jest w rejestrze KNF '
+                           'lub MiCA: do sprawdzenia.')
     if ponad_progiem:
         return 'wysokie', 'Treść typowa dla fałszywych inwestycji' + (f': {rodzaj}.' if rodzaj else '.')
     for sygnal in sygnaly:

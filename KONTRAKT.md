@@ -68,7 +68,7 @@ Pola jak wyżej oraz:
 | `werdykt` | `ok`, `do_sprawdzenia`, `oszustwo` | z ryzyka: poniżej 0,3 `ok`, od 0,7 `oszustwo`, pomiędzy albo bez tekstu `do_sprawdzenia` |
 | `ryzyko` | liczba 0-1 | prawdopodobieństwo oszustwa |
 | `pewny` | prawda / fałsz | fałsz przy werdykcie `do_sprawdzenia`: ocenić powinien człowiek |
-| `rejestr` | obiekt lub null | czy płatnik reklamy jest na listach KNF (domy maklerskie, banki maklerskie, oddziały zagranicznych firm, zagraniczne firmy notyfikowane); null, gdy reklama nie podaje płatnika. Pola: `stan`, `podmiot`, `panstwo`, `lista` |
+| `rejestr` | obiekt lub null | czy płatnik reklamy jest w rejestrach KNF (domy maklerskie, banki maklerskie, oddziały zagranicznych firm, zagraniczne firmy notyfikowane); null, gdy reklama nie podaje płatnika. Pola: `stan`, `podmiot`, `panstwo`, `lista` |
 | `sygnaly` | lista | co znalazł zbieracz, a potem co znalazły moduły; każdy sygnał ma `modul`, `kod`, `opis`, `podstawa`; sygnały zbieracza zostają przy każdym ponownym ocenianiu; sygnał `wielu_platnikow_domeny` (moduł `M1`) oznacza, że reklamy tej samej `domena` opłaca co najmniej trzech różnych płatników, którzy nie są w rejestrze KNF i nie mają w nazwie marki z domeny. Api liczy go przy każdym odczycie ze wszystkich reklam domeny i nie zapisuje go w bazie, więc dostają go też starsze reklamy domeny, gdy przybędzie płatnik; sygnał `obca_domena` (moduł `M1`) oznacza, że płatnik ma nazwę marki z rejestru KNF, ale reklama prowadzi do domeny bez tej nazwy, czyli do strony innej marki. Api też liczy go przy każdym odczycie; sygnały modułu `M2` z pomiaru strony domeny (`PUT /strony/{domena}`), też liczone przy każdym odczycie: `ostrzezenie_nieczytelne`, gdy ostrzeżenie o ryzyku CFD jest mniejsze niż przeważający tekst, ma kontrast poniżej 4,5:1 (3:1 przy dużym tekście) albo nie widać go w jednym z widoków, i `brak_ostrzezenia_strony`, gdy strona mówi o CFD, a ostrzeżenia nie widać w żadnym widoku; sygnał `mloda_domena` (moduł `M1`) z daty rejestracji domeny (`PUT /domeny/{domena}`), też liczony przy każdym odczycie: reklama o inwestycjach (ten sam test tematu co w `ai`, na tekście i nazwie płatnika) prowadzi do domeny zarejestrowanej mniej niż 30 dni przed `opublikowano`, a bez tej daty przed dniem odczytu; domena zarejestrowana po tym dniu sygnału nie daje |
 | `powody` | lista | słowa, które najmocniej wpłynęły na ocenę; każde ma `slowo` i `waga`; pusta przy ryzyku poniżej 0,1 |
 | `rodzaj` | tekst lub null | rodzaj oszustwa według modelu, np. jeden z `GET /rodzaje` |
@@ -118,12 +118,12 @@ Panel woła te same adresy z przedrostkiem `/api`.
 
 | `stan` | Znaczenie | `podmiot`, `panstwo`, `lista` |
 | --- | --- | --- |
-| `w_rejestrze` | nazwa płatnika to nazwa wpisu z list KNF | ten wpis: nazwa jak na liście, państwo, nazwa listy |
+| `w_rejestrze` | nazwa płatnika to nazwa wpisu z rejestrów KNF | ten wpis: nazwa jak w rejestrze, państwo, nazwa rejestru |
 | `spoza_rejestru` | płatnika nie ma na listach, ale jego marka ma tam inny podmiot, np. `Tickmill Ltd` i `Tickmill Europe Ltd` | wpis tej marki |
 | `mica` | płatnik to dostawca usług w zakresie kryptoaktywów z licencją MiCA w innym państwie UE (rejestr ESMA) | ten wpis: nazwa, kod państwa, `mica` |
 | `tfi` | płatnik to towarzystwo funduszy inwestycyjnych, a list TFI tu nie ma | null |
 | `bank` | płatnik to bank spoza listy banków z działalnością maklerską, a rejestru banków tu nie ma | null |
-| `poza_listami` | ani płatnika, ani jego marki nie ma na listach KNF ani w rejestrze MiCA | null |
+| `poza_listami` | ani płatnika, ani jego marki nie ma w rejestrach KNF ani w rejestrze MiCA | null |
 
 `lista` to jedna z `domy_maklerskie`, `banki_maklerskie`, `oddzialy_zagranicznych_firm`, `notyfikowane_zagraniczne`. Stany `spoza_rejestru` i `poza_listami` dają też sygnał modułu `M1` w `sygnaly`; `poza_listami` tylko wtedy, gdy tekst lub nazwa płatnika dotyczy inwestowania.
 
