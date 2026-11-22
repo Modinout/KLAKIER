@@ -87,7 +87,7 @@ services:
         condition: service_healthy
 
   kolejka:
-    image: public.ecr.aws/docker/library/redis:7-alpine
+    image: valkey/valkey:8.1-alpine
     restart: unless-stopped
 
   robotnik:
