@@ -217,20 +217,23 @@ class Sprawdzenie(BaseModel):
 
 
 class Fraza(BaseModel):
-    fraza: str = Field(max_length=100)
+    """Fraza do wyszukania; bez niej robotnik szuka swoich fraz inwestycyjnych."""
+
+    fraza: str | None = Field(None, max_length=100)
 
     @model_validator(mode='after')
     def niepusta(self):
-        self.fraza = self.fraza.strip()
-        if not self.fraza:
-            raise ValueError('Podaj frazę do wyszukania.')
+        if self.fraza is not None:
+            self.fraza = self.fraza.strip()
+            if not self.fraza:
+                raise ValueError('Podaj frazę do wyszukania.')
         return self
 
 
 class Wyszukiwanie(BaseModel):
-    """Wyszukiwanie frazy w bibliotece reklam TikToka zlecone z panelu."""
+    """Wyszukiwanie w bibliotece reklam TikToka zlecone z panelu."""
 
-    fraza: str
+    fraza: str | None
     stan: Literal['w_kolejce', 'w_toku', 'gotowe', 'blad']
     dodane: int | None = None
     pominiete: int | None = None

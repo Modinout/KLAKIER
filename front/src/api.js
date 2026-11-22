@@ -98,16 +98,12 @@ export function pobierzSprawdzenie(id) {
   return wyslij('/api/sprawdz/' + id)
 }
 
-export function zlecWyszukiwanie(fraza) {
-  return wyslij('/api/patrol', json('POST', { fraza }))
+export function zlecWyszukiwanie() {
+  return wyslij('/api/patrol', json('POST', {}))
 }
 
 export function pobierzWyszukiwanie(id) {
   return wyslij('/api/patrol/' + id)
-}
-
-export function pobierzOstatnieWyszukiwanie() {
-  return wyslij('/api/patrol')
 }
 
 export function pobierzProg() {

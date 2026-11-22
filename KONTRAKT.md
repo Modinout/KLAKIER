@@ -176,13 +176,13 @@ Ten sam link wklejony drugi raz trafia do tej samej reklamy i dopisuje jej nowe 
 
 ## Wyszukiwanie frazy z panelu
 
-Analityk wpisuje frazę w oknie „Patrol”. `POST /patrol` z treścią `{"fraza": "forex"}` wstawia ją do kolejki Valkey `patrol:frazy`. Biorą z niej `sprawdzacz` i robotnik patrolu, po linkach, a przed domenami. Robotnik szuka frazy jak `zbieracz/tiktok.py` i wysyła znalezione reklamy przez `POST /reklamy`. Odpowiedź: `202` i `{"id": 3}`, `422`, gdy fraza jest pusta albo ma ponad 100 znaków, `503`, gdy kolejka nie działa. Stan wyszukiwania trzyma kolejka, nie baza.
+Analityk klika „Patrol” w panelu. `POST /patrol` z treścią `{}` zleca wyszukanie fraz inwestycyjnych z `zbieracz/tiktok.py`, a z treścią `{"fraza": "forex"}` jednej frazy; zlecenie trafia do kolejki Valkey `patrol:frazy`. Biorą z niej `sprawdzacz` i robotnik patrolu, po linkach, a przed domenami. Robotnik szuka frazy jak `zbieracz/tiktok.py` i wysyła znalezione reklamy przez `POST /reklamy`. Odpowiedź: `202` i `{"id": 3}`, `422`, gdy fraza jest pusta albo ma ponad 100 znaków, `503`, gdy kolejka nie działa. Stan wyszukiwania trzyma kolejka, nie baza.
 
 `GET /patrol/{id}` i `GET /patrol` zwracają:
 
 | Pole | Typ | Opis |
 | --- | --- | --- |
-| `fraza` | tekst | szukana fraza |
+| `fraza` | tekst lub null | szukana fraza; null, gdy szukane były frazy inwestycyjne |
 | `stan` | `w_kolejce`, `w_toku`, `gotowe`, `blad` | etap wyszukiwania |
 | `dodane` | liczba lub null | nowe reklamy, przy stanie `gotowe` |
 | `pominiete` | liczba lub null | znalezione reklamy, które już były w bazie, przy stanie `gotowe` |

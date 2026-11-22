@@ -1,4 +1,4 @@
-# Zlecanie wyszukiwania frazy z panelu, na działającym stosie; samego wyszukiwania nie uruchamia.
+# Zlecanie wyszukiwania w bibliotece reklam TikToka z panelu, na działającym stosie; samego wyszukiwania nie uruchamia.
 import httpx
 
 from test_sciezka import API

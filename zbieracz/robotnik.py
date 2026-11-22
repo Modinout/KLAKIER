@@ -14,18 +14,19 @@ import tiktok
 
 
 def szukaj_frazy(zadanie, przegladarka):
-    """Szuka frazy zleconej w panelu i zapisuje w kolejce, jak poszło; zwraca linię do wydruku."""
+    """Szuka frazy zleconej w panelu, a bez frazy fraz inwestycyjnych, i zapisuje w kolejce, jak poszło; zwraca linie do wydruku."""
     zlecenie = json.loads(zadanie)
     stan = {'fraza': zlecenie['fraza'], 'stan': 'w_toku'}
     kolejka.zapisz_wyszukiwanie(zlecenie['id'], stan)
-    dodane, pominiete, blad, linia = tiktok.obsluz(zlecenie['fraza'], przegladarka)
-    if blad:
+    frazy = [zlecenie['fraza']] if zlecenie['fraza'] else tiktok.FRAZY
+    wyniki = [tiktok.obsluz(fraza, przegladarka) for fraza in frazy]
+    if all(blad for _, _, blad, _ in wyniki):
         stan |= {'stan': 'blad', 'blad': 'Biblioteka reklam TikToka nie odpowiedziała. Spróbuj ponownie.'}
     else:
-        stan |= {'stan': 'gotowe', 'dodane': dodane, 'pominiete': pominiete}
+        stan |= {'stan': 'gotowe', 'dodane': sum(w[0] for w in wyniki), 'pominiete': sum(w[1] for w in wyniki)}
     stan['kiedy'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
     kolejka.zapisz_wyszukiwanie(zlecenie['id'], stan)
-    return linia
+    return '\n'.join(linia for *_, linia in wyniki)
 
 
 def pracuj(tylko_linki):

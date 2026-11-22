@@ -181,15 +181,15 @@ class Redis:
         return 'patrol:linki', '{"id": 1}'
 
 
-def test_robotnik_bierze_link_przed_domena(monkeypatch):
+def test_robotnik_bierze_link_i_fraze_przed_domena(monkeypatch):
     redis = Redis()
     monkeypatch.setattr(kolejka, 'polaczenie', lambda: redis)
     assert kolejka.pobierz() == ('patrol:linki', '{"id": 1}')
-    assert redis.listy == [kolejka.LINKI, kolejka.LISTA]
+    assert redis.listy == [kolejka.LINKI, kolejka.FRAZY, kolejka.LISTA]
 
 
-def test_sprawdzacz_bierze_tylko_linki(monkeypatch):
+def test_sprawdzacz_nie_bierze_domen(monkeypatch):
     redis = Redis()
     monkeypatch.setattr(kolejka, 'polaczenie', lambda: redis)
     kolejka.pobierz(tylko_linki=True)
-    assert redis.listy == [kolejka.LINKI]
+    assert redis.listy == [kolejka.LINKI, kolejka.FRAZY]
