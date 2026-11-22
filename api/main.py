@@ -189,7 +189,11 @@ def odczytaj_tekst(obraz):
     except httpx.TransportError as blad:
         raise HTTPException(503, 'Odczyt obrazów jest niedostępny.') from blad
     if odpowiedz.status_code != 200:
-        raise HTTPException(odpowiedz.status_code, odpowiedz.json()['detail'])
+        try:
+            opis = odpowiedz.json()['detail']
+        except (ValueError, KeyError) as blad:
+            raise HTTPException(503, 'Odczyt obrazu nie powiódł się.') from blad
+        raise HTTPException(odpowiedz.status_code, opis)
     return odpowiedz.json()['tekst']
 
 
