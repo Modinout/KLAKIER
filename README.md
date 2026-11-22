@@ -62,13 +62,13 @@ Razem 11 punktów jest, 7 częściowo, 1 jeszcze nie. Poza listą: reklama CFD a
 
 ### Jak trafne są ustalenia
 
-Baza pokazowa, 1782 materiały:
+Baza pokazowa, 1775 materiałów:
 
-- M1, płatnik a rejestry: 169 ustaleń (87 razy płaci inny podmiot marki z rejestru, 82 razy płatnika nie ma w rejestrach KNF ani w rejestrze MiCA); 59 przypadków w `ai/test_rejestr.py`.
-- M1, polecenia u finfluencerów: 54 ustalenia; 20 losowo wybranych przeczytaliśmy ręcznie i wszystkie to prawdziwe linki albo kody polecające. Nie wiemy, czy oznaczenie współpracy padło w samym filmie, dlatego każde takie ustalenie jest „do sprawdzenia”.
-- M2, tekst: 9 ustaleń, wszystkie przeczytane ręcznie: 8 trafnych (4 reklamy CFD bez odsetka rachunków ze stratą, 4 obietnice podatkowe bez zastrzeżenia), 1 słabe.
+- M1, płatnik a rejestry: 141 ustaleń (91 razy płaci inny podmiot marki z rejestru, 50 razy płatnika nie ma w rejestrach KNF ani w rejestrze MiCA); 59 przypadków w `ai/test_rejestr.py`.
+- M1, polecenia u finfluencerów: 27 ustaleń. Zanim reguła zaczęła pomijać opisy po angielsku i usługi spoza inwestycji, było ich 54; 20 losowo wybranych z tamtych przeczytaliśmy ręcznie i wszystkie to prawdziwe linki albo kody polecające. Nie wiemy, czy oznaczenie współpracy padło w samym filmie, dlatego każde takie ustalenie jest „do sprawdzenia”.
+- M2, tekst: 10 ustaleń, wszystkie przeczytane ręcznie: 8 trafnych (4 reklamy CFD bez odsetka rachunków ze stratą, 4 obietnice podatkowe bez zastrzeżenia), 2 słabe.
 - M2, strona: 13 ustaleń (10 ostrzeżeń mniejszych od tekstu albo o słabym kontraście, 3 strony CFD bez widocznego ostrzeżenia), zmierzonych w przeglądarce, nieprzeczytanych ręcznie.
-- M3, doradztwo: 5 ustaleń, 1 słabe (artykuł z listą grup z sygnałami, a nie oferta).
+- M3, sygnały i rekomendacje: 4 ustalenia średniego poziomu, wszystkie przeczytane ręcznie. Sygnały rozsyłane ogółowi nie wymagają zezwolenia, więc analityk sprawdza, czy nie są radą dla konkretnej osoby. Oferty doradztwa albo zarządzania majątkiem bez zezwolenia w tej bazie nie ma.
 - KAPSEL: 95 prawdziwych oszustw i 374 uczciwe reklamy inwestycyjne, 5 podziałów po 5 losowań, z reklamami jednej kampanii, szablonu, strony albo płatnika zawsze po tej samej stronie podziału. Od progu 0,7 łapie średnio 74 z 95 oszustw bez fałszywego alarmu, od progu 0,3 kieruje do człowieka 90 z 95 przy 8 fałszywych alarmach na 374. Świeży test po wyborze modelu: 24 opublikowane oszustwa, wszystkie od 0,3 w górę (19 od 0,7), i 153 zwykłe reklamy bez fałszywego alarmu. Inne modele na tych samych cechach (naiwny Bayes, SVM) wypadają w granicach szumu, a reguły na słowach kluczowych łapią 23 z 95. Reklamę wideo model ocenia po tekście posta i jednej klatce. Gdy do reklamy doda się nagranie (`PUT /reklamy/{id}/nagranie`), mowę zamienia na tekst otwarty model Whisper na procesorze (około 0,4 s na sekundę nagrania), a KAPSEL ocenia ją razem z tekstem posta. Mowa może podnieść ryzyko, ale nie obniża ryzyka samego tekstu posta. Zbieracze nie pobierają filmów, a trafności dla polskiej mowy na prawdziwych reklamach jeszcze nie zmierzyliśmy. Model uczył się na polskich reklamach, więc oszustwa po angielsku, w tekście albo w mowie, dostają niską ocenę.
 
 To małe próby: pokazują kierunek, nie dokładny odsetek.
