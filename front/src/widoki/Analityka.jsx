@@ -1,9 +1,13 @@
+import { Download } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import Filtry, { PUSTE_FILTRY } from '../czesci/Filtry.jsx'
 import TabelaSpraw from '../czesci/TabelaSpraw.jsx'
 import Trend from '../czesci/Trend.jsx'
 import Widoki, { WIDOKI } from '../czesci/Widoki.jsx'
 import { dzienCzytelny, ileReklam, ileSpraw, liczba } from '../nazwy.js'
+import { pobierzPlik } from '../pobierz.js'
+import { nazwaRaportu, raport } from '../raport.js'
 import { dzienReklamy, najmocniejszyTag, odNajgorszych, tytul, wSprawy } from '../sprawy.js'
 import { ustalenia } from '../ustalenia.js'
 
@@ -76,7 +80,12 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
         <Trend reklamy={dlaTrendu} />
       </div>
       <Widoki filtry={filtry} zmien={setFiltry} ile={ile} />
-      <Filtry filtry={filtry} zmien={setFiltry} wiersze={wiersze} powody={powody} />
+      <Filtry filtry={filtry} zmien={setFiltry} wiersze={wiersze} powody={powody}>
+        <Button variant="outline" className="ml-auto" onClick={() => pobierzPlik(raport(sprawy), 'text/csv;charset=utf-8', nazwaRaportu())}>
+          <Download />
+          Pobierz raport
+        </Button>
+      </Filtry>
       <TabelaSpraw
         key={JSON.stringify(filtry)}
         sprawy={sprawy}

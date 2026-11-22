@@ -102,7 +102,7 @@ function FiltrDaty({ od, doDnia, zmien }) {
   )
 }
 
-export default function Filtry({ filtry, zmien, wiersze, powody }) {
+export default function Filtry({ filtry, zmien, wiersze, powody, children }) {
   function ustaw(zmiana) {
     zmien({ ...filtry, ...zmiana })
   }
@@ -146,6 +146,7 @@ export default function Filtry({ filtry, zmien, wiersze, powody }) {
           Wyczyść filtry
         </Button>
       )}
+      {children}
     </div>
   )
 }

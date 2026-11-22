@@ -44,7 +44,7 @@ Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy
 | `ai` | ocenia tekst reklamy małym klasyfikatorem KAPSEL na CPU (opis i ograniczenia: `ai/KARTA_MODELU.md`); uczy się z werdyktów analityka; stan nauki trzyma w wolumenie `stan_ai`; dodaje ustalenia trzech modułów: M1 płatnik a rejestry KNF (`rejestr.py`), M2 informacja o ryzyku (`wymogi.py`), M3 doradztwo bez zezwolenia (`doradztwo.py`) |
 | `odczyt` | odczytuje tekst z obrazu reklamy (PP-OCR na CPU); modele są w obrazie Dockera |
 | `baza` | Postgres, tabele `reklamy`, `obrazy_reklam` i `strony` (`baza/schemat.sql`) |
-| `front` | panel: kolejka spraw z filtrami (data, źródło, status, ryzyko, moduł) i wykresem trendu, karta sprawy z obrazem reklamy, ustaleniami i decyzją, gotowe zgłoszenie sprawy w toku do skopiowania albo pobrania, alerty na żywo, kalibracja progu |
+| `front` | panel: kolejka spraw z filtrami (data, źródło, status, ryzyko, moduł) i wykresem trendu, karta sprawy z obrazem reklamy, ustaleniami i decyzją, gotowe zgłoszenie sprawy w toku do skopiowania albo pobrania, raport CSV z bieżącego widoku i filtrów, alerty na żywo, kalibracja progu |
 
 Pola reklamy i adresy API opisuje `KONTRAKT.md`.
 

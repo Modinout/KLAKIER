@@ -128,7 +128,7 @@ export default function App() {
         />
       )}
       {/* The open sheet makes the rest of the page inert; the undo button in a toast must stay clickable. */}
-      <Toaster position="top-center" className="toaster group pointer-events-auto" />
+      <Toaster position="bottom-left" className="toaster group pointer-events-auto" />
     </Tabs>
   )
 }
