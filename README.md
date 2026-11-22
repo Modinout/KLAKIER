@@ -8,7 +8,7 @@ KLAKIER pomaga analitykowi UKNF znaleźć w reklamach inwestycyjnych trzy rodzaj
 
 KAPSEL to nasz własny model, który czyta tekst reklamy i ocenia, jak bardzo przypomina fałszywą inwestycję. Działa na zwykłym procesorze laptopa, bez internetu, w około milisekundę na reklamę. Zmierzyliśmy go na reklamach, których nie widział przy nauce: bez żadnego fałszywego alarmu wskazuje 74 z 95 prawdziwych oszustw, a każde z 24 świeżo opublikowanych oszustw trafiło co najmniej do sprawdzenia przez człowieka. Przy podejrzanych reklamach pokazuje słowa, które podniosły ryzyko, i ustawia analitykowi najgroźniejsze reklamy na początku kolejki. Jak powstał i gdzie się myli: `ai/KARTA_MODELU.md`.
 
-M2: z 19 punktów listy kryteriów UKNF (kryterium 12 ma dwie części) 11 sprawdzamy w pełni, 7 częściowo, 1 jeszcze nie; tabela jest w sekcji „Co sprawdza”.
+M2: 17 z 18 kryteriów UKNF dla informacji o ryzyku ma w systemie własne sprawdzenie, 7 z nich w części; co każde obejmuje, a czego nie, pokazuje tabela w sekcji „Co sprawdza”.
 
 ## Uruchomienie
 
@@ -38,29 +38,29 @@ Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera
 
 Lista pochodzi z materiałów UKNF („Kryteria oceny informacji o ryzyku”). Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z rejestrów KNF. Stronę docelową reklamy mierzy przeglądarka (`zbieracz/pomiar_ostrzezenia.js`, `api/ostrzezenie_strony.py`) w widoku komputera (1366 px), tabletu (768 px) i telefonu (390 px). Ustalenia z tekstu podają w podstawie numer kryterium UKNF, ustalenia ze strony powołują się na ESMA i WCAG.
 
-| Kryterium UKNF | Stan | Jak sprawdzamy |
+| Kryterium UKNF | Co sprawdzamy | Czego nie obejmuje |
 | --- | --- | --- |
-| 1 Identyfikacja firmy | częściowo | platforma podaje nad reklamą nazwę reklamodawcy, a my porównujemy ją z rejestrami KNF i MiCA (M1); czy sam tekst reklamy nazywa firmę, nie sprawdzamy |
-| 2 Oznaczenie reklamy | częściowo | tylko opisy filmów z linkiem lub kodem polecającym bez oznaczenia współpracy (`ai/polecenia.py`); reklam na platformach nie sprawdzamy |
-| 3 Informacja o ryzyku | jest | `zysk_bez_ryzyka`: informacja o ryzyku w dowolnym miejscu tekstu |
-| 4 Rozmiar czcionki ostrzeżenia | jest | strona: czcionka ostrzeżenia wobec przeważającej |
-| 5 Ekspozycja i kontrast | częściowo | strona: kontrast według WCAG (4,5:1); zasłaniania przez inne elementy nie sprawdzamy |
-| 6 Ukrywanie ryzyka | częściowo | strona: ukryty element liczy się jako niewidoczny; przypisu ani zakładki „Legal” nie oznaczamy |
-| 7 Dostępność za jednym kliknięciem | częściowo | strona: ostrzeżenie w zwiniętym elemencie liczy się jako brak; klikania nie testujemy |
-| 8 Responsywność | częściowo | komputer, tablet i telefon; przycięcia nie sprawdzamy |
-| 9 Zrozumiałość | częściowo | `ostrzezenie_niezrozumiale`, tylko w reklamach: zdanie ostrzeżenia dłuższe niż 45 słów albo ponad 20 słów, z których ponad jedna czwarta to bardzo długie słowa; listy żargonu nie ma, bo wymagane ostrzeżenie samo zawiera „CFD” i „dźwignię” |
-| 10 Spójność językowa | jest | `ryzyko_w_innym_jezyku`: polska reklama z ostrzeżeniem tylko po angielsku |
-| 11 Porównania produktów | jest | `porownanie_bez_podstawy`: „lepszy niż”, „w porównaniu z”, „najtańszy”, „najniższe prowizje”, „nr 1” bez źródła, rankingu ani daty |
-| 12a Wyniki historyczne: okres i źródło | jest | `wyniki_bez_okresu`, gdy reklama podaje wynik w procentach |
-| 12b Wyniki historyczne: opłaty i waluta | jest | `wyniki_bez_oplat_i_waluty` |
-| 13 Dominacja wyników historycznych | jeszcze nie | wymaga oceny układu reklamy |
-| 14 Ostrzeżenie przy wynikach historycznych | jest | `wyniki_bez_zastrzezenia` |
-| 15 Prognozy | jest | `prognoza_bez_zastrzezenia`: prognoza z liczbą |
-| 16 Informacja podatkowa | jest | `podatki_bez_zastrzezenia` |
-| 17 Aprobata organu nadzoru | jest | `nadzor_jako_argument`: „zatwierdzony”, „rekomendowany” albo „approved” obok KNF, CySEC lub FCA |
-| 18 Nadzór jako argument bezpieczeństwa | jest | `nadzor_jako_argument` |
+| 1 Identyfikacja firmy | nazwę reklamodawcy, którą platforma podaje nad reklamą, porównujemy z rejestrami KNF i MiCA (M1) | tego, czy sam tekst reklamy nazywa firmę |
+| 2 Oznaczenie reklamy | opisy filmów z linkiem lub kodem polecającym bez oznaczenia współpracy (`ai/polecenia.py`) | reklam na platformach |
+| 3 Informacja o ryzyku | `zysk_bez_ryzyka`: informacja o ryzyku w dowolnym miejscu tekstu | |
+| 4 Rozmiar czcionki ostrzeżenia | strona: czcionka ostrzeżenia wobec przeważającej | |
+| 5 Ekspozycja i kontrast | strona: kontrast według WCAG (4,5:1) | zasłaniania przez inne elementy |
+| 6 Ukrywanie ryzyka | strona: ukryty element liczy się jako niewidoczny | przypisu ani zakładki „Legal” |
+| 7 Dostępność za jednym kliknięciem | strona: ostrzeżenie w zwiniętym elemencie liczy się jako brak | testu klikania |
+| 8 Responsywność | strona na komputerze, tablecie i telefonie | przycięcia |
+| 9 Zrozumiałość | `ostrzezenie_niezrozumiale`: zdanie ostrzeżenia w reklamie dłuższe niż 45 słów albo ponad 20 słów, z których ponad jedna czwarta to bardzo długie słowa | stron docelowych; listy żargonu, bo wymagane ostrzeżenie samo zawiera „CFD” i „dźwignię” |
+| 10 Spójność językowa | `ryzyko_w_innym_jezyku`: polska reklama z ostrzeżeniem tylko po angielsku | |
+| 11 Porównania produktów | `porownanie_bez_podstawy`: „lepszy niż”, „w porównaniu z”, „najtańszy”, „najniższe prowizje”, „nr 1” bez źródła, rankingu ani daty | |
+| 12a Wyniki historyczne: okres i źródło | `wyniki_bez_okresu`, gdy reklama podaje wynik w procentach | |
+| 12b Wyniki historyczne: opłaty i waluta | `wyniki_bez_oplat_i_waluty` | |
+| 13 Dominacja wyników historycznych | jeszcze nie sprawdzamy | wymaga oceny układu reklamy |
+| 14 Ostrzeżenie przy wynikach historycznych | `wyniki_bez_zastrzezenia` | |
+| 15 Prognozy | `prognoza_bez_zastrzezenia`: prognoza z liczbą | |
+| 16 Informacja podatkowa | `podatki_bez_zastrzezenia` | |
+| 17 Aprobata organu nadzoru | `nadzor_jako_argument`: „zatwierdzony”, „rekomendowany” albo „approved” obok KNF, CySEC lub FCA | |
+| 18 Nadzór jako argument bezpieczeństwa | `nadzor_jako_argument` | |
 
-Razem 11 punktów jest, 7 częściowo, 1 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
+Razem 17 z 18 kryteriów ma własne sprawdzenie: 10 w całości, 7 w części, a kryterium 13 jeszcze nie. Poza listą: reklama CFD albo forex bez standardowego odsetka rachunków ze stratą (`brak_ostrzezenia_cfd`, ESMA 2018/796, dziś interwencja produktowa KNF). Zakresu zezwolenia firmy, np. na doradztwo, nie sprawdzamy.
 
 ### Jak trafne są ustalenia
 
