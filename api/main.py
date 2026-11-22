@@ -6,13 +6,21 @@ from datetime import datetime
 
 import httpx
 import psycopg
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, Header, HTTPException, Response
 from fastapi.responses import JSONResponse
 
 import alerty
 import baza
+import domeny
+import dowody
+import historia
+import opis_zmian
 import ostrzezenie_strony
 import platnicy_domeny
+import powiazane
+import prog
+import sprawdzenia
+import wiek_domeny
 from schematy import (
     Alert,
     DodanyRodzaj,
@@ -37,6 +45,12 @@ ODCZYT_PO_KOLEI = threading.Lock()
 
 app = FastAPI(title='KLAKIER API')
 app.add_api_websocket_route('/alerty', alerty.sluchaj)
+app.include_router(historia.router)
+app.include_router(prog.router)
+app.include_router(powiazane.router)
+app.include_router(domeny.router)
+app.include_router(sprawdzenia.router)
+app.include_router(dowody.router)
 
 
 @app.exception_handler(httpx.TransportError)
@@ -78,8 +92,12 @@ def jedna_reklama(id: int):
 
 
 @app.patch('/reklamy/{id}', response_model=Reklama)
-def zmien_reklame(id: int, zmiana: ZmianaReklamy):
-    return z_sygnalem_domeny([znaleziona(baza.zmien(id, zmiana.model_dump(exclude_unset=True)))])[0]
+def zmien_reklame(id: int, zmiana: ZmianaReklamy, kto: str = Header('analityk', alias='X-Analityk')):
+    przed = znaleziona(baza.jedna(id))
+    zmiany = zmiana.model_dump(exclude_unset=True)
+    zmieniona = znaleziona(baza.zmien(id, zmiany))
+    historia.zapisz(kto, opis_zmian.zmiany_analityka(przed, zmiany))
+    return z_sygnalem_domeny([zmieniona])[0]
 
 
 @app.get('/reklamy/{id}/podobne', response_model=list[PodobnaReklama])
@@ -117,10 +135,13 @@ def zapisz_strone(domena: str, pomiar: PomiarStrony):
 
 
 @app.post('/ucz', response_model=Nauka)
-def ucz():
+def ucz(kto: str = Header('model', alias='X-Analityk')):
     przyklady = baza.przyklady_analityka()
     nauka = httpx.post(f'{AI_URL}/ucz', json={'przyklady': przyklady}, timeout=120).raise_for_status().json()
-    return {'przyklady': nauka['przyklady'], 'przeliczono': przelicz_wszystkie()}
+    przed = oceny_modelu()
+    przeliczono = przelicz_wszystkie()
+    historia.zapisz(kto, opis_zmian.zmiany_modelu(przed, oceny_modelu()))
+    return {'przyklady': nauka['przyklady'], 'przeliczono': przeliczono}
 
 
 @app.get('/rodzaje', response_model=list[str])
@@ -194,17 +215,27 @@ def przelicz_wszystkie():
     return len(reklamy)
 
 
-def z_sygnalem_domeny(wiersze):
-    """Rows of the reklamy table with the findings about their landing domain: payers compared with the domain, and
-    the risk warning on its page.
+def oceny_modelu():
+    """Model verdict and risk level of every ad by id, as the panel shows them."""
+    reklamy = map(Reklama.model_validate, z_sygnalem_domeny(baza.lista(None, None, 0, None)))
+    return {reklama.id: reklama.model_dump(include={'werdykt', 'poziom'}) for reklama in reklamy}
 
-    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad or a new measurement of
-    the page must show on the older ads of the domain at once.
+
+def z_sygnalem_domeny(wiersze):
+    """Rows of the reklamy table with the findings about their landing domain: payers compared with the domain, the
+    risk warning on its page and its age; and with whether the text model's risk reaches the threshold of GET /prog.
+
+    Computed on each read, not stored: a re-score rewrites the stored signals, and a new ad, a new measurement of
+    the page, a new date of the domain or a new threshold must show on the older ads at once.
     """
     sygnaly = platnicy_domeny.sygnaly_domen(baza.platnicy_domen())
     strony = baza.strony()
+    daty_domen = domeny.daty()
+    prog_modelu = prog.zapisany()
     return [{**wiersz, 'sygnaly': wiersz['sygnaly'] + platnicy_domeny.sygnaly_reklamy(wiersz, sygnaly)
-             + ostrzezenie_strony.sygnaly(wiersz['domena'], strony.get(wiersz['domena']))}
+             + ostrzezenie_strony.sygnaly(wiersz['domena'], strony.get(wiersz['domena']))
+             + wiek_domeny.sygnaly(wiersz, daty_domen.get(wiersz['domena'])),
+             'ponad_progiem': prog.ponad_progiem(wiersz, prog_modelu)}
             for wiersz in wiersze]
 
 

@@ -36,6 +36,7 @@ services:
       BAZA_URL: postgresql://klakier:${HASLO_BAZY}@baza/klakier
       AI_URL: http://ai:8000
       ODCZYT_URL: http://odczyt:8000
+      KOLEJKA_URL: redis://kolejka:6379/0
     ports:
       - "8000:8000"
     healthcheck: *zdrowie

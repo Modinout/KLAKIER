@@ -166,3 +166,62 @@ def strony():
     """Measured landing pages by domain."""
     with polacz() as baza:
         return {strona['domena']: strona for strona in baza.execute('SELECT * FROM strony').fetchall()}
+
+
+def dodaj_sprawdzenie(url):
+    with polacz() as baza:
+        return baza.execute('INSERT INTO sprawdzenia (url) VALUES (%s) RETURNING id', [url]).fetchone()['id']
+
+
+def usun_sprawdzenie(id):
+    with polacz() as baza:
+        baza.execute('DELETE FROM sprawdzenia WHERE id = %s', [id])
+
+
+def sprawdzenie(id):
+    with polacz() as baza:
+        return baza.execute('SELECT stan, reklama_id, blad FROM sprawdzenia WHERE id = %s', [id]).fetchone()
+
+
+def zapisz_sprawdzenie(id, stan):
+    with polacz() as baza:
+        return baza.execute(
+            """
+            UPDATE sprawdzenia SET stan = %(stan)s, reklama_id = %(reklama_id)s, blad = %(blad)s WHERE id = %(id)s
+            RETURNING stan, reklama_id, blad
+            """,
+            {**stan, 'id': id},
+        ).fetchone()
+
+
+# A visit without its files, with the hashes of both files in one object.
+POLA_DOWODU = "id, kiedy, rodzaj, adres, lancuch, json_build_object('obraz', sha256_obrazu, 'html', sha256_html) AS sha256"
+
+
+def dodaj_dowod(reklama_id, dowod):
+    with polacz() as baza:
+        return baza.execute(
+            f"""
+            INSERT INTO dowody (reklama_id, kiedy, rodzaj, adres, lancuch, obraz, html, sha256_obrazu, sha256_html)
+            VALUES (%(reklama_id)s, %(kiedy)s, %(rodzaj)s, %(adres)s, %(lancuch)s, %(obraz)s, %(html)s,
+                    %(sha256_obrazu)s, %(sha256_html)s)
+            RETURNING {POLA_DOWODU}
+            """,
+            {**dowod, 'reklama_id': reklama_id, 'lancuch': Jsonb(dowod['lancuch'])},
+        ).fetchone()
+
+
+def dowody(reklama_id):
+    with polacz() as baza:
+        return baza.execute(f'SELECT {POLA_DOWODU} FROM dowody WHERE reklama_id = %s ORDER BY id', [reklama_id]).fetchall()
+
+
+def dowod(id):
+    """One visit with its files."""
+    with polacz() as baza:
+        return baza.execute('SELECT * FROM dowody WHERE id = %s', [id]).fetchone()
+
+
+def dowody_z_plikami(reklama_id):
+    with polacz() as baza:
+        return baza.execute('SELECT * FROM dowody WHERE reklama_id = %s ORDER BY id', [reklama_id]).fetchall()

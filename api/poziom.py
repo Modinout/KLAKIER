@@ -9,12 +9,15 @@ WYSOKIE = {
 NOTATKI = {'brak_na_liscie_cert', 'na_liscie_cert', 'platnik_spoza_rejestru'}
 
 
-def poziom(sygnaly, werdykt, rodzaj):
-    """Returns (level, reason): the strongest finding decides and its description is the reason."""
+def poziom(sygnaly, ponad_progiem, rodzaj):
+    """Returns (level, reason): the strongest finding decides and its description is the reason.
+
+    ponad_progiem: the text model's risk is at the threshold of GET /prog or over it.
+    """
     for sygnal in sygnaly:
         if sygnal['kod'] in WYSOKIE:
             return 'wysokie', sygnal['opis']
-    if werdykt == 'oszustwo':
+    if ponad_progiem:
         return 'wysokie', 'Treść typowa dla fałszywych inwestycji' + (f': {rodzaj}.' if rodzaj else '.')
     for sygnal in sygnaly:
         if sygnal['kod'] not in NOTATKI:

@@ -29,9 +29,10 @@ docker compose --profile patrol up -d --no-deps kolejka robotnik harmonogram
 docker compose --profile patrol run --rm --no-deps patrol python patrol.py <domena>
 docker compose --profile patrol run --rm --no-deps patrol python tiktok.py [fraza ...]
 docker compose --profile patrol run --rm --no-deps patrol python strony_docelowe.py [domena ...]
+docker compose --profile patrol run --rm --no-deps patrol python wiek_domen.py [domena ...]
 ```
 
-Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc uruchamia patrol domen z listy ostrzeżeń KNF, wyszukiwanie fraz w bibliotece reklam TikToka i pomiar ostrzeżenia o ryzyku na stronach docelowych. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy.
+Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc uruchamia patrol domen z listy ostrzeżeń KNF, wyszukiwanie fraz w bibliotece reklam TikToka i pomiar ostrzeżenia o ryzyku na stronach docelowych. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy. Piąta sprawdza w RDAP, kiedy zarejestrowano domeny docelowe reklam, najwyżej jednym zapytaniem na sekundę, i zapisuje datę w api; bez podanych domen bierze wszystkie domeny docelowe z bazy.
 
 Reklamy z Mety (Facebook, Instagram, Messenger): analityk zapisuje stronę wyników Biblioteki reklam w przeglądarce, a `python meta.py strona.html` wczytuje z niej reklamy do bazy. Meta nie pozwala na automatyczne wizyty w bibliotece, dlatego urząd w pracy docelowej korzysta z oficjalnego API Biblioteki reklam z tokenem.
 

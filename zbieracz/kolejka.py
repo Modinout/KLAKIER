@@ -1,7 +1,9 @@
-# Task queue for the patrol: one Redis list of domains to check.
+# Task queue for the robotnik: a Redis list of domains for the patrol and one of links pasted in the panel.
 import os
 
 LISTA = 'patrol:domeny'
+# Filled by the api (api/sprawdzenia.py).
+LINKI = 'patrol:linki'
 
 
 def polaczenie():
@@ -17,5 +19,6 @@ def dodaj(domena):
 
 
 def pobierz():
-    """Waits until a domain is in the queue and takes it."""
-    return polaczenie().blpop(LISTA)[1]
+    """Waits until a task is in the queue and takes it; returns the name of its list and the task."""
+    # BLPOP looks at the lists in the order given, so an analyst waiting for a link goes before the next domain.
+    return polaczenie().blpop([LINKI, LISTA])

@@ -24,6 +24,7 @@ CREATE TABLE reklamy (
     drugi_sedzia  JSONB,
     status        TEXT NOT NULL DEFAULT 'nowa',
     werdykt_analityka TEXT,
+    notatka       TEXT,
     ma_obraz      BOOLEAN NOT NULL DEFAULT false,
     UNIQUE (zrodlo, id_zrodla)
 );
@@ -41,4 +42,53 @@ CREATE TABLE strony (
     zmierzono     TIMESTAMPTZ NOT NULL,
     komputer      JSONB,
     telefon       JSONB
+);
+
+CREATE TABLE historia (
+    id            SERIAL PRIMARY KEY,
+    reklama_id    INTEGER NOT NULL REFERENCES reklamy(id) ON DELETE CASCADE,
+    kiedy         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    kto           TEXT NOT NULL,
+    co            TEXT NOT NULL
+);
+CREATE INDEX historia_reklama_id ON historia (reklama_id);
+
+-- Settings the analysts change in the panel, in a single row.
+CREATE TABLE ustawienia (
+    id            INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    prog          DOUBLE PRECISION NOT NULL
+);
+-- The text model's own scam threshold, so the levels stay as the model's verdicts until someone changes it.
+INSERT INTO ustawienia (prog) VALUES (0.7);
+
+-- Registration dates of landing domains by RDAP, as the collector found them; the api turns them into findings on
+-- each read.
+CREATE TABLE domeny (
+    domena        TEXT PRIMARY KEY,
+    zarejestrowano DATE NOT NULL,
+    sprawdzono    TIMESTAMPTZ NOT NULL
+);
+
+-- Links an analyst pasted in the panel; the robotnik checks them one by one.
+CREATE TABLE sprawdzenia (
+    id            SERIAL PRIMARY KEY,
+    url           TEXT NOT NULL,
+    zlecono       TIMESTAMPTZ NOT NULL DEFAULT now(),
+    stan          TEXT NOT NULL DEFAULT 'w_kolejce',
+    reklama_id    INTEGER REFERENCES reklamy(id) ON DELETE SET NULL,
+    blad          TEXT
+);
+
+-- What the browser saw on each visit of a checked link. Rows are only added, so a record keeps every visit.
+CREATE TABLE dowody (
+    id            SERIAL PRIMARY KEY,
+    reklama_id    INTEGER NOT NULL REFERENCES reklamy(id) ON DELETE CASCADE,
+    kiedy         TIMESTAMPTZ NOT NULL,
+    rodzaj        TEXT NOT NULL,
+    adres         TEXT NOT NULL,
+    lancuch       JSONB NOT NULL,
+    obraz         BYTEA NOT NULL,
+    html          BYTEA NOT NULL,
+    sha256_obrazu TEXT NOT NULL,
+    sha256_html   TEXT NOT NULL
 );

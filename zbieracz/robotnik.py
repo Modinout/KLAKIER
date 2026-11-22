@@ -1,8 +1,9 @@
-# Worker: takes domains from the patrol queue one by one and checks them like patrol.py.
+# Worker: takes tasks from the queue one by one: links pasted in the panel, and domains it checks like patrol.py.
 from playwright.sync_api import sync_playwright
 
 import kolejka
 import patrol
+import sprawdzenie_linku
 
 
 def pracuj():
@@ -12,8 +13,11 @@ def pracuj():
         przegladarka = playwright.chromium.launch(headless=True)
         print('Czekam na zadania.', flush=True)
         while True:
-            domena = kolejka.pobierz()
-            *_, linia = patrol.obsluz(domena, ostrzezenia, przegladarka, z_cert)
+            lista, zadanie = kolejka.pobierz()
+            if lista == kolejka.LINKI:
+                linia = sprawdzenie_linku.obsluz(zadanie, ostrzezenia, przegladarka, z_cert)
+            else:
+                *_, linia = patrol.obsluz(zadanie, ostrzezenia, przegladarka, z_cert)
             print(linia, flush=True)
 
 
