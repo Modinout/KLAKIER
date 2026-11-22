@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { pobierzReklamy } from './api.js'
+import { sledzSprawdzenie } from './sprawdzanieLinku.js'
 import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
 import Analityk from './czesci/Analityk.jsx'
@@ -25,6 +26,8 @@ export default function App() {
   const [reklamy, setReklamy] = useState(null)
   const [prog, setProg] = useState(0.4)
   const [otwarte, setOtwarte] = useState(null)
+  // A link check ends after a while; by then the analyst may have opened a case.
+  const otwarteTeraz = useRef(null)
   const [obejrzane, setObejrzane] = useState(new Set())
   const najnowszeDodano = useRef(null)
   // High-risk cases already there when the panel opened; only later ones count as new alerts.
@@ -68,6 +71,10 @@ export default function App() {
 
   useAlerty(dolacz)
 
+  useEffect(() => {
+    otwarteTeraz.current = otwarte
+  }, [otwarte])
+
   const alerty = useMemo(() => wSprawy(reklamy ?? []).filter((s) => s.poziom === 'wysokie' && s.glowna.status !== 'zamknieta'), [reklamy])
   const przybyla = (s) => !poczatkowe.current?.has(s.klucz)
   const nowyAlert = (s) => przybyla(s) && !s.reklamy.some((r) => obejrzane.has(r.id))
@@ -80,6 +87,22 @@ export default function App() {
   function otworz(id, sprawy) {
     setOtwarte({ id, sprawy })
     setObejrzane((zbior) => new Set(zbior).add(id))
+  }
+
+  function poZleceniu(id, host) {
+    sledzSprawdzenie(id, host, (reklamaId) =>
+      odswiez().then(() => {
+        if (!otwarteTeraz.current) {
+          toast.dismiss(id)
+          return otworz(reklamaId, [])
+        }
+        toast.success('Sprawdzono link: ' + host, {
+          id,
+          duration: 10000,
+          action: { label: 'Otwórz', onClick: () => otworz(reklamaId, []) },
+        })
+      })
+    )
   }
 
   const otwarta = otwarte && reklamy?.find((r) => r.id === otwarte.id)
@@ -100,7 +123,7 @@ export default function App() {
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
           <Analityk />
-          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} poSprawdzeniu={(id) => odswiez().then(() => otworz(id, []))} />
+          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} poZleceniu={poZleceniu} />
         </div>
       </header>
       <main className="flex min-h-0 flex-1 flex-col px-8 py-6">

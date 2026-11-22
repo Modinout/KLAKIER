@@ -1,5 +1,5 @@
 import { bezTekstu, NAZWY_WERDYKTOW } from '../nazwy.js'
-import { notatki, ocenaModelu, ustalenia } from '../ustalenia.js'
+import { czystaSprawa, notatki, ocenaModelu, ustalenia } from '../ustalenia.js'
 
 function Punkt({ tytul, szary, children }) {
   return (
@@ -49,7 +49,7 @@ export default function ListaUstalen({ reklama }) {
           )}
         </Punkt>
       )}
-      {!model && lista.length === 0 && !bezTekstu(reklama) && <Punkt szary tytul="Brak ustaleń" />}
+      {!model && lista.length === 0 && !bezTekstu(reklama) && !czystaSprawa(reklama) && <Punkt szary tytul="Brak ustaleń" />}
       {bezTekstu(reklama) && <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />}
       {notatki(reklama).map((s) => <Punkt key={s.kod} szary tytul={s.opis} />)}
     </ul>

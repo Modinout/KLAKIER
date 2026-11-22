@@ -20,6 +20,10 @@ export function ocenaModelu(reklama) {
   return liniaOszustwa(reklama)
 }
 
+export function czystaSprawa(reklama) {
+  return reklama.poziom === 'niskie' && ustalenia(reklama).length === 0 && !ocenaModelu(reklama)
+}
+
 export function zdaniePowodu(reklama) {
   return reklama.powod && reklama.powod.replace(/^Tekst reklamy wygląda na oszustwo/, liniaOszustwa(reklama))
 }

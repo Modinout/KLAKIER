@@ -8,7 +8,7 @@ import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, NAZWY_STATUSOW,
 import { pobierzPlik } from '../pobierz.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
-import { zdaniePowodu } from '../ustalenia.js'
+import { czystaSprawa, zdaniePowodu } from '../ustalenia.js'
 import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
 import Dowody from './Dowody.jsx'
 import Historia from './Historia.jsx'
@@ -30,11 +30,11 @@ const KOMUNIKATY = {
 
 function Wniosek({ reklama }) {
   return (
-    <p className="mb-4">
+    <p>
       <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
         {POZIOMY[reklama.poziom]} ryzyko
       </span>
-      {reklama.powod && ': ' + zdaniePowodu(reklama)}
+      {czystaSprawa(reklama) ? ': nie znaleziono naruszeń.' : reklama.powod && ': ' + zdaniePowodu(reklama)}
     </p>
   )
 }
@@ -137,13 +137,15 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
               </>
             )}
           </SheetDescription>
-          <Wniosek reklama={reklama} />
+          <div className="mb-4">
+            <Wniosek reklama={reklama} />
+            <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />
+          </div>
           <Rejestr reklama={reklama} />
           <ListaUstalen reklama={reklama} />
           <Notatka key={'notatka' + reklama.id} reklama={reklama} podmien={podmien} />
           {obraz && <Obraz reklama={reklama} ukryj={() => setBezObrazu(reklama.id)} />}
           <Tekst key={'tekst' + reklama.id} reklama={reklama} obraz={obraz} />
-          {!bezTekstu(reklama) && <Ocena key={'ocena' + reklama.id} reklama={reklama} podmien={podmien} />}
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
           <Powiazane reklama={reklama} otworz={otworz} />
           <Podobne reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />

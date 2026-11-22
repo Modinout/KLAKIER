@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { zmienWerdyktAnalityka } from '../api.js'
-import { BLAD_ZAPISU } from '../nazwy.js'
+import { BLAD_ZAPISU, bezTekstu } from '../nazwy.js'
 
 const OCENY = {
   oszustwo: 'To oszustwo',
@@ -10,13 +10,34 @@ const OCENY = {
 }
 
 const WERDYKTY_MODELU = {
-  oszustwo: 'oszustwo',
-  do_sprawdzenia: 'wymaga sprawdzenia',
   ok: 'tekst w porządku',
+  do_sprawdzenia: 'tekst wymaga sprawdzenia',
+  oszustwo: 'tekst wygląda na oszustwo',
+}
+
+const WERDYKTY_ANALITYKA = {
+  oszustwo: 'to oszustwo',
+  ok: 'tekst w porządku',
+}
+
+function procent(ryzyko) {
+  const p = Math.round(ryzyko * 100)
+  return p === 0 ? 'poniżej 1%' : p + '%'
+}
+
+function linia(reklama) {
+  if (bezTekstu(reklama)) return 'Model KAPSEL: brak tekstu do oceny'
+  const analityk = WERDYKTY_ANALITYKA[reklama.werdykt_analityka]
+  return (
+    'Model KAPSEL: ' + WERDYKTY_MODELU[reklama.werdykt] + ' · ryzyko ' + procent(reklama.ryzyko) + (analityk ? ' · analityk: ' + analityk : '')
+  )
 }
 
 export default function Ocena({ reklama, podmien }) {
   const [otwarta, setOtwarta] = useState(Boolean(reklama.werdykt_analityka))
+  const zTekstem = !bezTekstu(reklama)
+
+  if (zTekstem && !reklama.werdykt) return null
 
   function zapisz(werdykt) {
     return zmienWerdyktAnalityka(reklama.id, werdykt).then(podmien)
@@ -35,32 +56,31 @@ export default function Ocena({ reklama, podmien }) {
       .catch(() => toast.error(BLAD_ZAPISU))
   }
 
-  if (!otwarta) {
-    return (
-      <button className="mt-6 block text-[13px] text-muted-foreground hover:text-foreground" onClick={() => setOtwarta(true)}>
-        Oceń tekst (uczy model)
-      </button>
-    )
-  }
-
   return (
-    <div className="mt-6">
-      {reklama.werdykt && (
-        <p className="mb-2 text-[13px] text-muted-foreground">Ocena modelu KAPSEL: {WERDYKTY_MODELU[reklama.werdykt]}</p>
-      )}
-      <div className="flex items-center gap-1.5">
-        {Object.entries(OCENY).map(([werdykt, nazwa]) => (
-          <Button
-            key={werdykt}
-            size="xs"
-            variant={werdykt === reklama.werdykt_analityka ? 'default' : 'outline'}
-            aria-pressed={werdykt === reklama.werdykt_analityka}
-            onClick={() => ustaw(werdykt)}
-          >
-            {nazwa}
-          </Button>
-        ))}
+    <div className="mt-1 text-[13px] text-muted-foreground">
+      <div className="flex items-baseline gap-3">
+        <p>{linia(reklama)}</p>
+        {zTekstem && !otwarta && (
+          <button className="ml-auto shrink-0 underline-offset-4 hover:text-foreground hover:underline" onClick={() => setOtwarta(true)}>
+            Popraw
+          </button>
+        )}
       </div>
+      {zTekstem && otwarta && (
+        <div className="mt-2 flex items-center gap-1.5">
+          {Object.entries(OCENY).map(([werdykt, nazwa]) => (
+            <Button
+              key={werdykt}
+              size="xs"
+              variant={werdykt === reklama.werdykt_analityka ? 'default' : 'outline'}
+              aria-pressed={werdykt === reklama.werdykt_analityka}
+              onClick={() => ustaw(werdykt)}
+            >
+              {nazwa}
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

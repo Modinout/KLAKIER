@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -7,15 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { dodajReklame, odczytajObraz, pobierzSprawdzenie, zapiszObraz, zlecSprawdzenie } from '../api.js'
-import { BLAD_ZAPISU, OPISY, PLATFORMY } from '../nazwy.js'
+import { dodajReklame, odczytajObraz, zapiszObraz, zlecSprawdzenie } from '../api.js'
+import { BLAD_ZAPISU, domena, OPISY, PLATFORMY } from '../nazwy.js'
+import { BLAD_SPRAWDZANIA } from '../sprawdzanieLinku.js'
 
 const PUSTE = { reklamodawca: '', url: '', tekst: '', platforma: 'google', obraz: null }
-const CO_ILE_MS = 2000
-const NAJDLUZEJ_MS = 3 * 60 * 1000
-// A check that stays in progress this long has lost its worker.
-const BEZ_ZMIANY_MS = 2 * 60 * 1000
-const NAPISY_SPRAWDZANIA = { w_kolejce: 'W kolejce…', w_toku: 'Sprawdzam stronę…' }
 
 function bladOdczytu(blad) {
   if (blad.status === 422) return 'To nie jest obraz.'
@@ -26,23 +22,17 @@ function bladOdczytu(blad) {
 function bladSprawdzenia(blad) {
   if (blad.status === 422) return blad.tresc?.detail?.[0]?.msg ?? 'Podaj poprawny adres strony.'
   if (blad.status === 503) return blad.tresc?.detail ?? 'Sprawdzanie stron jest teraz niedostępne.'
-  return 'Nie udało się sprawdzić strony. Spróbuj ponownie.'
+  return BLAD_SPRAWDZANIA
 }
 
-function czekaj(ms) {
-  return new Promise((koniec) => setTimeout(koniec, ms))
-}
-
-export default function DodajReklame({ poDodaniu, poSprawdzeniu }) {
+export default function DodajReklame({ poDodaniu, poZleceniu }) {
   const [otwarte, setOtwarte] = useState(false)
   const [pola, setPola] = useState(PUSTE)
   const [czyta, setCzyta] = useState(false)
   const [wysyla, setWysyla] = useState(false)
   const [link, setLink] = useState('')
-  const [stanLinku, setStanLinku] = useState(null)
+  const [zleca, setZleca] = useState(false)
   const [bladLinku, setBladLinku] = useState('')
-  // Bumped when the dialog closes or a new check starts, so an older polling loop stops.
-  const sprawdzanie = useRef(0)
 
   function ustaw(pole, wartosc) {
     setPola((p) => ({ ...p, [pole]: wartosc }))
@@ -51,53 +41,23 @@ export default function DodajReklame({ poDodaniu, poSprawdzeniu }) {
   function otworz(czy) {
     setOtwarte(czy)
     if (czy) return
-    sprawdzanie.current++
     setPola(PUSTE)
     setLink('')
-    setStanLinku(null)
     setBladLinku('')
   }
 
   async function sprawdzLink() {
-    const moje = ++sprawdzanie.current
-    const aktualne = () => moje === sprawdzanie.current
     setBladLinku('')
-    setStanLinku('w_kolejce')
+    setZleca(true)
     try {
       const { id } = await zlecSprawdzenie(link)
-      const start = Date.now()
-      let stan = 'w_kolejce'
-      let odZmiany = start
-      while (Date.now() - start < NAJDLUZEJ_MS) {
-        await czekaj(CO_ILE_MS)
-        if (!aktualne()) return
-        const wynik = await pobierzSprawdzenie(id)
-        if (!aktualne()) return
-        if (wynik.stan === 'gotowe') {
-          otworz(false)
-          poSprawdzeniu(wynik.reklama_id)
-          return
-        }
-        if (wynik.stan === 'blad') {
-          setBladLinku(wynik.blad)
-          setStanLinku(null)
-          return
-        }
-        if (wynik.stan !== stan) {
-          stan = wynik.stan
-          odZmiany = Date.now()
-          setStanLinku(stan)
-        } else if (stan === 'w_toku' && Date.now() - odZmiany >= BEZ_ZMIANY_MS) {
-          setBladLinku('Sprawdzanie nie powiodło się. Spróbuj ponownie.')
-          setStanLinku(null)
-          return
-        }
-      }
-      setBladLinku('Sprawdzanie trwa zbyt długo. Spróbuj ponownie.')
+      otworz(false)
+      poZleceniu(id, domena(link))
     } catch (e) {
-      if (aktualne()) setBladLinku(bladSprawdzenia(e))
+      setBladLinku(bladSprawdzenia(e))
+    } finally {
+      setZleca(false)
     }
-    if (aktualne()) setStanLinku(null)
   }
 
   function wczytajObraz(plik) {
@@ -165,8 +125,8 @@ export default function DodajReklame({ poDodaniu, poSprawdzeniu }) {
           <Label htmlFor="link">Link do sprawdzenia</Label>
           <div className="flex gap-2">
             <Input id="link" type="url" placeholder="https://" value={link} onChange={(e) => setLink(e.target.value)} />
-            <Button type="button" variant="outline" disabled={!link.trim() || stanLinku !== null} onClick={sprawdzLink}>
-              {NAPISY_SPRAWDZANIA[stanLinku] ?? 'Sprawdź link'}
+            <Button type="button" variant="outline" disabled={!link.trim() || zleca} onClick={sprawdzLink}>
+              Sprawdź link
             </Button>
           </div>
           {bladLinku && <p className="text-destructive">{bladLinku}</p>}
