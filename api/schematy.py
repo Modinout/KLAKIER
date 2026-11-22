@@ -216,6 +216,28 @@ class Sprawdzenie(BaseModel):
     blad: str | None = None
 
 
+class Fraza(BaseModel):
+    fraza: str = Field(max_length=100)
+
+    @model_validator(mode='after')
+    def niepusta(self):
+        self.fraza = self.fraza.strip()
+        if not self.fraza:
+            raise ValueError('Podaj frazę do wyszukania.')
+        return self
+
+
+class Wyszukiwanie(BaseModel):
+    """Wyszukiwanie frazy w bibliotece reklam TikToka zlecone z panelu."""
+
+    fraza: str
+    stan: Literal['w_kolejce', 'w_toku', 'gotowe', 'blad']
+    dodane: int | None = None
+    pominiete: int | None = None
+    kiedy: datetime | None = None
+    blad: str | None = None
+
+
 class NowyDowod(BaseModel):
     """Jedna wizyta sprawdzanego linku: zrzut ekranu jako PNG w base64 i HTML strony."""
 

@@ -7,6 +7,7 @@ import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
 import useSzeroki from './useSzeroki.js'
 import DodajReklame from './czesci/DodajReklame.jsx'
+import Patrol from './czesci/Patrol.jsx'
 import Szczegoly from './czesci/Szczegoly.jsx'
 import Alerty from './widoki/Alerty.jsx'
 import Analityka from './widoki/Analityka.jsx'
@@ -147,6 +148,7 @@ export default function App() {
           <TabsTrigger value="kalibracja" className="px-3">Kalibracja</TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
+          <Patrol odswiez={odswiez} />
           <DodajReklame poDodaniu={poDodaniu} poSprawdzeniu={poSprawdzeniu} />
         </div>
       </header>

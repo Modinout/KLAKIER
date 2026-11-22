@@ -1,12 +1,31 @@
-# Robotnik: bierze zadania z kolejki po kolei: linki wklejone w panelu oraz domeny, które sprawdza jak patrol.py.
-# Użycie: python robotnik.py [linki]; z "linki" bierze tylko linki, więc link nigdy nie czeka na domenę.
+# Robotnik: bierze zadania z kolejki po kolei: linki wklejone w panelu, frazy do wyszukania w bibliotece reklam TikToka
+# oraz domeny, które sprawdza jak patrol.py.
+# Użycie: python robotnik.py [linki]; z "linki" nie bierze domen, więc link i fraza nigdy nie czekają na domenę.
+import json
 import sys
+from datetime import datetime, timezone
 
 from playwright.sync_api import sync_playwright
 
 import kolejka
 import patrol
 import sprawdzenie_linku
+import tiktok
+
+
+def szukaj_frazy(zadanie, przegladarka):
+    """Szuka frazy zleconej w panelu i zapisuje w kolejce, jak poszło; zwraca linię do wydruku."""
+    zlecenie = json.loads(zadanie)
+    stan = {'fraza': zlecenie['fraza'], 'stan': 'w_toku'}
+    kolejka.zapisz_wyszukiwanie(zlecenie['id'], stan)
+    dodane, pominiete, blad, linia = tiktok.obsluz(zlecenie['fraza'], przegladarka)
+    if blad:
+        stan |= {'stan': 'blad', 'blad': 'Biblioteka reklam TikToka nie odpowiedziała. Spróbuj ponownie.'}
+    else:
+        stan |= {'stan': 'gotowe', 'dodane': dodane, 'pominiete': pominiete}
+    stan['kiedy'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    kolejka.zapisz_wyszukiwanie(zlecenie['id'], stan)
+    return linia
 
 
 def pracuj(tylko_linki):
@@ -21,6 +40,8 @@ def pracuj(tylko_linki):
                 przegladarka = playwright.chromium.launch(headless=True)
             if lista == kolejka.LINKI:
                 linia = sprawdzenie_linku.obsluz(zadanie, ostrzezenia, przegladarka, z_cert)
+            elif lista == kolejka.FRAZY:
+                linia = szukaj_frazy(zadanie, przegladarka)
             else:
                 *_, linia = patrol.obsluz(zadanie, ostrzezenia, przegladarka, z_cert)
             print(linia, flush=True)

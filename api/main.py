@@ -16,6 +16,7 @@ import dowody
 import historia
 import opis_zmian
 import ostrzezenie_strony
+import patrol
 import platnicy_domeny
 import powiazane
 import prog
@@ -52,6 +53,7 @@ app.include_router(prog.router)
 app.include_router(powiazane.router)
 app.include_router(domeny.router)
 app.include_router(sprawdzenia.router)
+app.include_router(patrol.router)
 app.include_router(dowody.router)
 
 

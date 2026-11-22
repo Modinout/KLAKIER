@@ -116,6 +116,9 @@ Pola jak wyżej oraz:
 | `POST /sprawdz` | zleca sprawdzenie linku, opis niżej w „Sprawdzenie linku z panelu” |
 | `GET /sprawdz/{id}` | stan sprawdzenia linku; `404`, gdy go nie ma |
 | `PUT /sprawdz/{id}` | robotnik zapisuje stan sprawdzenia, treść jak odpowiedź `GET /sprawdz/{id}`; `404`, gdy go nie ma |
+| `POST /patrol` | zleca wyszukiwanie frazy w bibliotece reklam TikToka, opis niżej w „Wyszukiwanie frazy z panelu” |
+| `GET /patrol/{id}` | stan wyszukiwania; `404`, gdy go nie ma |
+| `GET /patrol` | ostatnie zakończone wyszukiwanie albo `null`, gdy żadnego nie było |
 | `POST /reklamy/{id}/dowody` | robotnik dopisuje dowód wizyty, opis niżej w „Dowody wizyty”; zwraca go bez plików; `404`, gdy nie ma reklamy, `422`, gdy `obraz` to nie PNG |
 | `GET /reklamy/{id}/dowody` | dowody reklamy od najstarszego, bez plików; `404`, gdy nie ma reklamy |
 | `GET /dowody/{id}/obraz` | zrzut ekranu z dowodu, `image/png`; `404`, gdy nie ma dowodu |
@@ -170,6 +173,21 @@ Ten sam link wklejony drugi raz trafia do tej samej reklamy i dopisuje jej nowe 
 | `stan` | `w_kolejce`, `w_toku`, `gotowe`, `blad` | etap sprawdzenia |
 | `reklama_id` | liczba lub null | reklama ze strony pod linkiem, przy stanie `gotowe` |
 | `blad` | tekst lub null | krótki powód po polsku przy stanie `blad`, np. `Strona odpowiedziała kodem błędu 404.` |
+
+## Wyszukiwanie frazy z panelu
+
+Analityk wpisuje frazę w oknie „Patrol”. `POST /patrol` z treścią `{"fraza": "forex"}` wstawia ją do kolejki Valkey `patrol:frazy`. Biorą z niej `sprawdzacz` i robotnik patrolu, po linkach, a przed domenami. Robotnik szuka frazy jak `zbieracz/tiktok.py` i wysyła znalezione reklamy przez `POST /reklamy`. Odpowiedź: `202` i `{"id": 3}`, `422`, gdy fraza jest pusta albo ma ponad 100 znaków, `503`, gdy kolejka nie działa. Stan wyszukiwania trzyma kolejka, nie baza.
+
+`GET /patrol/{id}` i `GET /patrol` zwracają:
+
+| Pole | Typ | Opis |
+| --- | --- | --- |
+| `fraza` | tekst | szukana fraza |
+| `stan` | `w_kolejce`, `w_toku`, `gotowe`, `blad` | etap wyszukiwania |
+| `dodane` | liczba lub null | nowe reklamy, przy stanie `gotowe` |
+| `pominiete` | liczba lub null | znalezione reklamy, które już były w bazie, przy stanie `gotowe` |
+| `kiedy` | data i czas lub null | koniec wyszukiwania |
+| `blad` | tekst lub null | krótki powód po polsku przy stanie `blad` |
 
 ### Dowody wizyty
 
