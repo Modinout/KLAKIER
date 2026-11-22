@@ -36,7 +36,7 @@ Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są o
 
 ### M2: kryteria UKNF dla informacji o ryzyku
 
-Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z rejestrów KNF. Stronę docelową reklamy mierzy przeglądarka (`zbieracz/pomiar_ostrzezenia.js`, `api/ostrzezenie_strony.py`) w widoku komputera (1366 px), tabletu (768 px) i telefonu (390 px). Ustalenia z tekstu podają w podstawie numer kryterium UKNF, ustalenia ze strony powołują się na ESMA i WCAG.
+Lista pochodzi z materiałów UKNF („Kryteria oceny informacji o ryzyku”). Tekst reklamy sprawdzają reguły w `ai/wymogi.py`, tylko dla płatników z rejestrów KNF. Stronę docelową reklamy mierzy przeglądarka (`zbieracz/pomiar_ostrzezenia.js`, `api/ostrzezenie_strony.py`) w widoku komputera (1366 px), tabletu (768 px) i telefonu (390 px). Ustalenia z tekstu podają w podstawie numer kryterium UKNF, ustalenia ze strony powołują się na ESMA i WCAG.
 
 | Kryterium UKNF | Stan | Jak sprawdzamy |
 | --- | --- | --- |
