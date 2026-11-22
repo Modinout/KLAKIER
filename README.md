@@ -31,7 +31,9 @@ docker compose --profile patrol run --rm --no-deps patrol python tiktok.py [fraz
 docker compose --profile patrol run --rm --no-deps patrol python strony_docelowe.py [domena ...]
 ```
 
-Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc zleca sprawdzenie każdej domeny z listy ostrzeżeń KNF. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy.
+Pierwsza komenda włącza kolejkę zadań, robotnika i harmonogram, który co noc uruchamia patrol domen z listy ostrzeżeń KNF, wyszukiwanie fraz w bibliotece reklam TikToka i pomiar ostrzeżenia o ryzyku na stronach docelowych. Druga sprawdza jedną domenę od ręki. Trzecia zbiera reklamy z publicznej biblioteki reklam TikToka dla Polski; bez podanych fraz szuka pięciu wbudowanych fraz inwestycyjnych, najwyżej 10 reklam na frazę. Czwarta mierzy ostrzeżenie o ryzyku na stronach głównych domen, do których prowadzą reklamy firm z rejestru KNF, na komputerze i na telefonie, i zapisuje pomiar w api; bez podanych domen bierze wszystkie takie domeny z bazy.
+
+Reklamy z Mety (Facebook, Instagram, Messenger): analityk zapisuje stronę wyników Biblioteki reklam w przeglądarce, a `python meta.py strona.html` wczytuje z niej reklamy do bazy. Meta nie pozwala na automatyczne wizyty w bibliotece, dlatego urząd w pracy docelowej korzysta z oficjalnego API Biblioteki reklam z tokenem.
 
 Zmienne `ZBIERACZ_USER_AGENTS` i `ZBIERACZ_PROXY` w `.env` są opcjonalne: listy po przecinku, z których każde kolejne zadanie bierze następną wartość. Puste oznaczają własny User-Agent przeglądarki i brak proxy. Strona, która odmawia, nie jest odpytywana ponownie.
 
