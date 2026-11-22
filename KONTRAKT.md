@@ -33,11 +33,11 @@ Odpowiedź: `200` i `{"tekst": "..."}`, `422`, gdy to nie jest obraz, albo `503`
 
 ## Pomiar strony docelowej
 
-`PUT /strony/{domena}` od `zbieracz/strony_docelowe.py`, który otwiera stronę główną domeny na komputerze (okno 1366 × 900) i na telefonie (okno 390 × 844, User-Agent przeglądarki bez zmian). Nowy pomiar domeny zastępuje poprzedni. Taki sam pomiar strony pod linkiem wysyła sprawdzenie linku z panelu, opis niżej w „Sprawdzenie linku z panelu”.
+`PUT /strony/{domena}` od `zbieracz/strony_docelowe.py`, który otwiera stronę główną domeny na komputerze (okno 1366 × 900), na tablecie (okno 768 × 1024) i na telefonie (okno 390 × 844, User-Agent przeglądarki bez zmian). Nowy pomiar domeny zastępuje poprzedni. Taki sam pomiar strony pod linkiem, ale bez tabletu, wysyła sprawdzenie linku z panelu, opis niżej w „Sprawdzenie linku z panelu”.
 
 | Pole | Typ | Opis |
 | --- | --- | --- |
-| `komputer`, `telefon` | obiekt lub null | pomiar w jednym widoku; null, gdy strona się w nim nie otworzyła |
+| `komputer`, `tablet`, `telefon` | obiekt lub null | pomiar w jednym widoku; null, gdy strona się w nim nie otworzyła; `tablet` można pominąć |
 | `adres` | tekst | adres strony po przekierowaniach |
 | `przewazajacy_px` | liczba | rozmiar czcionki, którym napisano najwięcej widocznego tekstu |
 | `cfd` | prawda / fałsz | czy widoczny tekst strony mówi o kontraktach CFD |

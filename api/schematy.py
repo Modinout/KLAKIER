@@ -168,6 +168,8 @@ class PomiarStrony(BaseModel):
     """Widok jest None, gdy strona w nim się nie otworzyła."""
 
     komputer: WidokStrony | None
+    # Sprawdzenie linku z panelu mierzy tylko komputer i telefon.
+    tablet: WidokStrony | None = None
     telefon: WidokStrony | None
 
 

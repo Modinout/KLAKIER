@@ -1,10 +1,11 @@
-# Ostrzeżenie o ryzyku na stronie docelowej reklamy, tak jak zbieracz zmierzył je na komputerze i na telefonie.
+# Ostrzeżenie o ryzyku na stronie docelowej reklamy, tak jak zbieracz zmierzył je na komputerze, tablecie i telefonie.
 # Ostrzeżenie o CFD musi być wyraźne, a czcionka co najmniej tak duża jak przeważająca (ESMA 2018/796, załącznik III).
 KONTRAST = 4.5
 # WCAG wymaga mniej od dużego tekstu: od 24 px albo od 18,66 px pogrubionego.
 KONTRAST_DUZEGO_TEKSTU = 3
-MIEJSCA = {'komputer': 'na komputerze', 'telefon': 'na telefonie'}
-PODSTAWA = ('Pomiar strony głównej domeny w przeglądarce {data} (komputer 1366 px, telefon 390 px). Ostrzeżenie o ryzyku '
+MIEJSCA = {'komputer': 'na komputerze', 'tablet': 'na tablecie', 'telefon': 'na telefonie'}
+PODSTAWA = ('Pomiar strony głównej domeny w przeglądarce {data} (komputer 1366 px, tablet 768 px, telefon 390 px). '
+            'Ostrzeżenie o ryzyku '
             'CFD ma być wyeksponowane i nie mniejsze niż przeważająca czcionka: decyzja ESMA (UE) 2018/796, załącznik III, '
             'zastąpiona krajową interwencją produktową KNF; kontrast co najmniej 4,5:1 według WCAG 2.1')
 

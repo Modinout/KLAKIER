@@ -1,5 +1,5 @@
-# Mierzy ostrzeżenie o ryzyku na stronach głównych, do których prowadzą reklamy firm z rejestru KNF, na komputerze
-# i na telefonie, i wysyła każdy pomiar do api, które zamienia go w ustalenia przy każdym odczycie.
+# Mierzy ostrzeżenie o ryzyku na stronach głównych, do których prowadzą reklamy firm z rejestru KNF, na komputerze,
+# tablecie i telefonie, i wysyła każdy pomiar do api, które zamienia go w ustalenia przy każdym odczycie.
 # Użycie: python strony_docelowe.py [domena ...]; bez domen bierze domeny docelowe tych reklam.
 import os
 import re
@@ -13,6 +13,7 @@ import rotacja
 POMIAR = Path(__file__).with_name('pomiar_ostrzezenia.js').read_text(encoding='utf-8')
 WIDOKI = {
     'komputer': {'viewport': {'width': 1366, 'height': 900}},
+    'tablet': {'viewport': {'width': 768, 'height': 1024}, 'is_mobile': True, 'has_touch': True},
     # Wąskie okno z własnym User-Agentem przeglądarki, żeby strona pokazała układ, który daje telefonom według szerokości.
     'telefon': {'viewport': {'width': 390, 'height': 844}, 'is_mobile': True, 'has_touch': True},
 }
@@ -62,10 +63,11 @@ def obsluz(przegladarka, domena):
     if komputer is None:
         # Strona, która odmówiła przy pierwszej wizycie, nie jest pytana ponownie.
         return False, f'{domena}: strona nie otworzyła się albo odmówiła, pomijam'
+    tablet = zmierz(przegladarka, domena, 'tablet')
     telefon = zmierz(przegladarka, domena, 'telefon')
-    httpx.put(f"{os.environ['API_URL']}/strony/{domena}", json={'komputer': komputer, 'telefon': telefon},
+    httpx.put(f"{os.environ['API_URL']}/strony/{domena}", json={'komputer': komputer, 'tablet': tablet, 'telefon': telefon},
               timeout=30).raise_for_status()
-    return True, f'{domena}: komputer: {opis(komputer)}; telefon: {opis(telefon)}'
+    return True, f'{domena}: komputer: {opis(komputer)}; tablet: {opis(tablet)}; telefon: {opis(telefon)}'
 
 
 def zmierz_wszystkie(domeny):

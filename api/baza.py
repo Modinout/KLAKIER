@@ -152,10 +152,11 @@ def zapisz_strone(domena, pomiar):
     with polacz() as baza:
         return baza.execute(
             """
-            INSERT INTO strony (domena, zmierzono, komputer, telefon)
-            VALUES (%(domena)s, now(), %(komputer)s, %(telefon)s)
+            INSERT INTO strony (domena, zmierzono, komputer, tablet, telefon)
+            VALUES (%(domena)s, now(), %(komputer)s, %(tablet)s, %(telefon)s)
             ON CONFLICT (domena) DO UPDATE
-            SET zmierzono = EXCLUDED.zmierzono, komputer = EXCLUDED.komputer, telefon = EXCLUDED.telefon
+            SET zmierzono = EXCLUDED.zmierzono, komputer = EXCLUDED.komputer, tablet = EXCLUDED.tablet,
+                telefon = EXCLUDED.telefon
             RETURNING *
             """,
             {'domena': domena, **widoki},

@@ -42,6 +42,7 @@ CREATE TABLE strony (
     domena        TEXT PRIMARY KEY,
     zmierzono     TIMESTAMPTZ NOT NULL,
     komputer      JSONB,
+    tablet        JSONB,
     telefon       JSONB
 );
 

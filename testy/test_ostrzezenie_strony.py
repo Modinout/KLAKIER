@@ -29,9 +29,9 @@ def widok(px=16, przewazajacy=16, kontrast=21, pogrubienie=400, widoczne=True, o
     }
 
 
-def strona(komputer, telefon=None):
+def strona(komputer, telefon=None, tablet=None):
     return {'domena': DOMENA, 'zmierzono': datetime(2026, 11, 22, 3, tzinfo=timezone.utc),
-            'komputer': komputer, 'telefon': telefon}
+            'komputer': komputer, 'tablet': tablet, 'telefon': telefon}
 
 
 def opis(komputer, telefon=None):
@@ -57,6 +57,12 @@ def test_slaby_kontrast_i_brak_na_telefonie():
 
 def test_na_telefonie_bez_ostrzezenia_w_ogole():
     assert opis(widok(), widok(ostrzezenie=False)).endswith(': na telefonie niewidoczne.')
+
+
+def test_na_tablecie_niewidoczne():
+    sygnal, = sygnaly(DOMENA, strona(widok(), widok(), tablet=widok(widoczne=False)))
+    assert sygnal['opis'] == 'Ostrzeżenie o ryzyku na stronie broker.example: na tablecie niewidoczne.'
+    assert '(komputer 1366 px, tablet 768 px, telefon 390 px)' in sygnal['podstawa']
 
 
 def test_duzy_pogrubiony_tekst_potrzebuje_mniejszego_kontrastu():
