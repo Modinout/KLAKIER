@@ -8,7 +8,7 @@ import { bezTekstu, BLAD_ZAPISU, data, dzienCzytelny, ileReklam, NAZWY_STATUSOW,
 import { pobierzPlik } from '../pobierz.js'
 import { POZIOMY } from '../ryzyko.js'
 import { dzienReklamy, odNajgorszej, tytul } from '../sprawy.js'
-import { czystaSprawa, zdaniePowodu } from '../ustalenia.js'
+import { czystaSprawa, modelZalecaSprawdzenie, tagi, ustalenia, zdecydowalModel, zdaniePowodu } from '../ustalenia.js'
 import { nazwaPliku, zgloszenie } from '../zgloszenie.js'
 import Dowody from './Dowody.jsx'
 import Historia from './Historia.jsx'
@@ -28,14 +28,34 @@ const KOMUNIKATY = {
   zamknieta: 'Sprawa zamknięta',
 }
 
+function dopisek(reklama) {
+  if (czystaSprawa(reklama)) return ': nie znaleziono naruszeń.'
+  if (reklama.poziom === 'niskie' && ustalenia(reklama).length === 0 && modelZalecaSprawdzenie(reklama)) {
+    return ': brak twardych ustaleń, ale model KAPSEL zaleca sprawdzenie tekstu.'
+  }
+  return reklama.powod && ': ' + zdaniePowodu(reklama)
+}
+
+// Skróty takie jak „CFD” zostają wielkimi literami.
+function malaLitera(tekst) {
+  return /^\p{Lu}\p{Lu}/u.test(tekst) ? tekst : tekst.charAt(0).toLocaleLowerCase('pl') + tekst.slice(1)
+}
+
 function Wniosek({ reklama }) {
+  const [pierwszy] = tagi(reklama)
+  const samPoziom = reklama.poziom !== 'niskie' && Boolean(pierwszy)
   return (
-    <p>
-      <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
-        {POZIOMY[reklama.poziom]} ryzyko
-      </span>
-      {czystaSprawa(reklama) ? ': nie znaleziono naruszeń.' : reklama.powod && ': ' + zdaniePowodu(reklama)}
-    </p>
+    <>
+      <p>
+        <span className={'font-semibold' + (reklama.poziom === 'wysokie' ? ' text-destructive' : '')}>
+          {POZIOMY[reklama.poziom]} ryzyko
+        </span>
+        {!samPoziom && dopisek(reklama)}
+      </p>
+      {samPoziom && !zdecydowalModel(reklama) && (
+        <p className="mt-1 text-[13px] text-muted-foreground">Zdecydowała reguła: {malaLitera(pierwszy)}</p>
+      )}
+    </>
   )
 }
 
@@ -151,7 +171,7 @@ export default function Szczegoly({ reklama, wiersze, sprawy, otworz, zamknij, p
             </Sekcja>
           )}
           <InneWSprawie reklama={reklama} reklamy={wSprawie.filter((r) => r.id !== reklama.id)} otworz={otworz} />
-          <Powiazane reklama={reklama} otworz={otworz} />
+          <Powiazane key={'powiazane' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} />
           <Podobne key={'podobne' + reklama.id} reklama={reklama} wSprawie={ids} otworz={otworz} odswiez={odswiez} />
           <Dowody reklama={reklama} />
           <Historia key={'historia' + reklama.id} reklama={reklama} />

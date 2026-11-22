@@ -1,5 +1,5 @@
 import { bezTekstu, NAZWY_WERDYKTOW } from '../nazwy.js'
-import { czystaSprawa, notatki, ocenaModelu, ustalenia } from '../ustalenia.js'
+import { notatki, ocenaModelu, ustalenia } from '../ustalenia.js'
 
 function Punkt({ tytul, szary, children }) {
   return (
@@ -17,7 +17,7 @@ function Podpis({ children }) {
   return <p className="text-[13px] text-muted-foreground">{children}</p>
 }
 
-// Zdanie o poziomie nad listą już to mówi; wiersz modelu różni się od niego tylko wielkością liter i końcową kropką.
+// Przy niskim ryzyku zdanie o poziomie nad listą już to mówi; wiersz modelu różni się od niego tylko wielkością liter i końcową kropką.
 function powtarzaPowod(tytul, powod) {
   const bezKropki = (tekst) => tekst.replace(/\.$/, '').toLowerCase()
   return Boolean(powod) && bezKropki(tytul) === bezKropki(powod)
@@ -27,12 +27,13 @@ export default function ListaUstalen({ reklama }) {
   const lista = ustalenia(reklama)
   const model = ocenaModelu(reklama)
   const drugi = reklama.drugi_sedzia
-  const modelPowtarza = model && powtarzaPowod(model, reklama.powod)
+  const powod = reklama.poziom === 'niskie' ? reklama.powod : null
+  const modelPowtarza = model && powtarzaPowod(model, powod)
 
   return (
     <ul className="mt-4">
       {lista.map((s) => {
-        const powtarza = powtarzaPowod(s.opis, reklama.powod)
+        const powtarza = powtarzaPowod(s.opis, powod)
         if (powtarza && !s.podstawa) return null
         return (
           <Punkt key={s.modul + s.kod} tytul={powtarza ? null : s.opis}>
@@ -49,7 +50,7 @@ export default function ListaUstalen({ reklama }) {
           )}
         </Punkt>
       )}
-      {!model && lista.length === 0 && !bezTekstu(reklama) && !czystaSprawa(reklama) && <Punkt szary tytul="Brak ustaleń" />}
+      {!model && lista.length === 0 && !bezTekstu(reklama) && reklama.poziom !== 'niskie' && <Punkt szary tytul="Brak ustaleń" />}
       {bezTekstu(reklama) && <Punkt szary tytul="Reklama graficzna: tekst nie został jeszcze odczytany" />}
       {notatki(reklama).map((s) => <Punkt key={s.kod} szary tytul={s.opis} />)}
     </ul>

@@ -36,6 +36,13 @@ function pasujeSprawa(s, filtry) {
   return true
 }
 
+// Szukany numer reklamy otwiera tę reklamę, a nie główną reklamę jej sprawy.
+function doOtwarcia(s, szukaj) {
+  const szukane = szukaj.trim()
+  const znaleziona = /^\d+$/.test(szukane) && s.reklamy.find((r) => String(r.id) === szukane)
+  return znaleziona ? znaleziona.id : s.glowna.id
+}
+
 function takieSame(a, b) {
   return JSON.stringify(a) === JSON.stringify(b)
 }
@@ -92,7 +99,7 @@ export default function Analityka({ wiersze, otwarteId, otworz }) {
         ile={ileSpraw(sprawy.length)}
         kiedy={(s) => dzienCzytelny(s.dzien)}
         otwarteId={otwarteId}
-        otworz={(s) => otworz(s.glowna.id, sprawy)}
+        otworz={(s) => otworz(doOtwarcia(s, filtry.szukaj), sprawy)}
         pusto={
           <Pusto
             poza={takieSame(filtry, tylkoSzukane) ? 0 : ile(tylkoSzukane)}

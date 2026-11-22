@@ -37,7 +37,7 @@ export default function Trend({ reklamy }) {
       <ChartContainer config={KONFIGURACJA} className="aspect-auto h-[44px] w-full">
         <BarChart data={punkty} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
           <XAxis dataKey="kiedy" tickLine={false} axisLine={false} tickMargin={4} minTickGap={24} height={20} fontSize={11} />
-          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent formatter={(ile) => KONFIGURACJA.ile.label + ': ' + ile} />} />
           <Bar
             dataKey="ile"
             fill="var(--color-ile)"

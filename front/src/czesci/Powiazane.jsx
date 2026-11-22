@@ -3,14 +3,14 @@ import { pobierzPowiazane } from '../api.js'
 import { NAZWY_POWIAZAN } from '../nazwy.js'
 import Sekcja from './Sekcja.jsx'
 
-export default function Powiazane({ reklama, otworz }) {
+export default function Powiazane({ reklama, wSprawie, otworz }) {
   const [powiazane, setPowiazane] = useState([])
 
   useEffect(() => {
     let aktualne = true
     setPowiazane([])
     pobierzPowiazane(reklama.id)
-      .then((lista) => aktualne && setPowiazane(lista))
+      .then((lista) => aktualne && setPowiazane(lista.filter((p) => !wSprawie.includes(p.id))))
       .catch(() => null)
     return () => {
       aktualne = false

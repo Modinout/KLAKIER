@@ -20,8 +20,17 @@ export function ocenaModelu(reklama) {
   return liniaOszustwa(reklama)
 }
 
+export function modelZalecaSprawdzenie(reklama) {
+  return !bezTekstu(reklama) && reklama.werdykt === 'do_sprawdzenia'
+}
+
+// Etykieta modelu jest najmocniejsza tylko wtedy, gdy żadna reguła nic nie ustaliła.
+export function zdecydowalModel(reklama) {
+  return Boolean(ocenaModelu(reklama)) && ustalenia(reklama).length === 0
+}
+
 export function czystaSprawa(reklama) {
-  return reklama.poziom === 'niskie' && ustalenia(reklama).length === 0 && !ocenaModelu(reklama)
+  return reklama.poziom === 'niskie' && ustalenia(reklama).length === 0 && !ocenaModelu(reklama) && !modelZalecaSprawdzenie(reklama)
 }
 
 export function zdaniePowodu(reklama) {
