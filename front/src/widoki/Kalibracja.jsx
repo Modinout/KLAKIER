@@ -31,24 +31,24 @@ function zdanieKolejki(wiersze, prog, zapisany) {
   return 'Przy progu ' + procent(prog) + ' kolejka się nie zmieni.'
 }
 
-function Kafelek({ tytul, ile, z, kolor, dopisek }) {
+function Wynik({ tytul, ile, z, kolor, dopisek }) {
   return (
-    <div className={'rounded-lg border border-l-4 p-5 ' + kolor.ramka}>
-      <p className="font-medium">{tytul}</p>
-      <p className="mt-2 flex items-baseline gap-3 tabular-nums">
-        <span className={'text-4xl font-semibold ' + kolor.tekst}>
-          {liczba(ile)} z {liczba(z)}
-        </span>
-        <span className={'text-2xl font-semibold ' + kolor.tekst}>{procent(ile / z)}</span>
+    <div>
+      <p className="flex items-baseline gap-2 tabular-nums">
+        <span className="font-medium">{tytul}</span>
+        <span className="ml-auto text-3xl font-semibold">{liczba(ile)}</span>
+        <span className="text-muted-foreground">z {liczba(z)}</span>
       </p>
-      <p className="mt-1 text-muted-foreground">{dopisek}</p>
+      <div className="mt-3 h-2 rounded-full bg-muted">
+        <div className={'h-full rounded-full ' + kolor} style={{ width: (ile / z) * 100 + '%' }} />
+      </div>
+      <p className="mt-2 flex justify-between text-muted-foreground tabular-nums">
+        <span>{dopisek}</span>
+        <span>{procent(ile / z)}</span>
+      </p>
     </div>
   )
 }
-
-const ZIELONY = { ramka: 'border-l-emerald-600', tekst: 'text-emerald-600' }
-const CZERWONY = { ramka: 'border-l-destructive', tekst: 'text-destructive' }
-const ZWYKLY = { ramka: '', tekst: '' }
 
 function Progi({ progi, prog, ustawProg, zapisany, zapisz, wiersze }) {
   const wartosci = progi.progi.map((p) => p.prog)
@@ -103,19 +103,19 @@ function Progi({ progi, prog, ustawProg, zapisany, zapisz, wiersze }) {
             <h2 className="mb-3 text-muted-foreground">
               Wynik na {liczba(progi.oszustw + progi.uczciwych)} sprawdzonych reklamach ({ileOszustw(progi.oszustw)}, {ileUczciwych(progi.uczciwych)})
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <Kafelek
+            <div className="grid grid-cols-2 gap-12">
+              <Wynik
                 tytul="Wyłapane oszustwa"
                 ile={punkt.lapane}
                 z={progi.oszustw}
-                kolor={ZIELONY}
+                kolor="bg-emerald-600"
                 dopisek={'przeoczone: ' + liczba(progi.oszustw - punkt.lapane)}
               />
-              <Kafelek
+              <Wynik
                 tytul="Fałszywe alarmy"
                 ile={punkt.falszywe}
                 z={progi.uczciwych}
-                kolor={punkt.falszywe > 0 ? CZERWONY : ZWYKLY}
+                kolor="bg-destructive"
                 dopisek="uczciwe reklamy oznaczone jako oszustwo"
               />
             </div>

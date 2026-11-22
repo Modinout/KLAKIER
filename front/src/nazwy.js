@@ -199,6 +199,6 @@ export const NAZWY_POWIAZAN = {
 }
 
 export const OPISY = {
-  alerty: 'Sprawy wysokiego ryzyka.',
+  alerty: 'Reklamy wysokiego ryzyka trafiają tu na żywo, od razu po wykryciu.',
   dodaj: 'Wklej tekst reklamy albo wrzuć jej zrzut. Reklama trafi do kolejki od razu z oceną.',
 }

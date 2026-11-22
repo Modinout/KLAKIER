@@ -31,9 +31,13 @@ export default function Alerty({ sprawy, przybyla, nowe, otwarteId, otworz }) {
     <>
       <h1 className="mb-1 text-2xl font-bold tracking-tight">Alerty</h1>
       <p className="mb-5 text-muted-foreground">{OPISY.alerty}</p>
-      <h2 className="mb-2 text-lg font-semibold">Nowe od otwarcia panelu</h2>
-      {nowych.length > 0 ? tabela(nowych) : <p className="text-muted-foreground">Brak nowych alertów od otwarcia panelu</p>}
-      <h2 className="mt-8 mb-2 text-lg font-semibold">Wcześniejsze</h2>
+      {nowych.length > 0 && (
+        <>
+          <h2 className="mb-2 text-lg font-semibold">Nowe od otwarcia panelu</h2>
+          {tabela(nowych)}
+          <h2 className="mt-8 mb-2 text-lg font-semibold">Wcześniejsze</h2>
+        </>
+      )}
       {tabela(wczesniejsze)}
     </>
   )
