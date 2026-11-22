@@ -86,7 +86,7 @@ export default function DodajReklame({ poDodaniu }) {
   return (
     <Dialog open={otwarte} onOpenChange={otworz}>
       <DialogTrigger asChild>
-        <Button className="ml-auto h-[34px] px-3.5">
+        <Button className="h-[34px] px-3.5">
           <Plus />
           Dodaj reklamę
         </Button>

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { pobierzReklamy } from './api.js'
 import { klucz, wSprawy } from './sprawy.js'
 import useAlerty from './useAlerty.js'
+import Analityk from './czesci/Analityk.jsx'
 import DodajReklame from './czesci/DodajReklame.jsx'
 import Szczegoly from './czesci/Szczegoly.jsx'
 import Alerty from './widoki/Alerty.jsx'
@@ -97,7 +98,10 @@ export default function App() {
           </TabsTrigger>
           <TabsTrigger value="kalibracja" className="px-3">Kalibracja</TabsTrigger>
         </TabsList>
-        <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} />
+        <div className="ml-auto flex items-center gap-2">
+          <Analityk />
+          <DodajReklame poDodaniu={(nowa) => dolacz([nowa])} />
+        </div>
       </header>
       <main className="flex min-h-0 flex-1 flex-col px-8 py-6">
         {reklamy ? (

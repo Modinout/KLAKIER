@@ -19,15 +19,48 @@ const USTALENIA = 'Ustalenia:'
 const PODSTAWA = '   Podstawa: '
 const UWAGI = 'Uwagi:'
 const TRESC = 'Treść: '
-const BEZ_TEKSTU = 'Reklama graficzna, tekst nie został odczytany'
+const NOTATKA = 'Notatka: '
+const BEZ_TEKSTU ='Reklama graficzna, tekst nie został odczytany'
 
 function rozne(lista) {
   return [...new Set(lista.filter(Boolean))]
 }
 
-function wniosek(reklama) {
+// The reason is left out when the first case finding already says it.
+function wniosek(reklama, pierwszyPunkt) {
   const zdanie = zdaniePowodu(reklama)
-  return POZIOMY[reklama.poziom] + RYZYKO + (zdanie ? ': ' + zdanie : '')
+  const powtorzone = zdanie && pierwszyPunkt && zdanie.startsWith(pierwszyPunkt.split('\n')[0])
+  return POZIOMY[reklama.poziom] + RYZYKO + (zdanie && !powtorzone ? ': ' + zdanie : '')
+}
+
+function zdania(tekst) {
+  return tekst.split(/(?<=\.) (?=\p{Lu})/u)
+}
+
+function punkt(s) {
+  return s.opis + (s.podstawa ? '\n' + PODSTAWA + s.podstawa : '')
+}
+
+function takieSamo(a, b) {
+  return a.kod === b.kod && (a.podstawa ?? null) === (b.podstawa ?? null)
+}
+
+// A finding is shared when every ad has one with the same code and basis; the case keeps the
+// sentences all of them say, each ad keeps the rest of its own description.
+function wspolneUstalenia(reklamy) {
+  return ustalenia(reklamy[0]).flatMap((s) => {
+    const takie = reklamy.map((r) => ustalenia(r).find((t) => takieSamo(s, t)))
+    if (takie.some((t) => !t)) return []
+    const wszystkich = zdania(s.opis).filter((z) => takie.every((t) => zdania(t.opis).includes(z)))
+    return wszystkich.length ? [{ ...s, opis: wszystkich.join(' ') }] : []
+  })
+}
+
+function resztaOpisow(reklama, wspolneU) {
+  return wspolneU.map((w) => {
+    const wlasne = ustalenia(reklama).find((t) => takieSamo(w, t))
+    return zdania(wlasne.opis).filter((z) => !zdania(w.opis).includes(z)).join(' ')
+  })
 }
 
 function platnicy(reklamy) {
@@ -43,8 +76,8 @@ function podmioty(reklamy) {
   return rozne(wpisy).map((wpis) => W_REJESTRZE + wpis)
 }
 
-function punkty(reklama) {
-  const lista = ustalenia(reklama).map((s) => s.opis + (s.podstawa ? '\n' + PODSTAWA + s.podstawa : ''))
+function punkty(reklama, wspolneU) {
+  const lista = ustalenia(reklama).filter((t) => !wspolneU.some((w) => takieSamo(w, t))).map(punkt)
   const model = ocenaModelu(reklama)
   return model ? [...lista, model] : lista
 }
@@ -66,15 +99,21 @@ function listaUwag(lista) {
 }
 
 // Findings shared by every ad of the case are listed once above the ads.
-function blokReklamy(reklama, wspolnePunkty, wspolneUwagi) {
+function blokReklamy(reklama, wspolneU, wspolnePunkty, wspolneUwagi) {
   return [
     [REKLAMA_NR + reklama.id, nazwaZrodla(reklama.zrodlo), ZEBRANO + data(reklama.zebrano)].join(' · '),
+    ...resztaOpisow(reklama, wspolneU),
     reklama.url && ADRES + reklama.url,
     reklama.ma_obraz && OBRAZ + new URL(adresObrazu(reklama.id), location.origin).href,
-    ...listaUstalen(punkty(reklama).filter((p) => !wspolnePunkty.includes(p))),
+    ...listaUstalen(punkty(reklama, wspolneU).filter((p) => !wspolnePunkty.includes(p))),
     ...listaUwag(uwagi(reklama).filter((p) => !wspolneUwagi.includes(p))),
-    TRESC + (bezTekstu(reklama) ? BEZ_TEKSTU : reklama.tekst.replace(/\s+/g, ' ').trim()),
+    TRESC + (bezTekstu(reklama) ? BEZ_TEKSTU : jedenAkapit(reklama.tekst)),
+    reklama.notatka && NOTATKA + jedenAkapit(reklama.notatka),
   ]
+}
+
+function jedenAkapit(tekst) {
+  return tekst.replace(/\s+/g, ' ').trim()
 }
 
 function blok(linie) {
@@ -84,14 +123,16 @@ function blok(linie) {
 // The first ad is the one open on the sheet.
 export function zgloszenie(reklamy) {
   const glowna = reklamy[0]
-  const wspolnePunkty = wspolne(reklamy, punkty)
+  const wspolneU = wspolneUstalenia(reklamy)
+  const wspolnePunkty = wspolne(reklamy, (r) => punkty(r, wspolneU))
   const wspolneUwagi = wspolne(reklamy, uwagi)
+  const punktySprawy = [...wspolneU.map(punkt), ...wspolnePunkty]
   const bloki = [
     [NAGLOWEK + tytul(glowna), SPORZADZONO + dzienCzytelny(dzien(new Date())), REKLAM_W_SPRAWIE + reklamy.length],
-    [wniosek(glowna)],
+    [wniosek(glowna, punktySprawy[0])],
     [...platnicy(reklamy), ...rozne(reklamy.map(domenaDocelowa)).map((d) => PROWADZI_DO + d), ...podmioty(reklamy)],
-    [...listaUstalen(wspolnePunkty), ...listaUwag(wspolneUwagi)],
-    ...reklamy.map((r) => blokReklamy(r, wspolnePunkty, wspolneUwagi)),
+    [...listaUstalen(punktySprawy), ...listaUwag(wspolneUwagi)],
+    ...reklamy.map((r) => blokReklamy(r, wspolneU, wspolnePunkty, wspolneUwagi)),
   ]
   return bloki.map(blok).filter(Boolean).join('\n\n')
 }

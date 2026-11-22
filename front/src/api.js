@@ -1,3 +1,5 @@
+import { analityk } from './analityk.js'
+
 async function wyslij(url, opcje) {
   const odpowiedz = await fetch(url, opcje)
   if (!odpowiedz.ok) {
@@ -14,6 +16,17 @@ function json(metoda, dane) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dane),
   }
+}
+
+// A header carries only Latin-1, so a name with Polish letters goes encoded.
+function podpis() {
+  const nazwa = analityk()
+  return nazwa ? { 'X-Analityk': encodeURIComponent(nazwa) } : {}
+}
+
+function zmienReklame(id, dane) {
+  const opcje = json('PATCH', dane)
+  return wyslij('/api/reklamy/' + id, { ...opcje, headers: { ...opcje.headers, ...podpis() } })
 }
 
 export function pobierzReklamy(od) {
@@ -41,7 +54,7 @@ export function odczytajObraz(obraz) {
 }
 
 export function zmienStatus(id, status) {
-  return wyslij('/api/reklamy/' + id, json('PATCH', { status }))
+  return zmienReklame(id, { status })
 }
 
 // Takes [id, status] pairs, so an undo can give each ad its own earlier status.
@@ -50,7 +63,15 @@ export function zmienStatusy(pary) {
 }
 
 export function zmienWerdyktAnalityka(id, werdykt) {
-  return wyslij('/api/reklamy/' + id, json('PATCH', { werdykt_analityka: werdykt }))
+  return zmienReklame(id, { werdykt_analityka: werdykt })
+}
+
+export function zmienNotatke(id, notatka) {
+  return zmienReklame(id, { notatka })
+}
+
+export function pobierzHistorie(id) {
+  return wyslij('/api/reklamy/' + id + '/historia')
 }
 
 export function pobierzPodobne(id) {
@@ -58,7 +79,7 @@ export function pobierzPodobne(id) {
 }
 
 export function uczModel() {
-  return wyslij('/api/ucz', { method: 'POST' })
+  return wyslij('/api/ucz', { method: 'POST', headers: podpis() })
 }
 
 export function pobierzProgi() {
