@@ -18,6 +18,8 @@ W pliku `.env` ustaw własne hasło bazy. Trzecia komenda wczytuje 144 prawdziwe
 
 Zmienne `DUZY_MODEL_URL`, `DUZY_MODEL_NAZWA` i `DUZY_MODEL_KLUCZ` w `.env` są opcjonalne: wskazują duży model, który daje drugą ocenę niepewnych reklam i pisze przykłady dla nowych rodzajów oszustw. Bez nich te dwie funkcje są wyłączone.
 
+Panel i API nie mają logowania; po starcie są dostępne tylko z tego komputera.
+
 - Panel: http://localhost:8080
 - Opis API w przeglądarce: http://localhost:8000/docs
 - Czysty start bazy: `docker compose down -v` (kasuje też to, czego model nauczył się od analityka, i dodane rodzaje oszustw)

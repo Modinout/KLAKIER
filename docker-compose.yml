@@ -9,9 +9,10 @@ services:
       - ./baza/schemat.sql:/docker-entrypoint-initdb.d/schemat.sql:ro
       - dane_bazy:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U klakier"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U klakier"]
       interval: 2s
       retries: 15
+    restart: unless-stopped
 
   ai:
     build: ./ai
@@ -25,10 +26,12 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/zdrowie')"]
       interval: 2s
       retries: 30
+    restart: unless-stopped
 
   odczyt:
     build: ./odczyt
     healthcheck: *zdrowie
+    restart: unless-stopped
 
   api:
     build: ./api
@@ -37,9 +40,12 @@ services:
       AI_URL: http://ai:8000
       ODCZYT_URL: http://odczyt:8000
       KOLEJKA_URL: redis://kolejka:6379/0
+    # Both loopback addresses: localhost may resolve to ::1 first, and an unanswered ::1 delays every call.
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
+      - "[::1]:8000:8000"
     healthcheck: *zdrowie
+    restart: unless-stopped
     depends_on:
       baza:
         condition: service_healthy
@@ -49,7 +55,9 @@ services:
   front:
     build: ./front
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
+      - "[::1]:8080:80"
+    restart: unless-stopped
     depends_on:
       api:
         condition: service_healthy
