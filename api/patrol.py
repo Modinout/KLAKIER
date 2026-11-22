@@ -11,6 +11,10 @@ from sprawdzenia import KOLEJKA
 FRAZY = 'patrol:frazy'
 NUMER = 'patrol:numer'
 OSTATNIE = 'patrol:ostatnie'
+# Trwające wyszukiwanie: drugie zlecenie dostaje jego numer, a nie własny przebieg po tych samych reklamach.
+BIEZACE = 'patrol:biezace'
+# Po tylu sekundach przerwane wyszukiwanie nie blokuje już następnego.
+NAJDLUZEJ_S = 600
 
 router = APIRouter()
 
@@ -23,8 +27,12 @@ def klucz(id):
              tags=['Patrol'])
 def zlec(zlecenie: Fraza):
     try:
+        biezace = KOLEJKA.get(BIEZACE)
+        if biezace and json.loads(KOLEJKA.get(klucz(int(biezace))))['stan'] in ('w_kolejce', 'w_toku'):
+            return {'id': int(biezace)}
         id = KOLEJKA.incr(NUMER)
         KOLEJKA.set(klucz(id), json.dumps({'fraza': zlecenie.fraza, 'stan': 'w_kolejce'}))
+        KOLEJKA.set(BIEZACE, id, ex=NAJDLUZEJ_S)
         KOLEJKA.rpush(FRAZY, json.dumps({'id': id, 'fraza': zlecenie.fraza}))
     except redis.RedisError as blad:
         raise HTTPException(503, 'Kolejka patrolu nie działa.') from blad

@@ -176,7 +176,7 @@ Ten sam link wklejony drugi raz trafia do tej samej reklamy i dopisuje jej nowe 
 
 ## Wyszukiwanie frazy z panelu
 
-Analityk klika „Patrol” w panelu. `POST /patrol` z treścią `{}` zleca wyszukanie fraz inwestycyjnych z `zbieracz/tiktok.py`, a z treścią `{"fraza": "forex"}` jednej frazy; zlecenie trafia do kolejki Valkey `patrol:frazy`. Biorą z niej `sprawdzacz` i robotnik patrolu, po linkach, a przed domenami. Robotnik szuka frazy jak `zbieracz/tiktok.py` i wysyła znalezione reklamy przez `POST /reklamy`. Odpowiedź: `202` i `{"id": 3}`, `422`, gdy fraza jest pusta albo ma ponad 100 znaków, `503`, gdy kolejka nie działa. Stan wyszukiwania trzyma kolejka, nie baza.
+Analityk klika „Patrol” w panelu. `POST /patrol` z treścią `{}` zleca wyszukanie fraz inwestycyjnych z `zbieracz/tiktok.py`, a z treścią `{"fraza": "forex"}` jednej frazy; zlecenie trafia do kolejki Valkey `patrol:frazy`. Biorą z niej `sprawdzacz` i robotnik patrolu, po linkach, a przed domenami. Robotnik szuka frazy jak `zbieracz/tiktok.py` i wysyła znalezione reklamy przez `POST /reklamy`. Odpowiedź: `202` i `{"id": 3}`, `422`, gdy fraza jest pusta albo ma ponad 100 znaków, `503`, gdy kolejka nie działa. Dopóki wyszukiwanie trwa, kolejne zlecenie dostaje jego `id` i nie uruchamia drugiego. Stan wyszukiwania trzyma kolejka, nie baza.
 
 `GET /patrol/{id}` i `GET /patrol` zwracają:
 
@@ -188,6 +188,17 @@ Analityk klika „Patrol” w panelu. `POST /patrol` z treścią `{}` zleca wysz
 | `pominiete` | liczba lub null | znalezione reklamy, które już były w bazie, przy stanie `gotowe` |
 | `kiedy` | data i czas lub null | koniec wyszukiwania |
 | `blad` | tekst lub null | krótki powód po polsku przy stanie `blad` |
+| `frazy` | lista | wszystkie frazy tego wyszukiwania po kolei; robotnik uzupełnia je po jednej, więc przy stanie `w_toku` pokazują postęp |
+
+Każda pozycja `frazy`:
+
+| Pole | Typ | Opis |
+| --- | --- | --- |
+| `fraza` | tekst | szukana fraza |
+| `w_bibliotece` | liczba lub null | reklamy pasujące do frazy w bibliotece TikToka; null, dopóki fraza czeka |
+| `dodane` | liczba lub null | nowe reklamy z tej frazy |
+| `pominiete` | liczba lub null | sprawdzone reklamy z tej frazy, które już były w bazie |
+| `blad` | prawda lub fałsz | biblioteka nie odpowiedziała na tę frazę |
 
 ### Dowody wizyty
 

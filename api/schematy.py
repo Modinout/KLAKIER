@@ -230,11 +230,22 @@ class Fraza(BaseModel):
         return self
 
 
+class WynikFrazy(BaseModel):
+    """Jedna fraza wyszukiwania; liczby są puste, dopóki robotnik jej nie skończy."""
+
+    fraza: str
+    w_bibliotece: int | None = None
+    dodane: int | None = None
+    pominiete: int | None = None
+    blad: bool = False
+
+
 class Wyszukiwanie(BaseModel):
     """Wyszukiwanie w bibliotece reklam TikToka zlecone z panelu."""
 
     fraza: str | None
     stan: Literal['w_kolejce', 'w_toku', 'gotowe', 'blad']
+    frazy: list[WynikFrazy] = []
     dodane: int | None = None
     pominiete: int | None = None
     kiedy: datetime | None = None

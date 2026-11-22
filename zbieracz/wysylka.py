@@ -20,6 +20,12 @@ def dodaj(rekord):
     return True, zapamietaj(odpowiedz.json())
 
 
+def kompletny(zrodlo, id_zrodla):
+    """Czy api ma już ten rekord z obrazem i tekstem; takiego zbieracz nie pobiera drugi raz."""
+    zapisany = zapisane.get((zrodlo, id_zrodla))
+    return bool(zapisany and zapisany['ma_obraz'] and zapisany['tekst'])
+
+
 def wyslij(rekord, obraz):
     """Wysyła rekord, potem jego obraz; zwraca, czy rekord jest nowy i czy obraz poszedł.
 

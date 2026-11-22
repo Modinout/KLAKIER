@@ -78,7 +78,8 @@ def okladka(reklama):
 
 
 def reklamy(przegladarka, fraza):
-    """Zwraca liczbę pasujących reklam, do NAJWIECEJ na temat z danymi szczegółowymi i obrazem, oraz liczbę nie na temat."""
+    """Zwraca liczbę pasujących reklam, do NAJWIECEJ na temat z danymi szczegółowymi i obrazem, liczbę nie na temat
+    oraz liczbę reklam, które api już ma w całości; tych nie otwiera drugi raz."""
     with przegladarka.new_context(locale='pl-PL', viewport={'width': 1280, 'height': 1400}, **rotacja.ustawienia()) as kontekst:
         karta = kontekst.new_page()
         # Pierwsza wizyta ustawia ciasteczka potrzebne wyszukiwaniu; wyszukiwanie bez nich jest odrzucane.
@@ -91,12 +92,13 @@ def reklamy(przegladarka, fraza):
         wynik = wyszukiwanie.value.json()
         # Biblioteka pomija listę, gdy nic nie pasuje.
         wybrane, poza_tematem = wybierz(wynik.get('data', []))
+        nowe = [reklama for reklama in wybrane if not wysylka.kompletny('tiktok_ads', reklama['id'])]
         znalezione = []
-        for reklama in wybrane:
+        for reklama in nowe:
             karta.wait_for_timeout(3000)
             adres = okladka(reklama)
             znalezione.append((reklama, szczegoly(karta, reklama['id']), pobierz_okladke(kontekst, adres) if adres else None))
-    return wynik['total'], znalezione, poza_tematem
+    return wynik['total'], znalezione, poza_tematem, len(wybrane) - len(nowe)
 
 
 def pobierz_okladke(kontekst, adres):
@@ -116,20 +118,25 @@ def szczegoly(karta, id):
 
 
 def obsluz(fraza, przegladarka):
-    """Szuka jednej frazy i wysyła jej rekordy i obrazy; zwraca dodane, pominięte, błędy (0 lub 1) i linię do wydruku."""
+    """Szuka jednej frazy i wysyła jej rekordy i obrazy.
+
+    Zwraca liczbę reklam w bibliotece, dodane, pominięte, błędy (0 lub 1) i linię do wydruku.
+    """
     dodane = obrazy = 0
     try:
         zebrano = datetime.now(timezone.utc).isoformat(timespec='seconds')
-        razem, znalezione, poza_tematem = reklamy(przegladarka, fraza)
+        wysylka.wczytaj_zapisane()
+        razem, znalezione, poza_tematem, w_bazie = reklamy(przegladarka, fraza)
         for reklama, dane, obraz in znalezione:
             nowy, z_obrazem = wysylka.wyslij(rekord(reklama, dane, zebrano), obraz)
             dodane += nowy
             obrazy += z_obrazem
     except Exception as blad:
-        return 0, 0, 1, f'{fraza}: błąd: {type(blad).__name__} {" ".join(str(blad).split())[:200]}'
-    pominiete = len(znalezione) - dodane
-    return dodane, pominiete, 0, (f'{fraza}: reklamy TikTok: {razem}, poza tematem {poza_tematem}, wzięte {len(znalezione)}; '
-                                  f'dodane {dodane}, pominięte {pominiete}; obrazy {obrazy}')
+        return 0, 0, 0, 1, f'{fraza}: błąd: {type(blad).__name__} {" ".join(str(blad).split())[:200]}'
+    wziete = w_bazie + len(znalezione)
+    pominiete = wziete - dodane
+    return razem, dodane, pominiete, 0, (f'{fraza}: reklamy TikTok: {razem}, poza tematem {poza_tematem}, wzięte {wziete}; '
+                                         f'dodane {dodane}, pominięte {pominiete}; obrazy {obrazy}')
 
 
 def przeszukaj(frazy):
@@ -139,7 +146,7 @@ def przeszukaj(frazy):
     with sync_playwright() as playwright:
         przegladarka = playwright.chromium.launch(headless=True)
         for fraza in frazy:
-            nowe, juz_byly, blad, linia = obsluz(fraza, przegladarka)
+            _, nowe, juz_byly, blad, linia = obsluz(fraza, przegladarka)
             dodane += nowe
             pominiete += juz_byly
             bledy += blad

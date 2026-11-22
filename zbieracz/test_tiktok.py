@@ -134,10 +134,29 @@ def test_okladka_inna_niz_png_i_jpeg_nie_idzie_do_api(monkeypatch):
     monkeypatch.setattr(tiktok.wysylka, 'dodaj', lambda rekord: (
         dodane.append(rekord['id_zrodla']) or True, {'id': rekord['id_zrodla'], 'ma_obraz': False, 'tekst': ''}))
     monkeypatch.setattr(tiktok.wysylka, 'wyslij_obraz', lambda id, obraz: obrazy.append(id))
+    monkeypatch.setattr(tiktok.wysylka, 'wczytaj_zapisane', lambda: None)
+    monkeypatch.setattr(tiktok.wysylka, 'zapisane', {})
     wynik = tiktok.obsluz('inwestowanie', przegladarka)
-    assert wynik[:3] == (4, 0, 0)
+    assert wynik[:4] == (4, 4, 0, 0)
     assert dodane == ['0', '1', '2', '3']
     assert obrazy == ['2', '3']
+
+
+def test_reklamy_ktora_api_ma_w_calosci_nie_otwiera_drugi_raz(monkeypatch):
+    lista = [{**REKLAMA, 'id': str(i), 'image_urls': [], 'videos': []} for i in range(3)]
+    przegladarka = type('Przegladarka', (), {'new_context': lambda _, **__: Kontekst({'data': lista, 'total': 250}, {})})()
+    dodane = []
+    monkeypatch.setattr(tiktok.rotacja, 'ustawienia', lambda: {})
+    monkeypatch.setattr(tiktok.wysylka, 'dodaj', lambda rekord: (
+        dodane.append(rekord['id_zrodla']) or True, {'id': rekord['id_zrodla'], 'ma_obraz': False, 'tekst': ''}))
+    monkeypatch.setattr(tiktok.wysylka, 'wczytaj_zapisane', lambda: None)
+    monkeypatch.setattr(tiktok.wysylka, 'zapisane', {
+        ('tiktok_ads', '0'): {'ma_obraz': True, 'tekst': 'tekst'},
+        ('tiktok_ads', '1'): {'ma_obraz': False, 'tekst': 'tekst'},
+    })
+    wynik = tiktok.obsluz('forex', przegladarka)
+    assert wynik[:4] == (250, 2, 1, 0)
+    assert dodane == ['1', '2']
 
 
 def test_adres_wyszukiwania():

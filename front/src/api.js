@@ -106,6 +106,10 @@ export function pobierzWyszukiwanie(id) {
   return wyslij('/api/patrol/' + id)
 }
 
+export function ostatnieWyszukiwanie() {
+  return wyslij('/api/patrol')
+}
+
 export function pobierzProg() {
   return wyslij('/api/prog')
 }
