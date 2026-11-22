@@ -52,15 +52,20 @@ FINANSE = re.compile(
 HOSTY_FINANSOWE = (
     'trading', 'trader', 'invest', 'broker', 'bank', 'markets', 'forex', 'fx', 'crypto', 'coin', 'stock', 'financ',
     'xtb', 'freedom24', 'lightyear', 'revolut', 'ibkr', 'etoro', 'degiro', 'saxo', 'binance', 'bybit', 'mexc',
-    'bingx', 'kraken', 'walutomat', 'wise.com', 'mbank', 'plus500', 'myfund', 'parqet',
+    'bingx', 'kraken', 'mbank', 'plus500',
 )
+# Przelewy, wymiana walut i śledzenie portfela to nie usługi inwestycyjne.
+INNE_USLUGI = ('wise.com', 'walutomat.pl', 'myfund.pl', 'parqet.com')
+# Zasady oznaczania reklam dotyczą treści kierowanych do odbiorców w Polsce: opis po angielsku im nie podlega.
+POLSKIE_LITERY = re.compile(r'[ąćęłńśźż]')
+ANGIELSKIE_SLOWA = re.compile(r'\b(?:the|and|you|your|with|this|that|for|from|how|what|get|here|first|are|will)\b')
 # Nazwy marek tam, gdzie domena pisze je inaczej niż firma.
 NAZWY_MAREK = {
     'xtb': 'XTB', 'etoro': 'eToro', 'trading212': 'Trading 212', 'mexc': 'MEXC', 'ibkr': 'Interactive Brokers',
     'interactivebrokers': 'Interactive Brokers', 'bingx': 'BingX', 'okx': 'OKX', 'degiro': 'DEGIRO', 'mbank': 'mBank',
     'freedom24': 'Freedom24', 'plus500': 'Plus500', 'vantagemarkets': 'Vantage', 'fusionmarkets': 'Fusion Markets',
     'apextraderfunding': 'Apex Trader Funding', 'fundedtradermarkets': 'Funded Trader Markets', 'gatesfx': 'GatesFX',
-    'myfund': 'myfund.pl', 'ninjatraderus': 'NinjaTrader',
+    'ninjatraderus': 'NinjaTrader',
 }
 # Porównywarki i rankingi brokerów: link prowadzi do nich, a nie do firmy, której usługę polecają.
 POSREDNICY = ('brokerchampion.com', 'twojinteres.pl', 'thefxranker.com', 'tradersunion.com')
@@ -159,12 +164,17 @@ def sygnaly(tekst, rejestr, zrodlo):
     # Firma z rejestrów KNF linkująca własną ofertę nie jest influencerem.
     if zrodlo != 'youtube' or not tekst or (rejestr and rejestr['stan'] != 'poza_listami'):
         return []
+    male = LINK.sub(' ', tekst).casefold()
+    if len(ANGIELSKIE_SLOWA.findall(male)) >= 3 and len(POLSKIE_LITERY.findall(male)) < 3:
+        return []
     # Adresy wycina się najpierw: "partner" lub "ref" wewnątrz linku nie jest oznaczeniem.
     if OZNACZENIE.search(LINK.sub(' ', tekst).casefold()):
         return []
     for trafienie in LINK.finditer(tekst):
         adres = trafienie.group().rstrip('.,;:!?')
         host = urlsplit(adres if '://' in adres else 'https://' + adres).hostname or ''
+        if w_domenie(host.removeprefix('www.'), INNE_USLUGI):
+            continue
         if polecajacy(adres) and finansowy(tekst, trafienie, host):
             cytat = re.sub(r'^(?:https?://)?(?:www\.)?', '', adres, flags=re.I)
             return sygnal(f'Opis filmu ma link polecający do {host.removeprefix("www.")} („{cytat}”)', firma(host))
